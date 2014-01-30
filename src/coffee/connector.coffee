@@ -8,7 +8,7 @@ TODO: Add class description/comment.
 ###
 class Connector
 
-  constructor: (options = {}) ->
+  constructor: (@_options = {}) ->
     this
 
   ###
