@@ -1,22 +1,22 @@
 fs = require 'fs'
 Q = require 'q'
-_ = require("underscore")._
-_s = require('underscore.string')
+_ = require('underscore')._
+_s = require 'underscore.string'
 
 ###
 TODO: Add class description/comment.
 ###
 class Connector
 
+  constructor: (options = {}) ->
+    this
 
   ###
   TODO: Add method description/comment.
-  @param {string} arg1 Entire types CSV as an array of records.
-  @param {string} arg2 Entire attributes CSV as an array of records.
   @param {function} callback The callback function to be invoked when the method finished its work.
   @return Result of the given callback
   ###
-  run: (arg1, arg2, callback) ->
+  run: (callback) ->
     callback true
 
 module.exports = Connector

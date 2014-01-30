@@ -1,16 +1,15 @@
-Q = require('q')
-
 argv = require('optimist')
-  .usage('Usage: $0 --arg1 [string] --arg2 [string]')
-  .alias('arg1', 'a1')
-  .alias('arg2', 'a2')
-  .describe('arg1', 'Put description here.')
-  .describe('arg2', 'Put description here.')
-  .demand(['arg1', 'arg2'])
+  .usage('Usage: $0 --projectKey [key] --clientId [id] --clientSecret [secret]')
+  .demand(['projectKey', 'clientId', 'clientSecret'])
   .argv
-
 Connector = require('../main').Connector
 
-connector = new Connector
-connector.run argv.arg1, argv.arg2, (success) ->
+options =
+  config:
+    project_key: argv.projectKey
+    client_id: argv.clientId
+    client_secret: argv.clientSecret
+
+connector = new Connector options
+connector.run (success) ->
   process.exit 1 unless success
