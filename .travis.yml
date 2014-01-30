@@ -5,13 +5,21 @@ before_script:
 - npm install -g grunt-cli
 script:
 - npm test
-- node lib/run.js
+- node lib/run.js --projectKey ${SPHERE_PROJECT_KEY} --clientId ${SPHERE_CLIENT_ID}
+  --clientSecret ${SPHERE_CLIENT_SECRET}
 notifications:
   hipchat:
     rooms:
       secure: hJXg+h3aGEAKsNlyDHw9eUc27vdbL5Dco+2ZllNNqP2EFrSIC29qhVBhSc+dd42GSb/oYToeKDS5zYXiXK7TL7esbBRLWjgwx0VAzAdZBnFGwHglzAxwfB1j4EW56DnAw4XbUtAER1R6tXNidhqMt61bBmCdqcSBNaISUaC0IS0=
     template:
-    - '%{repository}#%{build_number} (%{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Compare</a>)'
+    - ! '%{repository}#%{build_number} (%{author}): %{message} (<a href="%{build_url}">Details</a>/<a
+      href="%{compare_url}">Compare</a>)'
     format: html
     on_success: change
     on_failure: change
+SPHERE_PROJECT_KEY:
+  secure: EZ3BLxRVXCcmS3zNvO/3C2lGbekSpWjRkFkCARTL7UrsMXwaV21ecmjYx477iNRoxkv1/AWvHIZ48pMjpXZWc+ccgflRB7CtjUtkEx5DGBT/mC6S8Ed5NBvb9OSgmA1hN9Yq5+m7u/af+f0LiUOQQnbL1wpsbblr0DHOeV9KrvA=
+SPHERE_CLIENT_ID:
+  secure: ijFEnjH9F3HKVld+3KRN2uuRZQmFlYUtAe2KAQBuHvXoB1yB0U4algj00FDrMz/9oWLB82m3A5IPLwW/F5pUCCnrPSsiU891pUz7uhRI+/orPY+U0BX+TSYTJ7aBvjdzY1E0aMd2IUe3hbCOCiCY4LqG/UTFWyVzISekdONY5jw=
+SPHERE_CLIENT_SECRET:
+  secure: RX4vlDIoGHw1FWNW2bDc3iBTE6iYFjeydIXmozqgz6Ua8RXpvRgfaxPRSevP73YlRKBI4Fx8GmCfW4CcAM0w1wt9y8JO7gITqoUsaTabcwsvU8FfJwRZwstFcNsewiCoi3HVgUY2Z63Ghw9+egT29jv2ezuVdlvb00xK9SStvwc=
