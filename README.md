@@ -33,7 +33,7 @@ Missing required arguments: projectKey, clientId, clientSecret
 ```
 
 ## Tests
-Tests are written using [jasmine](http://pivotal.github.io/jasmine/) (behavior-driven development framework for testing javascript code).
+Tests are written using [jasmine](http://pivotal.github.io/jasmine/) (behavior-driven development framework for testing javascript code). Thanks to [jasmine-node](https://github.com/mhevery/jasmine-node), this test framework is also available for node.js.
 
 To run tests, simple execute the *test* task using `grunt`.
 ```bash
