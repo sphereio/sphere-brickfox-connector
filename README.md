@@ -32,5 +32,13 @@ Options:
 Missing required arguments: projectKey, clientId, clientSecret
 ```
 
+## Tests
+Tests are written using [jasmine](http://pivotal.github.io/jasmine/) (behavior-driven development framework for testing JavaScript code).
+
+To run tests, simple execute the *test* task using `grunt`.
+```bash
+$ grunt test
+```
+
 ## Styleguide
 We <3 CoffeeScript here at commercetools! So please have a look at this referenced [coffeescript styleguide](https://github.com/polarmobile/coffeescript-style-guide) when doing changes to the code.
