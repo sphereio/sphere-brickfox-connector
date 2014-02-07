@@ -92,3 +92,4 @@ module.exports = (grunt)->
   grunt.registerTask "build", ["clean", "coffeelint", "coffee", "concat"]
   grunt.registerTask "coverage", ["build", "shell:coverage"]
   grunt.registerTask "test", ["build", "shell:jasmine"]
+  grunt.registerTask "default", ["test"]
