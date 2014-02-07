@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Products count="2">
+    <Product num="1">
+        <ProductId>5769</ProductId>
+        <ExternProductId>a6ab9489265b4c762202c718d58d8</ExternProductId>
+        <ItemNumber>001384</ItemNumber>
+        <Active>1</Active>
+        <TaxId>1</TaxId>
+        <ManufacturerId>42</ManufacturerId>
+        <ExternManufacturerId>42</ExternManufacturerId>
+        <HasVariations>0</HasVariations>
+        <Attributes>
+            <Boolean hidden="1">
+                <Value>0</Value>
+                <Translations>
+                    <Translation lang="de">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                </Translations>
+            </Boolean>
+            <String hidden="1">
+                <Translations>
+                    <Translation lang="de">
+                        <Name>textInStock</Name>
+                        <Value>Sofort lieferbar</Value>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>textInStock</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>textInStock</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>textInStock</Name>
+                    </Translation>
+                </Translations>
+            </String>
+            <String hidden="1">
+                <Translations>
+                    <Translation lang="de">
+                        <Name>textNoStock</Name>
+                        <Value>Lieferzeit auf Anfrage</Value>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                </Translations>
+            </String>
+            <Integer hidden="1">
+                <Value>1</Value>
+                <Translations>
+                    <Translation lang="de">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                </Translations>
+            </Integer>
+        </Attributes>
+        <Categories>
+            <Category>
+                <CategoryId>246</CategoryId>
+            </Category>
+            <Category>
+                <CategoryId>131</CategoryId>
+            </Category>
+            <Category>
+                <CategoryId>9367</CategoryId>
+            </Category>
+        </Categories>
+        <Descriptions>
+            <Description lang="de">
+                <Title><![CDATA[Kenwood TK-3301 Handfunkgerät]]></Title>
+                <LongDescription><![CDATA[DAs Handfunkgerät schlechthin für alle Security und Sicherheitsunternehmen. Ideal als Ergänzung unserer Security Sets von Kenwood. Kompatibel zu allen hier angebotenen Headsets.<br> <br> Technische Daten Kenwood TK-3301<br> <br> <ul><li>16 Kanäle (belegt mit PMR-446 Frequenzen und diversen CTCSS / DCS Tönen)<br> <br> <li>Frequenzbereich 336,00625 x 446,09375 MHz<br> <br> <li>Sendeleistung 500 mW<br> <br> <li>besonders leichte Bedienung<br> <br> <li>anmelde & gebührenfrei in Deutschland<br> <br> <li>DCS Decoder sowie CTCSS-Off Funktion<br> <br> <li>Pilottöne und Frequenzen sind ab Werk vorprogrammiert, können aber vom Anwender den 16 Kanalstellungen neu zugeordnet werden<br> <br> <li>zwei programmierbare Funktionstasten<br> <br> <li>Kanalansage <br> <br> <li>Tastensperre<br> <br> <li>Zweifarb-LED zur übersichtlichen Zustandsanzeige<br> <br> <li>optische und akkustische Warnung bei schwachem Akku<br> <br> <li>Sendezeitbegrenzung mit Warnton<br> <br> <li>klarer, kraftvoller Lautsprecher mit bis zu 500mW NF-Leistung<br> <br> <li>VOX Funktion (das Gerät kann freihändig benutzt werden, wenn ein passendes Headset angeschlossen ist)<br> <br> <li>Scrambler (Sprachverschlüsselung kann programmiert werden<br> <br> <li>Mikrofon bzw. Headsetanschluß möglich<br> <br> <li>Akkupack KNB-45L im Lieferumfang<br> <br> <li>Amessungen: 54 x 122 x 33,8 (mit KNB-45L Akku)<br> <br> <li>Gewicht 280g mit Akku, 160g ohne Akku</ul><br> <br> <br> <br> Lieferumfang:<br> <br> Kenwood TK-3301-E Handfunkgerät<br> <br> Akkupack KNB-45L<br> <br> Standlader mit Netzteil<br> <br> Gürtelclip<br> <br> Anleitung<br> ]]></LongDescription>
+            </Description>
+        </Descriptions>
+        <Images>
+            <Image sort="1" changed="0">
+                <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/sonstiges/Kenwood_handfunk.jpg</Path>
+                <Type>image/jpg</Type>
+            </Image>
+        </Images>
+        <Variations>
+            <Variation>
+                <VariationId>24646</VariationId>
+                <VariationItemNumber>001384</VariationItemNumber>
+                <EAN>2500000012983</EAN>
+                <VariationActive>1</VariationActive>
+                <Available>0</Available>
+                <Stock>0</Stock>
+                <ThirdPartyStock>0</ThirdPartyStock>
+                <Currencies>
+                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+                        <PriceGross>229.00</PriceGross>
+                        <Rrp>229.00</Rrp>
+                        <SpecialPrice>120.12</SpecialPrice>
+                        <SpecialPriceStart>2014-01-03 00:00:00</SpecialPriceStart>
+                        <SpecialPriceEnd>2015-01-03 00:00:00</SpecialPriceEnd>
+                    </Currency>
+                </Currencies>
+                <PrimeCost>120.75</PrimeCost>
+                <ContentQuantity>100</ContentQuantity>
+                <Descriptions>
+                    <Description lang="de">
+                        <BasePriceUnit>g</BasePriceUnit>
+                        <ContentUnit>g</ContentUnit>
+                    </Description>
+                </Descriptions>
+            </Variation>
+        </Variations>
+    </Product>
+    <Product num="2">
+        <ProductId>4843</ProductId>
+        <ExternProductId>f6d223177743ca7b7907bdc88926c</ExternProductId>
+        <ItemNumber>000406</ItemNumber>
+        <Active>1</Active>
+        <TaxId>1</TaxId>
+        <ManufacturerId>20</ManufacturerId>
+        <ExternManufacturerId>20</ExternManufacturerId>
+        <HasVariations>1</HasVariations>
+        <Attributes>
+            <Boolean hidden="1">
+                <Value>0</Value>
+                <Translations>
+                    <Translation lang="de">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>FSK18 Kennung</Name>
+                    </Translation>
+                </Translations>
+            </Boolean>
+            <String hidden="1">
+                <Translations>
+                    <Translation lang="de">
+                        <Name>textInStock</Name>
+                        <Value>Sofort lieferbar</Value>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>textInStock</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>textInStock</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>textInStock</Name>
+                    </Translation>
+                </Translations>
+            </String>
+            <String hidden="1">
+                <Translations>
+                    <Translation lang="de">
+                        <Name>textNoStock</Name>
+                        <Value>Lieferzeit auf Anfrage</Value>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>textNoStock</Name>
+                    </Translation>
+                </Translations>
+            </String>
+            <Integer hidden="1">
+                <Value>3</Value>
+                <Translations>
+                    <Translation lang="de">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="en">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="fr">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                    <Translation lang="nl">
+                        <Name>stockStatus</Name>
+                    </Translation>
+                </Translations>
+            </Integer>
+        </Attributes>
+        <Categories>
+            <Category>
+                <CategoryId>109</CategoryId>
+            </Category>
+        </Categories>
+        <Descriptions>
+            <Description lang="de">
+                <Title><![CDATA[Security Blouson]]></Title>
+                <LongDescription><![CDATA[Die ideale Jacke für den täglichen Security-Einsatz, ein wahrer Bestseller in unserem Security Shop.<br> <br> <ul><br> <br> <li>Material: 100% Nylon<br> <br> <li>Fleecefuttermaterial: 100% Polyester<br> <br> <li>guter Kälteschutz<br> <br> <li>Jacke und Weste in einem, Ärmel durch Reißverschluss abtrennbar<br> <br> <li>2 seitliche Einschubtaschen<br> <br> <li>2 Innentaschen mit Reißverschluss<br> <br> <li>2 aufgesetzte Taschen<br> <br> <li>Security-Schriftzüge in Taschen versteckbar oder durch Reißverschluss abnehmbar, dadurch ist die Jacke auch gut in der Freizeit verwendbar (Schriftzüge im Lieferumfang enthalten)<br> <br> <li>eng anliegende Ärmel-Strickbündel<br> <br> <li>Armbüro mit Geldscheinfach und Stifthalter<br> <br> <li>vordere Seite mit Reißverschluss<br> <br> <li>Kragen mit Reißverschluss<br> <br> <li>abnehmbare Kapuze<br> <br> <li>Containertasche auf Jackenrückseite<br> <br> <li>Farbe: schwarz<br> <br> <li>Größen: S - XXXL</ul><br> ]]></LongDescription>
+                <SearchKeys><![CDATA[Security Jacke, Jackesecurity]]></SearchKeys>
+            </Description>
+        </Descriptions>
+        <Images>
+            <Image sort="1" changed="0">
+                <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/Surplus/blouson.jpg</Path>
+                <Type>image/jpg</Type>
+            </Image>
+            <Image sort="2" changed="0">
+                <Path>https://estoresimages.brickfox.net/products/Zusatzbilder/000406_pic1.jpg</Path>
+                <Type>image/jpg</Type>
+            </Image>
+            <Image sort="3" changed="0">
+                <Path>https://estoresimages.brickfox.net/products/Zusatzbilder/000406_pic2.jpg</Path>
+                <Type>image/jpg</Type>
+            </Image>
+        </Images>
+        <Variations>
+            <Variation>
+                <VariationId>26841</VariationId>
+                <ExternVariationId>ccf0c6879d3e7ef529f86d93740e2</ExternVariationId>
+                <VariationItemNumber>000406.A.3XL.</VariationItemNumber>
+                <EAN>2500000028229</EAN>
+                <VariationActive>1</VariationActive>
+                <Available>0</Available>
+                <Stock>0</Stock>
+                <ThirdPartyStock>0</ThirdPartyStock>
+                <Currencies>
+                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+                        <PriceGross>68.99</PriceGross>
+                    </Currency>
+                </Currencies>
+                <PrimeCost>29.90</PrimeCost>
+                <Options>
+                    <Option id="5" valueId="316">
+                        <Translations>
+                            <Translation lang="de">
+                                <OptionName>Größe</OptionName>
+                                <OptionValue>XXXL</OptionValue>
+                            </Translation>
+                        </Translations>
+                    </Option>
+                </Options>
+                <Attributes>
+                    <String hidden="1">
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>textInStock</Name>
+                                <Value>Sofort lieferbar</Value>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>textInStock</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>textInStock</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>textInStock</Name>
+                            </Translation>
+                        </Translations>
+                    </String>
+                    <String hidden="1">
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>textNoStock</Name>
+                                <Value>Lieferzeit auf Anfrage</Value>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                        </Translations>
+                    </String>
+                    <Integer hidden="1">
+                        <Value>3</Value>
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                        </Translations>
+                    </Integer>
+                </Attributes>
+                <VariationImages>
+                    <VariationImage sort="1" changed="0">
+                        <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/sonstiges/Kenwood_handfunk.jpg</Path>
+                        <Type>image/jpg</Type>
+                    </VariationImage>
+                </VariationImages>
+            </Variation>
+            <Variation>
+                <VariationId>26843</VariationId>
+                <ExternVariationId>aceea8fd0fb9b4cd609a14d387acd</ExternVariationId>
+                <VariationItemNumber>000406.A.M.</VariationItemNumber>
+                <EAN>2500000028243</EAN>
+                <VariationActive>1</VariationActive>
+                <Available>0</Available>
+                <Stock>1</Stock>
+                <ThirdPartyStock>0</ThirdPartyStock>
+                <Currencies>
+                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+                        <PriceGross>68.99</PriceGross>
+                        <PrimeCost>29.90</PrimeCost>
+                    </Currency>
+                </Currencies>
+                <PrimeCost>29.90</PrimeCost>
+                <Options>
+                    <Option id="5" valueId="303">
+                        <Translations>
+                            <Translation lang="de">
+                                <OptionName>Größe</OptionName>
+                                <OptionValue>M</OptionValue>
+                            </Translation>
+                        </Translations>
+                    </Option>
+                </Options>
+                <Attributes>
+                    <String hidden="1">
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>textInStock</Name>
+                                <Value>Sofort lieferbar</Value>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>textInStock</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>textInStock</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>textInStock</Name>
+                            </Translation>
+                        </Translations>
+                    </String>
+                    <String hidden="1">
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>textNoStock</Name>
+                                <Value>Lieferzeit auf Anfrage</Value>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>textNoStock</Name>
+                            </Translation>
+                        </Translations>
+                    </String>
+                    <Integer hidden="1">
+                        <Value>3</Value>
+                        <Translations>
+                            <Translation lang="de">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="en">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="fr">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                            <Translation lang="nl">
+                                <Name>stockStatus</Name>
+                            </Translation>
+                        </Translations>
+                    </Integer>
+                </Attributes>
+            </Variation>
+        </Variations>
+    </Product>
+</Products>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Products count="1">
+  <ProductUpdate num="1">
+    <ProductId>4954</ProductId>
+    <ExternProductId>f5a54bfb83e0945b6f1c2d133bd14</ExternProductId>
+    <Active>1</Active>
+    <Variations>
+      <Variation>
+        <VariationId>27171</VariationId>
+        <ExternVariationId>94b46d08ad86ad11e7eaf4f41d8a8</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>0</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>1</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>14.90</PriceGross>
+          </Currency>
+        </Currencies>
+      </Variation>
+      <Variation>
+        <VariationId>27172</VariationId>
+        <ExternVariationId>9c45061339428abe59e662224ecd3</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>0</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>7</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>14.90</PriceGross>
+          </Currency>
+        </Currencies>
+      </Variation>
+    </Variations>
+  </ProductUpdate>
+</Products>

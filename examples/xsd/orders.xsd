@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="Orders">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Order" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Order">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="OrderId"/>
+                <xs:element ref="OrderDate"/>
+                <xs:element ref="OrderStatus" minOccurs="0"/>
+                <xs:element ref="PaymentStatus" minOccurs="0"/>
+                <xs:element ref="CustomerId" minOccurs="0"/>
+                <xs:element ref="TotalAmountProducts" minOccurs="0"/>
+                <xs:element ref="TotalAmountProductsNetto" minOccurs="0"/>
+                <xs:element ref="TotalAmountVat" minOccurs="0"/>
+                <xs:element ref="ShippingCost"/>
+                <xs:element ref="PaymentCost" minOccurs="0"/>
+                <xs:element ref="TotalAmount"/>
+                <xs:element ref="Comment" minOccurs="0"/>
+                <xs:element ref="CostsChangings" minOccurs="0"/>
+                <xs:element ref="PaymentMethod"/>
+                <xs:element ref="PaymentMethodValues"/>
+                <xs:element ref="ShippingMethod"/>
+                <xs:element ref="BillingParty"/>
+                <xs:element ref="DeliveryParty"/>
+                <xs:element ref="Coupons" minOccurs="0"/>
+                <xs:element ref="OrderLines"/>
+            </xs:choice>
+            <xs:attribute name="num" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OrderId" type="xs:string"/>
+    <xs:element name="OrderDate" type="xs:string"/>
+    <xs:element name="OrderStatus" type="xs:string"/>
+    <xs:element name="PaymentStatus" type="xs:string"/>
+    <xs:element name="CustomerId" type="xs:string"/>
+    <xs:element name="TotalAmountProducts" type="decimal-or-empty"/>
+    <xs:element name="TotalAmountProductsNetto" type="decimal-or-empty"/>
+    <xs:element name="TotalAmountVat" type="decimal-or-empty"/>
+    <xs:element name="ShippingCost" type="xs:decimal"/>
+    <xs:element name="PaymentCost" type="decimal-or-empty"/>
+    <xs:element name="TotalAmount" type="xs:decimal"/>
+    <xs:element name="Comment" type="xs:string"/>
+    <xs:element name="CostsChangings">
+       <xs:complexType>
+         <xs:sequence>
+           <xs:element ref="CostsChanging" maxOccurs="unbounded"/>
+         </xs:sequence>
+       </xs:complexType>
+    </xs:element>
+    <xs:element name="CostsChanging">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="Type" type="CostsChangingType"/>
+          <xs:element ref="TypeValue"/>
+          <xs:element ref="Value"/>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+    <xs:element name="TypeValue" type="xs:decimal"/>
+    <xs:simpleType name="CostsChangingType">
+      <xs:restriction base="xs:integer"/>
+    </xs:simpleType>
+    <xs:element name="Value" type="xs:decimal"/>
+    <xs:element name="PaymentMethod" type="xs:string"/>
+    <xs:element name="ShippingMethod" type="xs:string"/>
+    <xs:element name="BillingParty">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="Company" minOccurs="0"/>
+                <xs:element ref="VatId" minOccurs="0"/>
+                <xs:element ref="FirstName" minOccurs="0"/>
+                <xs:element ref="LastName"/>
+                <xs:element ref="Address"/>
+                <xs:element ref="Number" minOccurs="0"/>
+                <xs:element ref="AddressAdd" minOccurs="0"/>
+                <xs:element ref="PostalCode"/>
+                <xs:element ref="City"/>
+                <xs:element ref="Country"/>
+                <xs:element ref="State" minOccurs="0"/>
+                <xs:element ref="PhonePrivate" minOccurs="0"/>
+                <xs:element ref="Title" minOccurs="0"/>
+                <xs:element ref="EmailAddress"/>
+                <xs:element ref="DateOfBirth" minOccurs="0"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DeliveryParty">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="Company" minOccurs="0"/>
+                <xs:element ref="VatId" minOccurs="0"/>
+                <xs:element ref="FirstName" minOccurs="0"/>
+                <xs:element ref="LastName"/>
+                <xs:element ref="Address"/>
+                <xs:element ref="Number" minOccurs="0"/>
+                <xs:element ref="AddressAdd" minOccurs="0"/>
+                <xs:element ref="PostalCode"/>
+                <xs:element ref="City"/>
+                <xs:element ref="Country"/>
+                <xs:element ref="State" minOccurs="0"/>
+                <xs:element ref="PhonePrivate" minOccurs="0"/>
+                <xs:element ref="Title" minOccurs="0"/>
+                <xs:element ref="EmailAddress"/>
+                <xs:element ref="DateOfBirth" minOccurs="0"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PaymentMethodValues">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="PaymentMethodValue" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PaymentMethodValue">
+        <xs:complexType>
+            <xs:attribute name="key" type="xs:string"/>
+            <xs:attribute name="value" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+	<xs:element name="Coupons">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Coupon" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Coupon">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="Id" minOccurs="0"/>
+        <xs:element ref="ExternId" minOccurs="0"/>
+        <xs:element ref="Code"/>
+        <xs:element name="Type" type="CouponType"/>
+        <xs:element ref="ReduceType"/>
+        <xs:element ref="Rebate"/>
+        <xs:element ref="Title"/>
+        <xs:element ref="CalculatedRebate"/>
+        <xs:element ref="Group" minOccurs="0"/>
+        <xs:element ref="OrderLineReferences"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Id" type="xs:string"/>
+  <xs:element name="ExternId" type="xs:string"/>
+  <xs:element name="Code" type="xs:string"/>
+  <xs:simpleType name="CouponType">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:element name="ReduceType" type="xs:string"/>
+  <xs:element name="Rebate" type="xs:decimal"/>
+  <xs:element name="CalculatedRebate" type="xs:decimal"/>
+  <xs:element name="Group">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="Id" minOccurs="0"/>
+        <xs:element ref="ExternId" minOccurs="0"/>
+        <xs:element ref="Title"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OrderLineReferences">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="OrderLineReference" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OrderLineReference">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="OrderLineId"/>
+        <xs:element ref="CalculatedRebate" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+    <xs:element name="OrderLines">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="OrderLine" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OrderLine">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="OrderLineId"/>
+                <xs:element ref="ProductId"/>
+                <xs:element ref="ProductName"/>
+                <xs:element ref="ItemNumber" minOccurs="0"/>
+                <xs:element ref="EAN" minOccurs="0"/>
+                <xs:element ref="VariationId"/>
+                <xs:element ref="QuantityOrdered"/>
+                <xs:element ref="ProductsPriceTotal" minOccurs="0"/>
+                <xs:element ref="ProductsPriceTotalNetto" minOccurs="0"/>
+                <xs:element ref="ProductsPrice"/>
+                <xs:element ref="ProductsPriceNetto" minOccurs="0"/>
+                <xs:element ref="VatPrice" minOccurs="0"/>
+                <xs:element ref="VatPriceTotal" minOccurs="0"/>
+                <xs:element ref="TaxRate"/>
+                <xs:element ref="OrderLineOptions" minOccurs="0"/>
+            </xs:choice>
+            <xs:attribute name="num" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OrderLineId" type="xs:string"/>
+    <xs:element name="ProductId" type="xs:integer"/>
+    <xs:element name="ProductName" type="xs:string"/>
+    <xs:element name="ItemNumber" type="xs:string"/>
+    <xs:element name="EAN" type="xs:string"/>
+    <xs:element name="VariationId" type="xs:integer"/>
+    <xs:element name="QuantityOrdered" type="xs:integer"/>
+    <xs:element name="ProductsPriceTotal" type="decimal-or-empty"/>
+    <xs:element name="ProductsPriceTotalNetto" type="decimal-or-empty"/>
+    <xs:element name="ProductsPrice" type="xs:decimal"/>
+    <xs:element name="ProductsPriceNetto" type="decimal-or-empty"/>
+    <xs:element name="VatPrice" type="decimal-or-empty"/>
+    <xs:element name="VatPriceTotal" type="decimal-or-empty"/>
+    <xs:element name="TaxRate" type="xs:decimal"/>
+    <xs:element name="OrderLineOptions">
+        <xs:complexType>
+            <xs:attribute name="count" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Company" type="xs:string"/>
+    <xs:element name="VatId" type="xs:string"/>
+    <xs:element name="FirstName" type="xs:string"/>
+    <xs:element name="LastName" type="xs:string"/>
+    <xs:element name="Address" type="xs:string"/>
+    <xs:element name="Number" type="xs:string"/>
+    <xs:element name="AddressAdd" type="xs:string"/>
+    <xs:element name="PostalCode" type="xs:string"/>
+    <xs:element name="City" type="xs:string"/>
+    <xs:element name="Country" type="xs:string"/>
+    <xs:element name="State" type="xs:string"/>
+    <xs:element name="PhonePrivate" type="xs:string"/>
+    <xs:element name="Title" type="xs:string"/>
+    <xs:element name="EmailAddress" type="xs:string"/>
+    <xs:element name="DateOfBirth" type="xs:string"/>
+    <xs:simpleType name="decimal-or-empty">
+        <xs:union memberTypes="xs:decimal empty-string" />
+    </xs:simpleType>
+    <xs:simpleType name="empty-string">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

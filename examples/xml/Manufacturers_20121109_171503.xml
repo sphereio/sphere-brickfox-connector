@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Manufacturers count="3">
+  <Manufacturer num="1">
+    <ManufacturerId>1</ManufacturerId>
+    <ExternManufacturerId>1</ExternManufacturerId>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Petzl]]></Name>
+      </Translation>
+      <Translation lang="en">
+        <Name><![CDATA[Petzl]]></Name>
+      </Translation>
+      <Translation lang="fr">
+        <Name><![CDATA[Petzl]]></Name>
+      </Translation>
+      <Translation lang="nl">
+        <Name><![CDATA[Petzl]]></Name>
+      </Translation>
+    </Translations>
+  </Manufacturer>
+  <Manufacturer num="2">
+    <ManufacturerId>4</ManufacturerId>
+    <ExternManufacturerId>4</ExternManufacturerId>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Setwear]]></Name>
+      </Translation>
+      <Translation lang="en">
+        <Name><![CDATA[Setwear]]></Name>
+      </Translation>
+      <Translation lang="fr">
+        <Name><![CDATA[Setwear]]></Name>
+      </Translation>
+      <Translation lang="nl">
+        <Name><![CDATA[Setwear]]></Name>
+      </Translation>
+    </Translations>
+  </Manufacturer>
+  <Manufacturer num="3">
+    <ManufacturerId>5</ManufacturerId>
+    <ExternManufacturerId>5</ExternManufacturerId>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Singing-Rock]]></Name>
+      </Translation>
+      <Translation lang="en">
+        <Name><![CDATA[Singing-Rock]]></Name>
+      </Translation>
+      <Translation lang="fr">
+        <Name><![CDATA[Singing-Rock]]></Name>
+      </Translation>
+      <Translation lang="nl">
+        <Name><![CDATA[Singing-Rock]]></Name>
+      </Translation>
+    </Translations>
+  </Manufacturer>
+</Manufacturers>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Categories count="6">
+  <Category num="1">
+    <CategoryId>68</CategoryId>
+    <SortOrder>9</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Bekleidung]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+  <Category num="2">
+    <CategoryId>72</CategoryId>
+    <ParentId>68</ParentId>
+    <SortOrder>4</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Kinder]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+  <Category num="3">
+    <CategoryId>131</CategoryId>
+    <SortOrder>10</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Ausrüstung]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+  <Category num="4">
+    <CategoryId>177</CategoryId>
+    <SortOrder>11</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Camping]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+  <Category num="5">
+    <CategoryId>204</CategoryId>
+    <SortOrder>12</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Transport]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+  <Category num="6">
+    <CategoryId>215</CategoryId>
+    <ParentId>204</ParentId>
+    <SortOrder>3</SortOrder>
+    <Translations>
+      <Translation lang="de">
+        <Name><![CDATA[Taschen]]></Name>
+      </Translation>
+    </Translations>
+  </Category>
+</Categories>

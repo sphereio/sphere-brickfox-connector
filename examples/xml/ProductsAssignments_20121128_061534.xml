@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Products count="1">
+  <Product num="1">
+    <ProductId>4765</ProductId>
+    <ExternProductId>5f676e3c1d0871e45d4e43369da8c</ExternProductId>
+    <Assignments>
+      <Assignment type="crossselling" sort="1">
+        <ProductId>4800</ProductId>
+        <ExternProductId>4623155af027548df7448f7261b97</ExternProductId>
+      </Assignment>
+      <Assignment type="crossselling" sort="2">
+        <ProductId>4694</ProductId>
+        <ExternProductId>323a3d83c82d78330ba7c907a5e2b</ExternProductId>
+      </Assignment>
+      <Assignment type="crossselling" sort="3">
+        <ProductId>5045</ProductId>
+        <ExternProductId>bcbb46b748ed7e72703a1a0a7c45b</ExternProductId>
+      </Assignment>
+      <Assignment type="crossselling" sort="4">
+        <ProductId>5047</ProductId>
+        <ExternProductId>3f1f1af4436f68a81a1b68eeea2d7</ExternProductId>
+      </Assignment>
+      <Assignment type="crossselling" sort="5">
+        <ProductId>4716</ProductId>
+        <ExternProductId>5a26a5f59d33e861e59637ce4e7b6</ExternProductId>
+      </Assignment>
+      <Assignment type="accessories" sort="1">
+        <ProductId>4840</ProductId>
+        <ExternProductId>c724fd9b68dc6d02bcd2fab08b6a6</ExternProductId>
+      </Assignment>
+      <Assignment type="accessories" sort="2">
+        <ProductId>4942</ProductId>
+        <ExternProductId>7769106e5d4e57da24114866a96a0</ExternProductId>
+      </Assignment>
+      <Assignment type="accessories" sort="3">
+        <ProductId>4843</ProductId>
+        <ExternProductId>f6d223177743ca7b7907bdc88926c</ExternProductId>
+      </Assignment>
+      <Assignment type="accessories" sort="4">
+        <ProductId>4751</ProductId>
+        <ExternProductId>2f5268455dd6b0102bb1c565229ce</ExternProductId>
+      </Assignment>
+    </Assignments>
+  </Product>
+</Products>
