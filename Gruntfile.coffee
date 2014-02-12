@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (grunt)->
+module.exports = (grunt) ->
   # project configuration
   grunt.initConfig
     # load package information
@@ -15,16 +15,7 @@ module.exports = (grunt)->
         "*/\n"
 
     coffeelint:
-      options:
-        indentation:
-          value: 2
-          level: "error"
-        no_trailing_semicolons:
-          level: "error"
-        no_trailing_whitespace:
-          level: "error"
-        max_line_length:
-          level: "ignore"
+      options: grunt.file.readJSON('node_modules/sphere-coffeelint/coffeelint.json')
       default: ["Gruntfile.coffee", "src/**/*.coffee"]
 
     clean:
@@ -35,19 +26,21 @@ module.exports = (grunt)->
       options:
         bare: true
       default:
-        expand: true
-        flatten: true
-        cwd: "src/coffee"
-        src: ["*.coffee"]
-        dest: "lib"
-        ext: ".js"
+        files: grunt.file.expandMapping(['**/*.coffee'], 'lib/',
+          flatten: false
+          cwd: 'src/coffee'
+          ext: '.js'
+          rename: (dest, matchedSrcPath) ->
+            dest + matchedSrcPath
+          )
       test:
-        expand: true
-        flatten: true
-        cwd: "src/spec"
-        src: ["*.spec.coffee"]
-        dest: "test"
-        ext: ".spec.js"
+        files: grunt.file.expandMapping(['**/*.spec.coffee'], 'test/',
+          flatten: false
+          cwd: 'src/spec'
+          ext: '.spec.js'
+          rename: (dest, matchedSrcPath) ->
+            dest + matchedSrcPath
+          )
 
     concat:
       options:
@@ -77,7 +70,7 @@ module.exports = (grunt)->
       coverage:
         command: "istanbul cover jasmine-node --captureExceptions test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
       jasmine:
-        command: "jasmine-node --captureExceptions test"
+        command: "jasmine-node --verbose --captureExceptions test"
 
   # load plugins that provide the tasks defined in the config
   grunt.loadNpmTasks "grunt-coffeelint"
