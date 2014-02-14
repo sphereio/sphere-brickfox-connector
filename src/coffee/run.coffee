@@ -19,11 +19,10 @@ argv = require('optimist')
   .demand(['projectKey', 'clientId', 'clientSecret', 'action'])
   .argv
 
-Connector = require('../main').Connector
-ProductImport = require("./productimport")
-ProductUpdateImport = require("./productupdateimport")
-OrderExport = require("./orderexport")
-OrderStatusImport = require("./orderstatusimport")
+ProductImport = require("./import/productimport")
+ProductUpdateImport = require("./import/productupdateimport")
+OrderExport = require("./export/orderexport")
+OrderStatusImport = require("./import/orderstatusimport")
 
 options =
   config:
