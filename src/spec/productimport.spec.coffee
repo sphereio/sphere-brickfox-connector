@@ -39,11 +39,11 @@ describe 'ProductImport', ->
       done()
 
   it 'should fetch product types', (done) ->
-    spyOn(@importer.sync._rest, 'GET').andCallFake (options, callback) -> callback(null, {statusCode: 200}, {foo: 'bar'})
+    spyOn(@importer.rest, 'GET').andCallFake (options, callback) -> callback(null, {statusCode: 200}, {foo: 'bar'})
     @importer._getProductTypes()
     .then (result) =>
       expect(result).toEqual foo: 'bar'
-      expect(@importer.sync._rest.GET).toHaveBeenCalledWith '/product-types', jasmine.any(Function)
+      expect(@importer.rest.GET).toHaveBeenCalledWith '/product-types', jasmine.any(Function)
       done()
     .fail (error) ->
       console.log error
