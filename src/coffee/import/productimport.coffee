@@ -2,8 +2,7 @@ fs = require 'fs'
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
-utils = require '../lib/utils'
-xml2js = require 'xml2js'
+utils = require '../../lib/utils'
 ProductSync = require('sphere-node-sync').ProductSync
 
 ###
@@ -11,9 +10,9 @@ Creates new products in Sphere by given XML file.
 ###
 class ProductImport
 
-  constructor: (options = {}) ->
-    @sourcePath = options.source
-    @sync = new ProductSync options
+  constructor: (@_options = {}) ->
+    throw new Error 'Source path is required' unless @_options.source
+    @sync = new ProductSync @_options
 
   ###
   Reads given products XML file and creates new products in Sphere.
@@ -23,22 +22,46 @@ class ProductImport
   execute: (callback) ->
     console.log "ProductImport started..."
 
-    utils.readFile @sourcePath
-    .then (result) ->
-      utils.parseXML result
+    @_readFile @_options.source
     .then (result) =>
-      console.log "Products to import: #{_.size result.Products}"
-      @buildProductsData result
-    .then (result) =>
-      _.each result, (product) =>
-        @create product
-    .then (result) ->
-      # return success status
-      callback true
+      Q.all [@_parseXml(result), @_getProductTypes()]
+    .spread (result, productTypes) =>
+      # TODO: match attributes
+      products = @_buildProductsData(result)
+      @_batch _.map(products, (p) => @_createProduct p), callback, 100
     .fail (error) ->
-      console.log error
+      console.log error.stack
+      callback false
 
-  buildProductsData: (data) ->
+  _readFile: (path) -> utils.readFile path
+
+  _parseXml: (file) -> utils.parseXML file
+
+  _getProductTypes: ->
+    deferred = Q.defer()
+    @sync._rest.GET '/product-types', (e, r, b) ->
+      console.log b
+      if e
+        deferred.reject e
+      else
+        deferred.resolve b
+    deferred.promise
+
+  _batch: (productList, callback, numberOfParallelRequest = 50) =>
+    console.log productList
+    current = _.take productList, numberOfParallelRequest
+    Q.all(current)
+    .then (result) =>
+      # TODO: do something with result?
+      if _.size(current) < numberOfParallelRequest
+        callback true
+      else
+        @_batch _.tail(productList, numberOfParallelRequest), callback, numberOfParallelRequest
+    .fail (error) ->
+      console.log error.stack
+      callback false
+
+  _buildProductsData: (data) ->
     products = []
     _.each data.Products?.Product, (p) ->
       name = utils.xmlVal(p.Descriptions[0].Description[0], "Title")
@@ -62,13 +85,14 @@ class ProductImport
           EAN: utils.xmlVal(v, "EAN")
           Available: utils.xmlVal(v, "Available")
         product.variants.push variant
-    console.log "Create new product JSON requests:\n #{utils.pretty(products)}"
+    # console.log "Create new product JSON requests:\n #{utils.pretty(products)}"
     # return products list
     products
 
-  create: (product) ->
+  _createProduct: (products) ->
     deferred = Q.defer()
     @sync._rest.POST '/products', JSON.stringify(product), (error, response, body) ->
+      console.log "kuku"
       if error
         deferred.reject "Create product with id: #{product.ProductId} failed. Error: #{error}"
       else
