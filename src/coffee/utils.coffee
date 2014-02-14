@@ -4,7 +4,6 @@ _ = require('underscore')._
 _s = require 'underscore.string'
 {parseString} = require 'xml2js'
 
-
 exports.xmlVal = (elem, attribName, fallback) ->
   return elem[attribName][0] if elem[attribName]
   fallback
@@ -18,9 +17,7 @@ exports.readFile = (file) ->
   fs.readFile file, 'utf8', (error, result) ->
     if error
       message = "Can not read file '#{file}'; #{error}"
-      console.error message
       deferred.reject message
-      process.exit 1
     else
       deferred.resolve result
   deferred.promise
@@ -30,9 +27,7 @@ exports.parseXML = (content) ->
   parseString content, (error, result) ->
     if error
       message = "Can not parse XML content; #{error}"
-      console.error message
       deferred.reject message
-      process.exit 2
     else
       deferred.resolve result
   deferred.promise
