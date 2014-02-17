@@ -12,7 +12,7 @@ Creates new products in Sphere by given XML file.
 class ProductImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'Source path is required' unless @_options.source
+    throw new Error 'XML source path is required' unless @_options.source
     @sync = new ProductSync @_options
     @rest = new Rest @_options
 

@@ -15,7 +15,7 @@ describe 'ProductImport', ->
     expect(@importer._options.source).toBe '/foo'
 
   it 'should throw error if source path is not given', ->
-    expect(-> new ProductImport).toThrow new Error 'Source path is required'
+    expect(-> new ProductImport).toThrow new Error 'XML source path is required'
 
   it 'should execute', (done) ->
     createMock = ->
