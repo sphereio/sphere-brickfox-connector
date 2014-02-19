@@ -9,6 +9,7 @@ exports.xmlVal = (elem, attribName, fallback) ->
   fallback
 
 exports.generateSlug = (name) ->
+  # TODO use some random number too
   timestamp = new Date().getTime()
   _s.slugify(name).concat("-#{timestamp}").substring(0, 256)
 
