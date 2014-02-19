@@ -1,407 +1,3634 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Products count="2">
-    <Product num="1">
-        <ProductId>5769</ProductId>
-        <ExternProductId>a6ab9489265b4c762202c718d58d8</ExternProductId>
-        <ItemNumber>001384</ItemNumber>
-        <Active>1</Active>
-        <TaxId>1</TaxId>
-        <ManufacturerId>42</ManufacturerId>
-        <ExternManufacturerId>42</ExternManufacturerId>
-        <HasVariations>0</HasVariations>
-        <Attributes>
-            <Boolean hidden="1">
-                <Value>0</Value>
-                <Translations>
-                    <Translation lang="de">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                </Translations>
-            </Boolean>
-            <String hidden="1">
-                <Translations>
-                    <Translation lang="de">
-                        <Name>textInStock</Name>
-                        <Value>Sofort lieferbar</Value>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>textInStock</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>textInStock</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>textInStock</Name>
-                    </Translation>
-                </Translations>
-            </String>
-            <String hidden="1">
-                <Translations>
-                    <Translation lang="de">
-                        <Name>textNoStock</Name>
-                        <Value>Lieferzeit auf Anfrage</Value>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                </Translations>
-            </String>
-            <Integer hidden="1">
-                <Value>1</Value>
-                <Translations>
-                    <Translation lang="de">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                </Translations>
-            </Integer>
-        </Attributes>
-        <Categories>
-            <Category>
-                <CategoryId>246</CategoryId>
-            </Category>
-            <Category>
-                <CategoryId>131</CategoryId>
-            </Category>
-            <Category>
-                <CategoryId>9367</CategoryId>
-            </Category>
-        </Categories>
+<Products count="4" shopsId="3">
+  <Product num="1">
+    <ProductId>235240</ProductId>
+    <ExternProductId>50251123 THE SMITH11_1</ExternProductId>
+    <ItemNumber>50251123 THE SMITH11_1</ItemNumber>
+    <Active>1</Active>
+    <TaxId>1</TaxId>
+    <ManufacturerId>870</ManufacturerId>
+    <HasVariations>1</HasVariations>
+    <Attributes>
+      <Boolean hidden="1" code="availability_branch_7">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>7 Brühl verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_13">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>13 Onlineshop verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+    </Attributes>
+    <Categories>
+      <Category>
+        <CategoryId>17375</CategoryId>
+      </Category>
+    </Categories>
+    <Descriptions>
+      <Description lang="de">
+        <Title><![CDATA[BOSS BLACK The Smith11 Sakko {{attribute code="color"}}]]></Title>
+        <LongDescription><![CDATA[<p>Hochwertiges Sakko der Marke <strong>BOSS BLACK</strong> {{attribute code="color"}}</p>
+<ul>
+<li>Modell The Smith11</li>
+<li>2-Knopfverschluss</li>
+<li>fallendes Revers</li>
+<li>zwei aufgesetzte Pattentaschen, eine      Brusttasche</li>
+<li>Ellenbogenpatches</li>
+<li>vier Innentaschen</li>
+<li>seitliche Rückenschlitze</li>
+<li>Ärmelabschluss mit Kissing Buttons</li>
+<li>Obermaterial: 68% Schurwolle, 30% Polyester, 2% Elasthan</li>
+<li>Futter: 55% Viskose, 45% Acetat</li>
+<li>Ellenbogenpatches: 80% Polyester, 20% Polyurethan</li>
+<li>Pflegehinweis: Reinigung</li>
+<li><span style="text-decoration: underline;">Maße bei Größe 50:</span></li>
+<li>Gesamtlänge: <span>ca. </span>76cm</li>
+<li>Ärmellänge: <span>ca. </span>65cm</li>
+<li>Rückenbreite: <span>ca. </span>46cm</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+</ul>
+<p>Dieses Sakko ist sowohl sportlich als auch elegant!</p>]]></LongDescription>
+      </Description>
+      <Description lang="en">
+        <Title>Test description title</Title>
+        <LongDescription>Test long description</LongDescription>
+      </Description>
+    </Descriptions>
+    <Variations>
+      <Variation>
+        <VariationId>1507416</VariationId>
+        <ExternVariationId>2000280430243</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-46</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>2</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
         <Descriptions>
-            <Description lang="de">
-                <Title><![CDATA[Kenwood TK-3301 Handfunkgerät]]></Title>
-                <LongDescription><![CDATA[DAs Handfunkgerät schlechthin für alle Security und Sicherheitsunternehmen. Ideal als Ergänzung unserer Security Sets von Kenwood. Kompatibel zu allen hier angebotenen Headsets.<br> <br> Technische Daten Kenwood TK-3301<br> <br> <ul><li>16 Kanäle (belegt mit PMR-446 Frequenzen und diversen CTCSS / DCS Tönen)<br> <br> <li>Frequenzbereich 336,00625 x 446,09375 MHz<br> <br> <li>Sendeleistung 500 mW<br> <br> <li>besonders leichte Bedienung<br> <br> <li>anmelde & gebührenfrei in Deutschland<br> <br> <li>DCS Decoder sowie CTCSS-Off Funktion<br> <br> <li>Pilottöne und Frequenzen sind ab Werk vorprogrammiert, können aber vom Anwender den 16 Kanalstellungen neu zugeordnet werden<br> <br> <li>zwei programmierbare Funktionstasten<br> <br> <li>Kanalansage <br> <br> <li>Tastensperre<br> <br> <li>Zweifarb-LED zur übersichtlichen Zustandsanzeige<br> <br> <li>optische und akkustische Warnung bei schwachem Akku<br> <br> <li>Sendezeitbegrenzung mit Warnton<br> <br> <li>klarer, kraftvoller Lautsprecher mit bis zu 500mW NF-Leistung<br> <br> <li>VOX Funktion (das Gerät kann freihändig benutzt werden, wenn ein passendes Headset angeschlossen ist)<br> <br> <li>Scrambler (Sprachverschlüsselung kann programmiert werden<br> <br> <li>Mikrofon bzw. Headsetanschluß möglich<br> <br> <li>Akkupack KNB-45L im Lieferumfang<br> <br> <li>Amessungen: 54 x 122 x 33,8 (mit KNB-45L Akku)<br> <br> <li>Gewicht 280g mit Akku, 160g ohne Akku</ul><br> <br> <br> <br> Lieferumfang:<br> <br> Kenwood TK-3301-E Handfunkgerät<br> <br> Akkupack KNB-45L<br> <br> Standlader mit Netzteil<br> <br> Gürtelclip<br> <br> Anleitung<br> ]]></LongDescription>
-            </Description>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
         </Descriptions>
-        <Images>
-            <Image sort="1" changed="0">
-                <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/sonstiges/Kenwood_handfunk.jpg</Path>
-                <Type>image/jpg</Type>
-            </Image>
-        </Images>
-        <Variations>
-            <Variation>
-                <VariationId>24646</VariationId>
-                <VariationItemNumber>001384</VariationItemNumber>
-                <EAN>2500000012983</EAN>
-                <VariationActive>1</VariationActive>
-                <Available>0</Available>
-                <Stock>0</Stock>
-                <ThirdPartyStock>0</ThirdPartyStock>
-                <Currencies>
-                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
-                        <PriceGross>229.00</PriceGross>
-                        <Rrp>229.00</Rrp>
-                        <SpecialPrice>120.12</SpecialPrice>
-                        <SpecialPriceStart>2014-01-03 00:00:00</SpecialPriceStart>
-                        <SpecialPriceEnd>2015-01-03 00:00:00</SpecialPriceEnd>
-                    </Currency>
-                </Currencies>
-                <PrimeCost>120.75</PrimeCost>
-                <ContentQuantity>100</ContentQuantity>
-                <Descriptions>
-                    <Description lang="de">
-                        <BasePriceUnit>g</BasePriceUnit>
-                        <ContentUnit>g</ContentUnit>
-                    </Description>
-                </Descriptions>
-            </Variation>
-        </Variations>
-    </Product>
-    <Product num="2">
-        <ProductId>4843</ProductId>
-        <ExternProductId>f6d223177743ca7b7907bdc88926c</ExternProductId>
-        <ItemNumber>000406</ItemNumber>
-        <Active>1</Active>
-        <TaxId>1</TaxId>
-        <ManufacturerId>20</ManufacturerId>
-        <ExternManufacturerId>20</ExternManufacturerId>
-        <HasVariations>1</HasVariations>
+        <Options>
+          <Option id="15" valueId="1798">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>46</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
         <Attributes>
-            <Boolean hidden="1">
-                <Value>0</Value>
-                <Translations>
-                    <Translation lang="de">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>FSK18 Kennung</Name>
-                    </Translation>
-                </Translations>
-            </Boolean>
-            <String hidden="1">
-                <Translations>
-                    <Translation lang="de">
-                        <Name>textInStock</Name>
-                        <Value>Sofort lieferbar</Value>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>textInStock</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>textInStock</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>textInStock</Name>
-                    </Translation>
-                </Translations>
-            </String>
-            <String hidden="1">
-                <Translations>
-                    <Translation lang="de">
-                        <Name>textNoStock</Name>
-                        <Value>Lieferzeit auf Anfrage</Value>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>textNoStock</Name>
-                    </Translation>
-                </Translations>
-            </String>
-            <Integer hidden="1">
-                <Value>3</Value>
-                <Translations>
-                    <Translation lang="de">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="en">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="fr">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                    <Translation lang="nl">
-                        <Name>stockStatus</Name>
-                    </Translation>
-                </Translations>
-            </Integer>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-46]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-46.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280430243]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133958]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
         </Attributes>
-        <Categories>
-            <Category>
-                <CategoryId>109</CategoryId>
-            </Category>
-        </Categories>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1507417</VariationId>
+        <ExternVariationId>2000280440242</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-48</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>1</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
         <Descriptions>
-            <Description lang="de">
-                <Title><![CDATA[Security Blouson]]></Title>
-                <LongDescription><![CDATA[Die ideale Jacke für den täglichen Security-Einsatz, ein wahrer Bestseller in unserem Security Shop.<br> <br> <ul><br> <br> <li>Material: 100% Nylon<br> <br> <li>Fleecefuttermaterial: 100% Polyester<br> <br> <li>guter Kälteschutz<br> <br> <li>Jacke und Weste in einem, Ärmel durch Reißverschluss abtrennbar<br> <br> <li>2 seitliche Einschubtaschen<br> <br> <li>2 Innentaschen mit Reißverschluss<br> <br> <li>2 aufgesetzte Taschen<br> <br> <li>Security-Schriftzüge in Taschen versteckbar oder durch Reißverschluss abnehmbar, dadurch ist die Jacke auch gut in der Freizeit verwendbar (Schriftzüge im Lieferumfang enthalten)<br> <br> <li>eng anliegende Ärmel-Strickbündel<br> <br> <li>Armbüro mit Geldscheinfach und Stifthalter<br> <br> <li>vordere Seite mit Reißverschluss<br> <br> <li>Kragen mit Reißverschluss<br> <br> <li>abnehmbare Kapuze<br> <br> <li>Containertasche auf Jackenrückseite<br> <br> <li>Farbe: schwarz<br> <br> <li>Größen: S - XXXL</ul><br> ]]></LongDescription>
-                <SearchKeys><![CDATA[Security Jacke, Jackesecurity]]></SearchKeys>
-            </Description>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
         </Descriptions>
-        <Images>
-            <Image sort="1" changed="0">
-                <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/Surplus/blouson.jpg</Path>
-                <Type>image/jpg</Type>
-            </Image>
-            <Image sort="2" changed="0">
-                <Path>https://estoresimages.brickfox.net/products/Zusatzbilder/000406_pic1.jpg</Path>
-                <Type>image/jpg</Type>
-            </Image>
-            <Image sort="3" changed="0">
-                <Path>https://estoresimages.brickfox.net/products/Zusatzbilder/000406_pic2.jpg</Path>
-                <Type>image/jpg</Type>
-            </Image>
-        </Images>
-        <Variations>
-            <Variation>
-                <VariationId>26841</VariationId>
-                <ExternVariationId>ccf0c6879d3e7ef529f86d93740e2</ExternVariationId>
-                <VariationItemNumber>000406.A.3XL.</VariationItemNumber>
-                <EAN>2500000028229</EAN>
-                <VariationActive>1</VariationActive>
-                <Available>0</Available>
-                <Stock>0</Stock>
-                <ThirdPartyStock>0</ThirdPartyStock>
-                <Currencies>
-                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
-                        <PriceGross>68.99</PriceGross>
-                    </Currency>
-                </Currencies>
-                <PrimeCost>29.90</PrimeCost>
-                <Options>
-                    <Option id="5" valueId="316">
-                        <Translations>
-                            <Translation lang="de">
-                                <OptionName>Größe</OptionName>
-                                <OptionValue>XXXL</OptionValue>
-                            </Translation>
-                        </Translations>
-                    </Option>
-                </Options>
-                <Attributes>
-                    <String hidden="1">
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>textInStock</Name>
-                                <Value>Sofort lieferbar</Value>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>textInStock</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>textInStock</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>textInStock</Name>
-                            </Translation>
-                        </Translations>
-                    </String>
-                    <String hidden="1">
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>textNoStock</Name>
-                                <Value>Lieferzeit auf Anfrage</Value>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                        </Translations>
-                    </String>
-                    <Integer hidden="1">
-                        <Value>3</Value>
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                        </Translations>
-                    </Integer>
-                </Attributes>
-                <VariationImages>
-                    <VariationImage sort="1" changed="0">
-                        <Path>https://estoresimages.brickfox.net/products/Produktbilder/Securitywelt/sonstiges/Kenwood_handfunk.jpg</Path>
-                        <Type>image/jpg</Type>
-                    </VariationImage>
-                </VariationImages>
-            </Variation>
-            <Variation>
-                <VariationId>26843</VariationId>
-                <ExternVariationId>aceea8fd0fb9b4cd609a14d387acd</ExternVariationId>
-                <VariationItemNumber>000406.A.M.</VariationItemNumber>
-                <EAN>2500000028243</EAN>
-                <VariationActive>1</VariationActive>
-                <Available>0</Available>
-                <Stock>1</Stock>
-                <ThirdPartyStock>0</ThirdPartyStock>
-                <Currencies>
-                    <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
-                        <PriceGross>68.99</PriceGross>
-                        <PrimeCost>29.90</PrimeCost>
-                    </Currency>
-                </Currencies>
-                <PrimeCost>29.90</PrimeCost>
-                <Options>
-                    <Option id="5" valueId="303">
-                        <Translations>
-                            <Translation lang="de">
-                                <OptionName>Größe</OptionName>
-                                <OptionValue>M</OptionValue>
-                            </Translation>
-                        </Translations>
-                    </Option>
-                </Options>
-                <Attributes>
-                    <String hidden="1">
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>textInStock</Name>
-                                <Value>Sofort lieferbar</Value>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>textInStock</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>textInStock</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>textInStock</Name>
-                            </Translation>
-                        </Translations>
-                    </String>
-                    <String hidden="1">
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>textNoStock</Name>
-                                <Value>Lieferzeit auf Anfrage</Value>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>textNoStock</Name>
-                            </Translation>
-                        </Translations>
-                    </String>
-                    <Integer hidden="1">
-                        <Value>3</Value>
-                        <Translations>
-                            <Translation lang="de">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="en">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="fr">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                            <Translation lang="nl">
-                                <Name>stockStatus</Name>
-                            </Translation>
-                        </Translations>
-                    </Integer>
-                </Attributes>
-            </Variation>
-        </Variations>
-    </Product>
+        <Options>
+          <Option id="15" valueId="1826">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>48</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-48]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-48.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280440242]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133959]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1507418</VariationId>
+        <ExternVariationId>2000280450241</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-50</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>2</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1807">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>50</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-50]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-50.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280450241]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133960]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1507419</VariationId>
+        <ExternVariationId>2000280460240</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-52</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>2</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1856">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>52</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-52]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-52.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280460240]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133961]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1507420</VariationId>
+        <ExternVariationId>2000280470249</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-54</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>1</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1823">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>54</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-54]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-54.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280470249]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133962]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1507421</VariationId>
+        <ExternVariationId>2000280480248</ExternVariationId>
+        <VariationItemNumber>50251123thesmith111_dunkelgrau-56</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>2</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>349.90</PriceGross>
+        <Rrp>349.90</Rrp>
+        <BasePrice>349.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1877">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>56</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2241">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Dgrau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-07-01 09:45:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[BOSS BLACK, The Smith11, Sakko, dunkelgrau]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-56]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[boss-black-the-smith11-sakko-dunkelgrau-56.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000280480248]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[133963]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[BOSS BLACK The Smith11 Sakko dunkelgrau in den Größen 46 bis 56 günstig kaufen. Viele weitere BOSS BLACK Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000280450241-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000280450241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+    </Variations>
+  </Product>
+  <Product num="2">
+    <ProductId>250851</ProductId>
+    <ExternProductId>50261154 ARDY 001</ExternProductId>
+    <ItemNumber>50261154 ARDY 001</ItemNumber>
+    <Active>1</Active>
+    <TaxId>1</TaxId>
+    <ManufacturerId>901</ManufacturerId>
+    <HasVariations>1</HasVariations>
+    <Attributes>
+      <Boolean hidden="1" code="availability_branch_7">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>7 Brühl verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_6">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>6 Weiterstadt verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_13">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>13 Onlineshop verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>enable_googlecheckout</Name>
+            <Value><![CDATA[1]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>has_options</Name>
+            <Value><![CDATA[1]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_robots</Name>
+            <Value><![CDATA[INDEX, FOLLOW]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>searchwords</Name>
+            <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>tab2_</Name>
+            <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>tab3_</Name>
+            <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>url_key</Name>
+            <Value><![CDATA[hugo-ardy-sakko-schwarz]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>url_path</Name>
+            <Value><![CDATA[hugo-ardy-sakko-schwarz.html]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_title</Name>
+            <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_description</Name>
+            <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>created_at</Name>
+            <Value><![CDATA[2013-12-13 09:15:00]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+    </Attributes>
+    <Categories>
+      <Category>
+        <CategoryId>17375</CategoryId>
+      </Category>
+    </Categories>
+    <Descriptions>
+      <Description lang="de">
+        <Title><![CDATA[HUGO Ardy Sakko]]></Title>
+        <LongDescription><![CDATA[<p>Stylisches Sakko der Marke <strong>HUGO</strong> in der Farbe Schwarz</p>
+<ul>
+<li>Modell Ardy</li>
+<li>Zwei-Knopfverschluss</li>
+<li><span>fallendes Revers<br /></span></li>
+<li><span>eine angedeutete Brusttasche<br /></span></li>
+<li>zwei aufgesetzte Paspeltaschen</li>
+<li>zwei Innentaschen mit Knopfverschluss</li>
+<li>Kissing-Buttons an den &Auml;rmeln</li>
+<li>mittiger Gehschlitz</li>
+<li>formgebende Abn&auml;her</li>
+<li>Leder-Optik am oberen Revers und an den Taschen</li>
+<li>angenehmes Material</li>
+<li>Obermaterial: 98% Schurwolle, 2% Elasthan</li>
+<li>Futter: 51% Acetat, 49% Viscose</li>
+<li>Besatz: 55% Polyamid, 45% Polyurethan</li>
+<li>Pflegehinweis: Reinigung</li>
+<li><span style="text-decoration: underline;">Ma&szlig;e f&uuml;r Gr&ouml;&szlig;e 50:</span></li>
+<li>Gesamtl&auml;nge: ca. 71cm</li>
+<li>&Auml;rmell&auml;nge: ca. 68cm</li>
+<li>R&uuml;ckenbreite: ca. 44cm</li>
+</ul>
+<p>&nbsp;</p>
+<p>Das Sakko Ardy des Labels HUGO sticht eindeutig aus der Masse heraus! Die Details in gleichfarbiger Leder-Optik und der l&auml;ssige Schnitt schenken Dir ein vielseitiges Highlight f&uuml;r jeden Anlass!</p>]]></LongDescription>
+      </Description>
+    </Descriptions>
+    <Variations>
+      <Variation>
+        <VariationId>1634880</VariationId>
+        <ExternVariationId>2000007971134</ExternVariationId>
+        <VariationItemNumber>50261154ardy001_schwarz-46</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>299.90</PriceGross>
+        <Rrp>299.90</Rrp>
+        <BasePrice>299.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1798">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>46</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-46]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-46.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000007971134]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[150153]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-13 09:15:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1634881</VariationId>
+        <ExternVariationId>2000007981133</ExternVariationId>
+        <VariationItemNumber>50261154ardy001_schwarz-48</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>299.90</PriceGross>
+        <Rrp>299.90</Rrp>
+        <BasePrice>299.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1826">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>48</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-48]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-48.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000007981133]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[148588]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-11 09:15:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1634882</VariationId>
+        <ExternVariationId>2000007991132</ExternVariationId>
+        <VariationItemNumber>50261154ardy001_schwarz-50</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>299.90</PriceGross>
+        <Rrp>299.90</Rrp>
+        <BasePrice>299.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1807">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>50</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-50]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-50.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000007991132]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[148589]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-11 09:15:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1634883</VariationId>
+        <ExternVariationId>2000008001137</ExternVariationId>
+        <VariationItemNumber>50261154ardy001_schwarz-52</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>299.90</PriceGross>
+        <Rrp>299.90</Rrp>
+        <BasePrice>299.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1856">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>52</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-52]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-52.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000008001137]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[148590]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-11 09:15:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1634884</VariationId>
+        <ExternVariationId>2000008011136</ExternVariationId>
+        <VariationItemNumber>50261154ardy001_schwarz-54</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>299.90</PriceGross>
+        <Rrp>299.90</Rrp>
+        <BasePrice>299.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1823">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>54</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[HUGO, Ardy, Sakko, schwarz, Leder, Schurwolle, Herren, Winter, Herbst]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-54]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[hugo-ardy-sakko-schwarz-54.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000008011136]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[148591]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[HUGO Ardy Sakko schwarz in den Größen 48 bis 54 günstig kaufen. Viele weitere HUGO Sakkos auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-11 09:15:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+    </Variations>
+  </Product>
+  <Product num="3">
+    <ProductId>242850</ProductId>
+    <ExternProductId>W34R47 Z0PX0</ExternProductId>
+    <ItemNumber>W34R47 Z0PX0</ItemNumber>
+    <Active>1</Active>
+    <TaxId>1</TaxId>
+    <ManufacturerId>910</ManufacturerId>
+    <HasVariations>1</HasVariations>
+    <Attributes>
+      <Boolean hidden="1" code="availability_branch_7">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>7 Brühl verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_8">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>8 Käfertal verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_6">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>6 Weiterstadt verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_1">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>1 Trendfabrik Lager verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_13">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>13 Onlineshop verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_4">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>4 Mannheim U2 verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+    </Attributes>
+    <Categories>
+      <Category>
+        <CategoryId>17377</CategoryId>
+      </Category>
+    </Categories>
+    <Descriptions>
+      <Description lang="de">
+        <Title><![CDATA[GUESS W34R47Z0PX0 Strickjacke]]></Title>
+        <LongDescription><![CDATA[<p>Sch&ouml;ne Strickjacke der Marke <strong>GUESS</strong> in der Farbe Schwarz</p>
+<ul>
+<li>weiter Schulterbereich mit Steinbesatz links</li>
+<li>Rippstrickb&uuml;ndchen</li>
+<li>dezenter Schimmer durch silberneb und blauen Glanzfaden</li>
+<li>kleines Metall-Logo oberhalb des vorderen Saumes</li>
+<li>weiter Schnitt</li>
+<li>tolles Strickmuster in dezenter Farbkombination</li>
+<li>hoher Tragekomfort</li>
+<li>Material: 71% Acryl, 12% Baumwolle, 12% Wolle, 5% andere Fasern</li>
+<li>Pflegehinweis: Handw&auml;sche - nicht f&uuml;r den Trockner geeignet</li>
+<li><span style="text-decoration: underline;">Ma&szlig;e bei Gr&ouml;&szlig;e S:</span></li>
+<li>Gesamtl&auml;nge: ca. 71cm</li>
+<li>&Auml;rmell&auml;nge: ca. 46cm</li>
+<li>R&uuml;ckenbreite: ca. 50cm</li>
+<li>Hinweis: Stylingvorschlag - das Tanktop ist nicht im Lieferumfang enthalten</li>
+</ul>
+<p>&nbsp;</p>
+<p>Der hochwertige Cardigan aus dem Hause GUESS erf&uuml;llt all Deine W&uuml;nsche! H&auml;lt sch&ouml;n warm, f&uuml;hlt sich kuschelig weich an und sieht dabei noch verdammt gut aus!</p>]]></LongDescription>
+      </Description>
+    </Descriptions>
+    <Variations>
+      <Variation>
+        <VariationId>1575899</VariationId>
+        <ExternVariationId>2000325080242</ExternVariationId>
+        <VariationItemNumber>w34r47z0px0_schwarz-XS</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>3</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>129.90</PriceGross>
+        <Rrp>129.90</Rrp>
+        <BasePrice>129.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1740">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>XS</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-08-24 10:31:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[GUESS, W34R47Z0PX0, Cardigan, schwarz, Wolle, Baumwolle, weiter Schnitt, Damen, glanz, schimmer]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-xs]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-xs.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>super_config_id</Name>
+                <Value><![CDATA[w34r47z0px0_schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000325080242]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[139626]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz in den Größen XS bis L günstig kaufen. Viele weitere GUESS Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>Farbe</Name>
+                <Value><![CDATA[Schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000325090241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000325090241-4.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1575900</VariationId>
+        <ExternVariationId>2000325090241</ExternVariationId>
+        <VariationItemNumber>w34r47z0px0_schwarz-S</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>3</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>129.90</PriceGross>
+        <Rrp>129.90</Rrp>
+        <BasePrice>129.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1737">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>S</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-08-24 10:31:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[GUESS, W34R47Z0PX0, Cardigan, schwarz, Wolle, Baumwolle, weiter Schnitt, Damen, glanz, schimmer]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-s]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-s.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>super_config_id</Name>
+                <Value><![CDATA[w34r47z0px0_schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000325090241]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[139627]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz in den Größen XS bis L günstig kaufen. Viele weitere GUESS Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>Farbe</Name>
+                <Value><![CDATA[Schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000325090241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000325090241-4.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1575901</VariationId>
+        <ExternVariationId>2000325100247</ExternVariationId>
+        <VariationItemNumber>w34r47z0px0_schwarz-M</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>5</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>129.90</PriceGross>
+        <Rrp>129.90</Rrp>
+        <BasePrice>129.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1738">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>M</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-08-24 10:31:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[GUESS, W34R47Z0PX0, Cardigan, schwarz, Wolle, Baumwolle, weiter Schnitt, Damen, glanz, schimmer]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-m]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-m.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>super_config_id</Name>
+                <Value><![CDATA[w34r47z0px0_schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000325100247]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[139628]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz in den Größen XS bis L günstig kaufen. Viele weitere GUESS Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>Farbe</Name>
+                <Value><![CDATA[Schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000325090241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000325090241-4.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1575902</VariationId>
+        <ExternVariationId>2000325110246</ExternVariationId>
+        <VariationItemNumber>w34r47z0px0_schwarz-L</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>2</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>129.90</PriceGross>
+        <Rrp>129.90</Rrp>
+        <BasePrice>129.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1739">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>L</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2208">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Schwarz</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>keine</Name>
+                <Value><![CDATA[2013-08-24 10:31:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[GUESS, W34R47Z0PX0, Cardigan, schwarz, Wolle, Baumwolle, weiter Schnitt, Damen, glanz, schimmer]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-l]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[guess-w34r47z0px0-strickjacke-schwarz-l.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>super_config_id</Name>
+                <Value><![CDATA[w34r47z0px0_schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2000325110246]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[139629]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[GUESS W34R47Z0PX0 Strickjacke schwarz in den Größen XS bis L günstig kaufen. Viele weitere GUESS Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>Farbe</Name>
+                <Value><![CDATA[Schwarz]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>2/0/2000325090241-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>2/0/2000325090241-4.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+    </Variations>
+  </Product>
+  <Product num="4">
+    <ProductId>250268</ProductId>
+    <ExternProductId>HARMONY CARDIGAN L/S 165763127</ExternProductId>
+    <ItemNumber>HARMONY CARDIGAN L/S 165763127</ItemNumber>
+    <Active>1</Active>
+    <TaxId>1</TaxId>
+    <ManufacturerId>921</ManufacturerId>
+    <HasVariations>1</HasVariations>
+    <Attributes>
+      <Boolean hidden="1" code="availability_branch_5">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>5 Grünstadt verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_14">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>Bruchsal verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_11">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>Prozentfabrik Weiterstadt verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_7">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>7 Brühl verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_2">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>2 Prozentfabrik verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_8">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>8 Käfertal verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_1">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>1 Trendfabrik Lager verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_13">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>13 Onlineshop verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_12">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>12 Filiale 12 verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_4">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>4 Mannheim U2 verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <Boolean hidden="1" code="availability_branch_10">
+        <Value>1</Value>
+        <Translations>
+          <Translation lang="de">
+            <Name>Prozentfabrik Kaiserslautern verfügbar</Name>
+          </Translation>
+        </Translations>
+      </Boolean>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>enable_googlecheckout</Name>
+            <Value><![CDATA[1]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>has_options</Name>
+            <Value><![CDATA[1]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_robots</Name>
+            <Value><![CDATA[INDEX, FOLLOW]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>searchwords</Name>
+            <Value><![CDATA[HILFIGER DENIM, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>tab2_</Name>
+            <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>tab3_</Name>
+            <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>url_key</Name>
+            <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>url_path</Name>
+            <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau.html]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_title</Name>
+            <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>meta_description</Name>
+            <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+      <String>
+        <Translations>
+          <Translation lang="de">
+            <Name>created_at</Name>
+            <Value><![CDATA[2013-12-30 11:24:00]]></Value>
+          </Translation>
+        </Translations>
+      </String>
+    </Attributes>
+    <Categories>
+      <Category>
+        <CategoryId>17377</CategoryId>
+      </Category>
+    </Categories>
+    <Descriptions>
+      <Description lang="de">
+        <Title><![CDATA[HILFIGER DENIM Harmony Strickjacke]]></Title>
+        <LongDescription><![CDATA[<p>Sch&ouml;ne Strickjacke der Marke <strong>HILFIGER DENIM</strong> in der Farbe Grau</p>
+<ul>
+<li>Modell Harmony</li>
+<li>tiefer V-Ausschnitt</li>
+<li>5'er-Knopfleiste</li>
+<li>Logo-Stitching auf der linken Brust</li>
+<li>l&eacute;gerer, weiter Schulterschnitt, schmale &Auml;rmel</li>
+<li>angedeutete Patches an den &Auml;rmeln</li>
+<li>breite Rippstrickb&uuml;ndchenan den &Auml;rmeln</li>
+<li>Saum hinten leicht abgerundet</li>
+<li>hinten etwas l&auml;nger geschnitten</li>
+<li>schmales B&uuml;ndchen am unteren Saum</li>
+<li>Material: 60% Baumwolle, 20% Viskose, 20% Nylon</li>
+<li>Pflegehinweis: 30&deg; - nicht f&uuml;r den Trockner geeignet</li>
+<li><span style="text-decoration: underline;">Ma&szlig;e bei Gr&ouml;&szlig;e S:</span></li>
+<li>Gesamtl&auml;nge: ca. 60cm (vorne), ca. 67cm hinten</li>
+<li>&Auml;rmell&auml;nge: ca. 47cm</li>
+<li>R&uuml;ckenbreite: ca. 43cm</li>
+</ul>
+<p>&nbsp;</p>
+<p>Der Cardigan Harmony der Marke HILFIGER DENIM ist dank des weiten Schnitts und der schmal geschnittenen &Auml;rmel die andere Art Strickjacke und passt sich Deinen Outfits spielend leicht an!!</p>]]></LongDescription>
+      </Description>
+    </Descriptions>
+    <Variations>
+      <Variation>
+        <VariationId>1630118</VariationId>
+        <ExternVariationId>2001586170086</ExternVariationId>
+        <VariationItemNumber>harmonycardiganl_grau-XS</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>4</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>99.90</PriceGross>
+        <Rrp>99.90</Rrp>
+        <BasePrice>99.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1740">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>XS</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2217">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Grau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[TOMMY HILFIGER, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-xs]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-xs.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2001586170086]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[149915]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-20 11:24:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1630119</VariationId>
+        <ExternVariationId>2001586180085</ExternVariationId>
+        <VariationItemNumber>harmonycardiganl_grau-S</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>1</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>99.90</PriceGross>
+        <Rrp>99.90</Rrp>
+        <BasePrice>99.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1737">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>S</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2217">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Grau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[TOMMY HILFIGER, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-s]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-s.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2001586180085]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[149917]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-20 11:24:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1630120</VariationId>
+        <ExternVariationId>2001586190084</ExternVariationId>
+        <VariationItemNumber>harmonycardiganl_grau-M</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>13</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>99.90</PriceGross>
+        <Rrp>99.90</Rrp>
+        <BasePrice>99.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1738">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>M</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2217">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Grau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[TOMMY HILFIGER, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-m]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-m.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2001586190084]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[149918]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-20 11:24:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1630121</VariationId>
+        <ExternVariationId>2001586200080</ExternVariationId>
+        <VariationItemNumber>harmonycardiganl_grau-L</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>99.90</PriceGross>
+        <Rrp>99.90</Rrp>
+        <BasePrice>99.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1739">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>L</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2217">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Grau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[TOMMY HILFIGER, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-l]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-l.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2001586200080]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[149920]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-20 11:24:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+      <Variation>
+        <VariationId>1630122</VariationId>
+        <ExternVariationId>2001586210089</ExternVariationId>
+        <VariationItemNumber>harmonycardiganl_grau-XL</VariationItemNumber>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <Stock>0</Stock>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <PriceGross>99.90</PriceGross>
+        <Rrp>99.90</Rrp>
+        <BasePrice>99.90</BasePrice>
+        <ContentQuantity>1</ContentQuantity>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+        <Options>
+          <Option id="15" valueId="1778">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Größe</OptionName>
+                <OptionValue>XL</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+          <Option id="16" valueId="2217">
+            <Translations>
+              <Translation lang="de">
+                <OptionName>Farbe</OptionName>
+                <OptionValue>Grau</OptionValue>
+              </Translation>
+            </Translations>
+          </Option>
+        </Options>
+        <Attributes>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>enable_googlecheckout</Name>
+                <Value><![CDATA[1]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_robots</Name>
+                <Value><![CDATA[INDEX, FOLLOW]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>searchwords</Name>
+                <Value><![CDATA[TOMMY HILFIGER, Harmony, Strickjacke, grau, Cardigan, Baumwolle, V-Ausschnitt, Damen, Herbst, winter]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab2_</Name>
+                <Value><![CDATA[National (innerhalb Deutschland) :
+
+Pakete werden in der Regel  2 - 3 Werktage, nach Geldeingang zugestellt. Ab einem Warenwert von 40 EURO ist der Hin-und Rückversand kostenlos.
+
+Unter einem Warenwert von 40 EURO, kostet dich der Versand lediglich 3,90 ]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>tab3_</Name>
+                <Value><![CDATA[Bei Nichtgefallen der Ware kannst du innerhalb von 14 Tagen nach Erhalt der Ware und der Widerrufserklärung in Textform (z. B. Brief, Fax, E-Mail) Deine Vertragserklärung in Textform oder durch Rücksendung der Ware, ohne Angabe von Gründen widerrufen.
+
+W]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_key</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-xl]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>url_path</Name>
+                <Value><![CDATA[tommy-hilfiger-harmony-strickjacke-grau-xl.html]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_ean">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_ean</Name>
+                <Value><![CDATA[2001586210089]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String hidden="1" code="magento_extern_id">
+            <Translations>
+              <Translation lang="de">
+                <Name>magento_extern_id</Name>
+                <Value><![CDATA[149921]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_title</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau online kaufen]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>meta_description</Name>
+                <Value><![CDATA[TOMMY HILFIGER Harmony Strickjacke grau in den Größen XS bis XL günstig kaufen. Viele weitere TOMMY HILFIGER Strickjacken auf Lager &#x2714; Versandkostenfrei ab 40 EURO &#x2714; Zertifizierter Shop &#x2714;]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+          <String>
+            <Translations>
+              <Translation lang="de">
+                <Name>created_at</Name>
+                <Value><![CDATA[2013-12-20 11:24:00]]></Value>
+              </Translation>
+            </Translations>
+          </String>
+        </Attributes>
+        <VariationImages>
+          <VariationImage sort="1" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+          <VariationImage sort="2" changed="1">
+            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Type>image/jpeg</Type>
+          </VariationImage>
+        </VariationImages>
+      </Variation>
+    </Variations>
+  </Product>
 </Products>
