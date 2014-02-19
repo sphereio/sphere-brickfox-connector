@@ -1,0 +1,17 @@
+{
+  "description": "Mappings of XML attribute names to sphere attribute names.",
+  "metaMappings": [{
+  	  "type": "LocalizedString",
+      "from": "meta_title",
+      "to": "metaTitle"
+    }, {
+      "type": "LocalizedString",
+      "from": "meta_description",
+      "to": "metaDescription"
+    }, {
+	  "type": "LocalizedString",
+      "from": "searchwords",
+      "to": "metaKeywords"
+    }
+  ]
+}
