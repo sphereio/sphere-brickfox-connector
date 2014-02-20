@@ -38,6 +38,18 @@ options =
   target: argv.target
   productTypeId: argv.productTypeId
   mapping: argv.mapping
+  logConfig: {
+    levelStream: 'warn' # log level for stdout stream
+    levelFile: 'info' # log level for file stream
+    path: './sphere-brickfox-connect.log' # where to write the file stream
+    name: 'sphere-brickfox-connect' # name of the application
+    src: false # includes a log of the call source location (file, line, function).
+               # Determining the source call is slow, therefor it's recommended not to enable this on production.
+    streams: [ # a list of streams that defines the type of output for log messages
+      {level: 'warn', stream: process.stdout}
+      {level: 'info', path: './sphere-brickfox-connect.log'}
+    ]
+  }
 
 
 handler = switch argv.action
