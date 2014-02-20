@@ -6,3 +6,5 @@ lib
 coverage
 config.js
 .project
+
+sphere-brickfox-connect.log
