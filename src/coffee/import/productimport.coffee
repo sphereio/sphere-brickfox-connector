@@ -5,6 +5,8 @@ _s = require 'underscore.string'
 utils = require '../../lib/utils'
 {ProductSync} = require('sphere-node-sync')
 {Rest} = require('sphere-node-connect')
+{Logger} = require('sphere-node-connect')
+
 
 ###
 Creates new products in Sphere by given XML file.
@@ -15,6 +17,7 @@ class ProductImport
     throw new Error 'XML source path is required' unless @_options.source
     @sync = new ProductSync @_options
     @rest = new Rest @_options
+    @logger = @rest.logger
     @mapping
     @successCounter = 0
     @failCounter = 0
@@ -26,7 +29,7 @@ class ProductImport
   @return Result of the given callback
   ###
   execute: (callback) ->
-    console.log "ProductImport started..."
+    @logger.info "ProductImport started..."
 
     @_readFile @_options.source
     .then (fileContent) =>
@@ -152,51 +155,59 @@ class ProductImport
     # return products list
     products
 
-  _addTextValue: (key, value) ->
-    attribute =
-      name: key
-      value: value[0]
+  _addValue: (variant, key, value, type, isCustomAttr) ->
+    console.log "Attribute type '#{type}'; isCustomAttr: #{isCustomAttr}, key: '#{key}', value '#{value[0]}'"
+    attribute
+    val
 
-  _addOptionValue: (key, value) ->
-    val = value.Translations[0].Translation[0]["OptionValue"][0]
-    attribute =
-      name: key
-      value: value.Translations[0].Translation[0]["OptionValue"][0]
+    switch type
+      when "text"
+        val = value[0]
+        attribute =
+          name: key
+          value: val
+      when "enum"
+        val = _s.slugify value[0]
+        attribute =
+          name: key
+          value: val
+      else
+        new Error "Unsupported attribute type '#{type}'; isCustomAttr: #{isCustomAttr}, key: '#{key}', value '#{utils.pretty value}'"
 
-  #TODO this method is a playground and will be refactored
+    if isCustomAttr
+      variant.attributes.push attribute
+    else
+      variant[key] = val
+
+  _addValues: (typesMap, variant, key, value) =>
+    if _.has(typesMap, key)
+      type = typesMap[key].type.name
+      @_addValue(variant, key, value, type, false)
+    else if @mapping and _.has(@mapping, key)
+      type = @mapping[key].type
+      isCustomAttr = @mapping[key].isCustom
+      keyMapping = @mapping[key].to
+      @_addValue(variant, keyMapping, value, type, isCustomAttr)
+
   _addVariant: (p, v, product, typesMap) ->
-    attributes = []
+    variant =
+      attributes: []
 
-    # exclude attributes which has to be handled differently
-    pOmitted = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
-    _.each pOmitted, (value, key) =>
-      #console.log key + " : " + value
-      if _.has(typesMap, key)
-        type = typesMap[key].type.name
-        switch type
-          when "text" then attributes.push(@_addTextValue(key, value))
-          else
-            new Error "Unsupported type #{type}"
+    # exclude product attributes which has to be handled differently
+    simpleAttributes = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
+    _.each simpleAttributes, (value, key) =>
+      @_addValues(typesMap, variant, key, value)
 
+    # extract Options from variant
     _.each v.Options?[0].Option, (value) =>
       key = value["$"].id
-      if _.has(typesMap, key)
-        type = typesMap[key].type.name
-        switch type
-          when "text" then attributes.push(@_addTextValue(key, value))
-          when "enum" then attributes.push(@_addOptionValue(key, value))
-          else
-            new Error "Unsupported type #{type}"
+      val = value.Translations[0].Translation[0]["OptionValue"]
+      @_addValues(typesMap, variant, key, val)
 
-        #console.log "attribute type: " + type
-        #console.log key + " : " + value
-
-    variant =
-      sku: utils.xmlVal(v, "VariationId")
-      attributes: attributes
     product.variants.push variant
 
   _createProduct: (product) =>
+    console.log utils.pretty product
     deferred = Q.defer()
     @rest.POST '/products', product, (error, response, body) =>
       if error

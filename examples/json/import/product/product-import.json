@@ -1,17 +1,50 @@
 {
-  "description": "Mappings of XML attribute names to sphere attribute names.",
-  "metaMappings": [{
-  	  "type": "LocalizedString",
-      "from": "meta_title",
-      "to": "metaTitle"
-    }, {
-      "type": "LocalizedString",
-      "from": "meta_description",
-      "to": "metaDescription"
-    }, {
-	  "type": "LocalizedString",
-      "from": "searchwords",
-      "to": "metaKeywords"
+	"meta_title": {
+    	"forProduct": "true",
+        "isCustom": "false",
+        "type": "ltext",
+        "to": "metaTitle"
+    },
+    "meta_description": {
+    	"forProduct": "true",
+        "isCustom": "false",
+        "type": "ltext",
+        "to": "metaDescription"
+    },
+    "searchwords": {
+    	"forProduct": "true",
+        "isCustom": "false",
+        "type": "ltext",
+        "to": "metaKeywords"
+    },
+	"ExternVariationId": {
+        "isCustom": "false",
+        "type": "text",
+        "to": "sku"
+    },
+    "VariationId": {
+        "isCustom": "true",
+        "type": "text",
+        "to": "variationId"
+    },
+    "ProductId": {
+        "isCustom": "true",
+        "type": "text",
+        "to": "productId"
+    },
+    "15": {
+        "isCustom": "true",
+        "type": "enum",
+        "to": "size"
+    },
+    "16": {
+        "isCustom": "true",
+        "type": "enum",
+        "to": "color"
+    },
+    "Rrp": {
+        "isCustom": "true",
+        "type": "money",
+        "to": "rrp"
     }
-  ]
 }
