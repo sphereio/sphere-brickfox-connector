@@ -5,7 +5,7 @@
     <ExternProductId>50251123 THE SMITH11_1</ExternProductId>
     <ItemNumber>50251123 THE SMITH11_1</ItemNumber>
     <Active>1</Active>
-    <TaxId>1</TaxId>
+    <TaxId>2</TaxId>
     <ManufacturerId>870</ManufacturerId>
     <HasVariations>1</HasVariations>
     <Attributes>
@@ -58,10 +58,6 @@
 </ul>
 <p>Dieses Sakko ist sowohl sportlich als auch elegant!</p>]]></LongDescription>
       </Description>
-      <Description lang="en">
-        <Title>Test description title</Title>
-        <LongDescription>Test long description</LongDescription>
-      </Description>
     </Descriptions>
     <Variations>
       <Variation>
@@ -72,9 +68,13 @@
         <Available>1</Available>
         <Stock>2</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -223,9 +223,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>1</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -374,9 +378,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>2</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -525,9 +533,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>2</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -676,9 +688,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>1</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -827,9 +843,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>2</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>349.90</PriceGross>
-        <Rrp>349.90</Rrp>
-        <BasePrice>349.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1143,9 +1163,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>299.90</PriceGross>
-        <Rrp>299.90</Rrp>
-        <BasePrice>299.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1277,11 +1301,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -1294,9 +1318,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>299.90</PriceGross>
-        <Rrp>299.90</Rrp>
-        <BasePrice>299.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1428,11 +1456,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -1445,9 +1473,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>299.90</PriceGross>
-        <Rrp>299.90</Rrp>
-        <BasePrice>299.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1579,11 +1611,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -1596,9 +1628,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>299.90</PriceGross>
-        <Rrp>299.90</Rrp>
-        <BasePrice>299.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1730,11 +1766,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -1747,9 +1783,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>299.90</PriceGross>
-        <Rrp>299.90</Rrp>
-        <BasePrice>299.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -1881,11 +1921,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-1.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2000007991132-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -1929,7 +1969,7 @@ W]]></Value>
         <Value>1</Value>
         <Translations>
           <Translation lang="de">
-            <Name>1 Trendfabrik Lager verfügbar</Name>
+            <Name>1 Examplestore Lager verfügbar</Name>
           </Translation>
         </Translations>
       </Boolean>
@@ -1988,9 +2028,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>3</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>129.90</PriceGross>
-        <Rrp>129.90</Rrp>
-        <BasePrice>129.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -2155,9 +2199,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>3</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>129.90</PriceGross>
-        <Rrp>129.90</Rrp>
-        <BasePrice>129.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -2322,9 +2370,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>5</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>129.90</PriceGross>
-        <Rrp>129.90</Rrp>
-        <BasePrice>129.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -2489,9 +2541,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>2</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>129.90</PriceGross>
-        <Rrp>129.90</Rrp>
-        <BasePrice>129.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -2711,7 +2767,7 @@ W]]></Value>
         <Value>1</Value>
         <Translations>
           <Translation lang="de">
-            <Name>1 Trendfabrik Lager verfügbar</Name>
+            <Name>1 Examplestore Lager verfügbar</Name>
           </Translation>
         </Translations>
       </Boolean>
@@ -2882,9 +2938,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>4</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>99.90</PriceGross>
-        <Rrp>99.90</Rrp>
-        <BasePrice>99.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -3016,11 +3076,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -3033,9 +3093,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>1</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>99.90</PriceGross>
-        <Rrp>99.90</Rrp>
-        <BasePrice>99.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -3167,11 +3231,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -3184,9 +3248,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>13</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>99.90</PriceGross>
-        <Rrp>99.90</Rrp>
-        <BasePrice>99.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -3318,11 +3386,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -3335,9 +3403,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>99.90</PriceGross>
-        <Rrp>99.90</Rrp>
-        <BasePrice>99.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -3469,11 +3541,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
@@ -3486,9 +3558,13 @@ W]]></Value>
         <Available>1</Available>
         <Stock>0</Stock>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <PriceGross>99.90</PriceGross>
-        <Rrp>99.90</Rrp>
-        <BasePrice>99.90</BasePrice>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
         <ContentQuantity>1</ContentQuantity>
         <Descriptions>
           <Description lang="de">
@@ -3620,11 +3696,11 @@ W]]></Value>
         </Attributes>
         <VariationImages>
           <VariationImage sort="1" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-2.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
           <VariationImage sort="2" changed="1">
-            <Path>http://cdn.trendfabrik.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
+            <Path>http://cdn.examplestore.de/media/catalog/product/2/0/2001586180085-3.jpg</Path>
             <Type>image/jpeg</Type>
           </VariationImage>
         </VariationImages>
