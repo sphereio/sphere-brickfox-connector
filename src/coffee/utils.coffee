@@ -23,6 +23,13 @@ exports.readFile = (file) ->
       deferred.resolve result
   deferred.promise
 
+exports.loadOptionalResource = (path) =>
+  if path
+    @readFile path
+  else
+    Q.fcall (val) ->
+      null
+
 exports.parseXML = (content) ->
   deferred = Q.defer()
   parseString content, (error, result) ->
