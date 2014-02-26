@@ -1,50 +1,90 @@
 {
 	"meta_title": {
-    	"forProduct": "true",
-        "isCustom": "false",
+    	"target": "product",
         "type": "ltext",
         "to": "metaTitle"
     },
     "meta_description": {
-    	"forProduct": "true",
-        "isCustom": "false",
+    	"target": "product",
         "type": "ltext",
         "to": "metaDescription"
     },
     "searchwords": {
-    	"forProduct": "true",
-        "isCustom": "false",
+    	"target": "product",
         "type": "ltext",
         "to": "metaKeywords"
     },
 	"ExternVariationId": {
-        "isCustom": "false",
+		"target": "variant",
         "type": "text",
         "to": "sku"
     },
     "VariationId": {
+    	"target": "variant",
         "isCustom": "true",
         "type": "text",
         "to": "variationId"
     },
     "ProductId": {
+    	"target": "variant",
         "isCustom": "true",
         "type": "text",
         "to": "productId"
     },
     "15": {
+    	"target": "variant",
         "isCustom": "true",
         "type": "enum",
         "to": "size"
     },
     "16": {
+    	"target": "variant",
         "isCustom": "true",
         "type": "enum",
         "to": "color"
     },
     "Rrp": {
+    	"target": "variant",
         "isCustom": "true",
         "type": "money",
+		"currency": "EUR",
         "to": "rrp"
+    },
+    "TaxId": {
+    	"target": "product",
+        "type": "special-tax",
+        "specialMapping": {
+        	"1": "371306f6-3ad8-4114-8ad2-6507df0fbf09",
+        	"2": "00fdb416-a20b-439c-b4cc-a51450f6bb3e"
+       	},
+        "to": "taxCategory"
+    },
+    "PriceGross": {
+    	"target": "variant",
+        "type": "special-price",
+        "specialMapping": {
+        	"country": "DE",
+        	"customerGroup": "4b96b6f9-03b5-420e-8720-e243837482a8",
+        	"channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
+       	},
+        "to": "prices"
+    },
+    "BasePrice": {
+    	"target": "variant",
+        "type": "special-price",
+        "specialMapping": {
+        	"country": "DE",
+        	"customerGroup": "27af5556-3497-4935-9a62-c016730ef580",
+        	"channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
+       	},
+        "to": "prices"
+    },
+    "Path": {
+    	"target": "variant",
+        "type": "special-image",
+        "specialMapping": {
+        	"baseURL": "http://example.com/"
+       	},
+        "to": "images"
     }
 }
