@@ -19,11 +19,11 @@ class ProductImport
     throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required' unless @_options.mapping
     @sync = new ProductSync @_options
     @rest = new Rest @_options
-    @logger = @rest.logger
-    @mapping
+    @logger = @_options.appLogger
     @successCounter = 0
     @failCounter = 0
-    @toBeImported = 0
+    @success = false
+
 
   ###
   Reads given products XML file and creates new products in Sphere.
@@ -31,6 +31,7 @@ class ProductImport
   @return Result of the given callback
   ###
   execute: (callback) ->
+    @startTime = new Date().getTime()
     @logger.info 'ProductImport started...'
 
     @_readFile @_options.source
@@ -42,12 +43,20 @@ class ProductImport
       # TODO: do we really need product type? It could be defined in product-import.json mapper too.
       productType = @_getProductType productTypes
       products = @_buildProductsData(productData, productType)
-      @logger.info "Create new product requests to send: #{_.size products}"
-      @_batch _.map(products, (p) => @_createProduct p), callback, 100
-    .fail (error) ->
+      @logger.info "About to create '#{_.size products}' products."
+      @_batch _.map(products, (p) => @_createProduct p), 100
+    .fail (error) =>
+      console.log "test"
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
-      callback false
+      @_processResult(callback)
+    .done () =>
+      @_processResult(callback)
+
+  _processResult: (callback) ->
+    endTime = new Date().getTime()
+    @logger.info "ProductImport finished. Success: '#{@success}'. #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed. Processing time: #{(endTime - @startTime) / 1000} seconds."
+    callback @success
 
   _readFile: (path) -> utils.readFile path
 
@@ -62,18 +71,18 @@ class ProductImport
         deferred.resolve body
     deferred.promise
 
-  _batch: (productList, callback, numberOfParallelRequest) =>
+  _batch: (productList, numberOfParallelRequest) =>
     current = _.take productList, numberOfParallelRequest
     Q.all(current)
     .then (result) =>
       if _.size(current) < numberOfParallelRequest
-        callback true
+        @success = true
       else
-        @_batch _.tail(productList, numberOfParallelRequest), callback, numberOfParallelRequest
-    .fail (error) ->
+        @_batch _.tail(productList, numberOfParallelRequest), numberOfParallelRequest
+    .fail (error) =>
       @logger.error "Error on create new product batch processing; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
-      callback false
+      @success = false
 
   _createProduct: (product) =>
     deferred = Q.defer()
