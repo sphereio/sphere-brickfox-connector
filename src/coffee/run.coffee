@@ -38,7 +38,7 @@ options =
   target: argv.target
   productTypeId: argv.productTypeId
   mapping: argv.mapping
-  logConfig: {
+  logConfig:
     levelStream: 'warn' # log level for stdout stream
     levelFile: 'info' # log level for file stream
     path: './sphere-brickfox-connect.log' # where to write the file stream
@@ -49,7 +49,6 @@ options =
       {level: 'warn', stream: process.stdout}
       {level: 'info', path: './sphere-brickfox-connect.log'}
     ]
-  }
 
 
 handler = switch argv.action

@@ -66,7 +66,7 @@ describe 'ProductImport', ->
 
     spyOn(@importer, '_readFile').andReturn createMock()
     spyOn(@importer, '_parseXml').andReturn createMock()
-    spyOn(@importer, '_getProductTypes').andReturn createProductTypesMock()
+    spyOn(@importer, '_fetchProductTypes').andReturn createProductTypesMock()
     spyOn(@importer, '_buildProductsData').andReturn [{foo: 'bar'}]
     spyOn(@importer, '_createProduct').andReturn createMock()
 
@@ -74,14 +74,14 @@ describe 'ProductImport', ->
       expect(result).toBe true
       expect(@importer._readFile).toHaveBeenCalledWith '/foo'
       expect(@importer._parseXml).toHaveBeenCalledWith 'Resolved'
-      expect(@importer._getProductTypes).toHaveBeenCalled()
+      expect(@importer._fetchProductTypes).toHaveBeenCalled()
       expect(@importer._buildProductsData).toHaveBeenCalled()
       expect(@importer._createProduct).toHaveBeenCalledWith {foo: 'bar'}
       done()
 
   it 'should fetch product types', (done) ->
     spyOn(@importer.rest, 'GET').andCallFake (options, callback) -> callback(null, {statusCode: 200}, {foo: 'bar'})
-    @importer._getProductTypes()
+    @importer._fetchProductTypes()
     .then (result) =>
       expect(result).toEqual foo: 'bar'
       expect(@importer.rest.GET).toHaveBeenCalledWith '/product-types', jasmine.any(Function)

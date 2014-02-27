@@ -5,8 +5,9 @@ _s = require 'underscore.string'
 utils = require '../../lib/utils'
 {ProductSync} = require('sphere-node-sync')
 {Rest} = require('sphere-node-connect')
-{Logger} = require('sphere-node-connect')
 
+
+#TODO: add code documentation
 
 ###
 Creates new products in Sphere by given XML file.
@@ -30,29 +31,29 @@ class ProductImport
   @return Result of the given callback
   ###
   execute: (callback) ->
-    @logger.info "ProductImport started..."
+    @logger.info 'ProductImport started...'
 
     @_readFile @_options.source
     .then (fileContent) =>
-      Q.all [@_parseXml(fileContent), @_getProductTypes(), @_readFile(@_options.mapping)]
+      Q.all [@_parseXml(fileContent), @_fetchProductTypes(), @_readFile(@_options.mapping)]
     .spread (productData, productTypes, mapping) =>
       @mapping = JSON.parse mapping
       @toBeImported = _.size(productData.Products?.Product)
       # TODO: do we really need product type? It could be defined in product-import.json mapper too.
       productType = @_getProductType productTypes
       products = @_buildProductsData(productData, productType)
-      console.log "Create new product requests to send: #{_.size products}"
+      @logger.info "Create new product requests to send: #{_.size products}"
       @_batch _.map(products, (p) => @_createProduct p), callback, 100
     .fail (error) ->
-      console.log "Error on execute method; #{error}"
-      if error.stack then console.log "Error stack: #{error.stack}"
+      @logger.error "Error on execute method; #{error}"
+      @logger.error "Error stack: #{error.stack}" if error.stack
       callback false
 
   _readFile: (path) -> utils.readFile path
 
   _parseXml: (file) -> utils.parseXML file
 
-  _getProductTypes: ->
+  _fetchProductTypes: ->
     deferred = Q.defer()
     @rest.GET '/product-types', (error, response, body) ->
       if error
@@ -70,14 +71,12 @@ class ProductImport
       else
         @_batch _.tail(productList, numberOfParallelRequest), callback, numberOfParallelRequest
     .fail (error) ->
-      console.error "Error on create new product batch processing."
-      if error.stack
-        console.log "Error stack: #{error.stack}"
-      console.error error
+      @logger.error 'Error on create new product batch processing.'
+      if error.stack then @logger.error "Error stack: #{error.stack}"
+      @logger.error error
       callback false
 
   _createProduct: (product) =>
-    #console.log utils.pretty product
     deferred = Q.defer()
     @rest.POST '/products', product, (error, response, body) =>
       if error
@@ -86,20 +85,20 @@ class ProductImport
       else
         if response.statusCode isnt 201
           @failCounter++
-          message = "Error on new product creation; Request: \n #{utils.pretty product} \n\n Response: " + utils.pretty body
+          message = "Error on new product creation; Request body: \n #{utils.pretty product} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
           @successCounter++
-          message = "New product created."
+          message = 'New product created.'
           deferred.resolve message
     deferred.promise
 
   _buildProductsData: (data, productType) =>
     products = []
     _.each data.Products?.Product, (p) =>
-      names = @_getLocalizedValue(p.Descriptions[0], "Title")
-      descriptions = @_getLocalizedValue(p.Descriptions[0], "LongDescription")
-      slugs = @_getLocSlugs(names)
+      names = @_getLocalizedValue(p.Descriptions[0], 'Title')
+      descriptions = @_getLocalizedValue(p.Descriptions[0], 'LongDescription')
+      slugs = @_getLocalizedSlugs(names)
 
       # create product
       product =
@@ -107,7 +106,7 @@ class ProductImport
         slug: slugs
         productType:
           id: productType.id
-          typeId: "product-type"
+          typeId: 'product-type'
         description: descriptions
         variants: []
 
@@ -130,7 +129,6 @@ class ProductImport
         else
           product.variants.push variant
 
-    # console.log "Create new product JSON requests:\n #{utils.pretty(products)}"
       products.push product
     # return products list
     products
@@ -149,8 +147,8 @@ class ProductImport
 
     # process variant 'Options'
     _.each v.Options[0]?.Option, (item) =>
-      key = item["$"].id
-      value = item.Translations[0].Translation[0]["OptionValue"]
+      key = item['$'].id
+      value = item.Translations[0].Translation[0].OptionValue
       @_processValue(product, variant, key, value)
 
     # process variant 'Attributes'
@@ -168,8 +166,8 @@ class ProductImport
       if _.has(@mapping, key)
         mapping = @mapping[key]
         url = value[0]
-        if not _s.startsWith(url, "http")
-          url = mapping.specialMapping.baseURL + url
+        if not _s.startsWith(url, 'http')
+          url = "#{mapping.specialMapping.baseURL}#{url}"
         image =
           url: url
           dimensions:
@@ -187,7 +185,7 @@ class ProductImport
         mapping = @mapping[key]
         if mapping.type is 'special-price'
           price = {}
-          currency = item["$"].currencyIso
+          currency = item['$'].currencyIso
           price.value =
             centAmount: @_getPriceAmount(value[0], mapping)
             currencyCode: currency
@@ -199,11 +197,11 @@ class ProductImport
           if customerGroup
             price.customerGroup =
               id: customerGroup
-              typeId: "customer-group"
+              typeId: 'customer-group'
           if channel
             price.channel =
               id: channel
-              typeId: "channel"
+              typeId: 'channel'
 
           if variant[mapping.to]
             variant[mapping.to].push price
@@ -215,36 +213,34 @@ class ProductImport
   _processAttributes: (item, product, variant) ->
     if item.Boolean
       _.each item.Boolean, (el) =>
-        key = el["$"]?.code
-        if not key
-          key = el.Translations[0].Translation[0].Name[0]
-        value = el.Value[0]
-        @_processValue(product, variant, key, value)
+        key = @_getAttributeKey(el)
+        @_processValue(product, variant, key, el.Value[0])
     if item.Integer
       _.each item.Integer, (el) =>
-        key = el["$"]?.code
-        if not key
-          key = el.Translations[0].Translation[0].Name[0]
-        value = el.Value[0]
-        @_processValue(product, variant, key, value)
+        key = @_getAttributeKey(el)
+        @_processValue(product, variant, key, el.Value[0])
     if item.String
       _.each item.String, (el) =>
-        key = el["$"]?.code
-        if not key
-          key = el.Translations[0].Translation[0].Name[0]
-        value = @_getLocalizedValue(el.Translations[0], "Value")
+        key = @_getAttributeKey(el)
+        value = @_getLocalizedValue(el.Translations[0], 'Value')
         @_processValue(product, variant, key, value)
+
+  _getAttributeKey: (item) ->
+    key = item['$']?.code
+    if not key
+      key = item.Translations[0].Translation[0].Name[0]
+    key
 
   _getLocalizedValue: (mainNode, attribName) ->
     localized = {}
     _.each mainNode, (item) ->
       _.each item, (val, index, list) ->
-        lang = list[index]["$"].lang
+        lang = list[index]['$'].lang
         value = utils.xmlVal(list[index], attribName)
         localized[lang] = value
     localized
 
-  _getLocSlugs: (names) ->
+  _getLocalizedSlugs: (names) ->
     slugs = {}
     _.each names, (value, key, list) ->
       slug = utils.generateSlug(value)
@@ -283,26 +279,26 @@ class ProductImport
     val
 
     switch type
-      when "text"
+      when 'text'
         val = value[0]
-      when "ltext"
+      when 'ltext'
         # take value as it is as it should have proper form already
         val = value
-      when "enum"
+      when 'enum'
         val = _s.slugify value[0]
-      when "money"
+      when 'money'
         val = @_getPriceAmount(value[0], mapping)
         currency = if mapping.currency then mapping.currency else 'EUR'
         if val
           val =
             centAmount: val
             currencyCode: currency
-      when "special-tax"
+      when 'special-tax'
         val = mapping.specialMapping[value[0]]
         if val
           val =
             id: val
-            typeId: "tax-category"
+            typeId: 'tax-category'
       else
         throw new Error "Unsupported attribute type: '#{type}' for value: '#{utils.pretty value}'; mapping: '#{utils.pretty mapping}'"
 
