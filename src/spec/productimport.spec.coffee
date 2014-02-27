@@ -2,20 +2,31 @@ Q = require 'q'
 _ = require('underscore')._
 Config = require '../config'
 ProductImport = require('../lib/import/productimport')
+{ProductImportLogger} = require '../lib/loggers'
 
 describe 'ProductImport', ->
+
   beforeEach ->
-    @importer = new ProductImport _.extend Config, source: '/foo'
+    @importer = new ProductImport _.extend _.clone(Config),
+      logger: new ProductImportLogger
+      appLogger: new ProductImportLogger
+      source: '/sourcepath'
+      mapping: '/mappingpath'
 
   afterEach ->
     @importer = null
 
   it 'should initialize', ->
     expect(@importer).toBeDefined()
-    expect(@importer._options.source).toBe '/foo'
+    expect(@importer._options.source).toBe '/sourcepath'
+    expect(@importer._options.mapping).toBe '/mappingpath'
 
   it 'should throw error if source path is not given', ->
     expect(-> new ProductImport).toThrow new Error 'XML source path is required'
+
+  it 'should throw error if mapping path is not given', ->
+    options = _.extend _.clone(Config), source: '/sourcepath'
+    expect(-> new ProductImport options).toThrow new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required'
 
   it 'should execute', (done) ->
     createMock = ->
@@ -71,12 +82,13 @@ describe 'ProductImport', ->
     spyOn(@importer, '_createProduct').andReturn createMock()
 
     @importer.execute (result) =>
-      expect(result).toBe true
-      expect(@importer._readFile).toHaveBeenCalledWith '/foo'
+      expect(@importer._readFile).toHaveBeenCalledWith '/sourcepath'
+      expect(@importer._readFile).toHaveBeenCalledWith '/mappingpath'
       expect(@importer._parseXml).toHaveBeenCalledWith 'Resolved'
       expect(@importer._fetchProductTypes).toHaveBeenCalled()
       expect(@importer._buildProductsData).toHaveBeenCalled()
       expect(@importer._createProduct).toHaveBeenCalledWith {foo: 'bar'}
+      expect(result).toBe true
       done()
 
   it 'should fetch product types', (done) ->

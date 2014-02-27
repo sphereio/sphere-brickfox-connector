@@ -15,7 +15,7 @@ Creates new products in Sphere by given XML file.
 class ProductImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'XML source path is required' unless @_options.source
+    throw new Error 'XML source path is required' unless @_options.products
     throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required' unless @_options.mapping
     @sync = new ProductSync @_options
     @rest = new Rest @_options
@@ -34,33 +34,52 @@ class ProductImport
     @startTime = new Date().getTime()
     @logger.info 'ProductImport started...'
 
-    @_readFile @_options.source
-    .then (fileContent) =>
-      Q.all [@_parseXml(fileContent), @_fetchProductTypes(), @_readFile(@_options.mapping)]
-    .spread (productData, productTypes, mapping) =>
-      @mapping = JSON.parse mapping
-      @toBeImported = _.size(productData.Products?.Product)
-      # TODO: do we really need product type? It could be defined in product-import.json mapper too.
-      productType = @_getProductType productTypes
-      products = @_buildProductsData(productData, productType)
-      @logger.info "About to create '#{_.size products}' products."
-      @_batch _.map(products, (p) => @_createProduct p), 100
+    Q.spread [
+      @_loadMapping @_options.mapping
+      @_loadProductsXML @_options.products
+      @_loadManufacturersXML @_options.manufacturers
+      @_loadCategoriesXML @_options.categories
+      @_fetchProductTypes()
+      ],
+      (mapping, productsData, manufacturersData, categoriesData, productTypes) =>
+        @logger.debug "mappingData:\n#{mapping}"
+        @logger.debug "productsData:\n#{utils.pretty productsData}"
+        @logger.debug "manufacturersData:\n#{utils.pretty manufacturersData}"
+        @logger.debug "categoriesData:\n#{utils.pretty categoriesData}"
+        @logger.debug "productTypesData:\n#{utils.pretty productTypes}"
+        @mapping = JSON.parse mapping
+        @toBeImported = _.size(productsData.Products?.Product)
+        # TODO: do we really need product type? It could be defined in product-import.json mapper too.
+        productType = @_getProductType productTypes
+        products = @_buildProductsData(productsData, productType)
+        @logger.info "About to create '#{_.size products}' products."
+        @_batch _.map(products, (p) => @_createProduct p), 100
     .fail (error) =>
-      console.log "test"
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback)
-    .done () =>
+    .done (result) =>
       @_processResult(callback)
 
   _processResult: (callback) ->
     endTime = new Date().getTime()
-    @logger.info "ProductImport finished. Success: '#{@success}'. #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed. Processing time: #{(endTime - @startTime) / 1000} seconds."
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """ProductImport finished with result: #{result}.
+                    #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed.
+                    Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback @success
 
-  _readFile: (path) -> utils.readFile path
+  _loadMapping: (path) ->
+    utils.readFile(path)
 
-  _parseXml: (file) -> utils.parseXML file
+  _loadProductsXML: (path) ->
+    utils.xmlToJson(path)
+
+  _loadManufacturersXML: (path) ->
+    utils.xmlToJson(path) if path
+
+  _loadCategoriesXML: (path) ->
+    utils.xmlToJson(path) if path
 
   _fetchProductTypes: ->
     deferred = Q.defer()

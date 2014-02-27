@@ -40,5 +40,10 @@ exports.parseXML = (content) ->
       deferred.resolve result
   deferred.promise
 
+exports.xmlToJson = (path) =>
+  @readFile(path)
+  .then (fileContent) =>
+    @parseXML(fileContent)
+
 exports.pretty = (data) ->
   JSON.stringify data, null, 4
