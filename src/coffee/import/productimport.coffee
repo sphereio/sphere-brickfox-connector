@@ -71,9 +71,8 @@ class ProductImport
       else
         @_batch _.tail(productList, numberOfParallelRequest), callback, numberOfParallelRequest
     .fail (error) ->
-      @logger.error 'Error on create new product batch processing.'
-      if error.stack then @logger.error "Error stack: #{error.stack}"
-      @logger.error error
+      @logger.error "Error on create new product batch processing; #{error}"
+      @logger.error "Error stack: #{error.stack}" if error.stack
       callback false
 
   _createProduct: (product) =>
