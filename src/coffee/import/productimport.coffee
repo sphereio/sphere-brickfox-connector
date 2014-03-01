@@ -41,18 +41,18 @@ class ProductImport
       @_loadCategoriesXML @_options.categories
       @_fetchProductTypes()
       ],
-      (mapping, productsData, manufacturersData, categoriesData, productTypes) =>
-        @logger.debug "mappingData:\n#{mapping}"
+      (mappingData, productsData, manufacturersData, categoriesData, productTypesData) =>
+        @logger.debug "mappingData:\n#{mappingData}"
         @logger.debug "productsData:\n#{utils.pretty productsData}"
-        @logger.debug "manufacturersData:\n#{utils.pretty manufacturersData}"
-        @logger.debug "categoriesData:\n#{utils.pretty categoriesData}"
-        @logger.debug "productTypesData:\n#{utils.pretty productTypes}"
-        @mapping = JSON.parse mapping
+        @logger.debug "productTypesData:\n#{utils.pretty productTypesData}"
+        @mapping = JSON.parse mappingData
         @toBeImported = _.size(productsData.Products?.Product)
-        # TODO: do we really need product type? It could be defined in product-import.json mapper too.
-        productType = @_getProductType productTypes
+        productType = @_getProductType productTypesData
+        manufacturers = @_processManufacturers(manufacturersData, productType) if manufacturersData
+        @_updateProductType(productType, manufacturers) if manufacturers
+        @_updateCategories categoriesData if categoriesData
         products = @_buildProductsData(productsData, productType)
-        @logger.info "About to create '#{_.size products}' products."
+        @logger.info "[Products] About to create '#{_.size products}' products."
         @_batch _.map(products, (p) => @_createProduct p), 100
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
@@ -60,6 +60,7 @@ class ProductImport
       @_processResult(callback)
     .done (result) =>
       @_processResult(callback)
+
 
   _processResult: (callback) ->
     endTime = new Date().getTime()
@@ -81,6 +82,54 @@ class ProductImport
   _loadCategoriesXML: (path) ->
     utils.xmlToJson(path) if path
 
+  _processManufacturers: (manufacturersData, productType) ->
+    @logger.info '[Manufacturers] Update manufacturers started...'
+    @logger.debug "[Manufacturers] manufacturersData:\n#{utils.pretty manufacturersData}"
+
+    if not @mapping.productMapping.ManufacturerId
+      @logger.info '[Manufacturers] Mmapping for ManufacturerId is not defined. No manufacturers will be created.'
+      return
+
+    count = manufacturersData.Manufacturers?['$'].count
+    if count
+      @logger.info "[Manufacturers] Manufacturers found: '#{count}'"
+    else
+      @logger.info '[Manufacturers] No manufacturers found or undefined. Please check manufacturers input XML.'
+      return
+
+    attributeName = @mapping.productMapping.ManufacturerId.to
+    matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
+    if not matchedAttr
+      throw new Error "Error on manufacturers import. ManufacturerId mapping attributeName: '#{attributeName}' could not be found on product type with id: '#{productType.id}'"
+
+    actions = []
+    keys = _.pluck(matchedAttr.type.values, 'key')
+    _.each manufacturersData.Manufacturers.Manufacturer, (m) =>
+      key = m.ManufacturerId[0]
+      exists = _.contains(keys,  key)
+      if not exists
+        # create new addLocalizedEnumValue action
+        value = @_getLocalizedValue(m.Translations[0], 'Name')
+        action =
+          action: 'addLocalizedEnumValue'
+          attributeName: attributeName
+          value:
+            key: key
+            label: value
+        actions.push action
+
+    if _.size(actions) > 0
+      @logger.info "[Manufacturers] Update actions to send for attribute '#{attributeName}': '#{_.size actions}'"
+      payload =
+        version: productType.version
+        actions: actions
+    else
+      @logger.info "[Manufacturers] No update action for attribute '#{attributeName}' required.'#{_.size actions}'"
+
+  _updateCategories: (categoriesData) ->
+    @logger.info '[Categories] Update categories started...'
+    @logger.debug "[Categories] categoriesData:\n#{utils.pretty categoriesData}"
+
   _fetchProductTypes: ->
     deferred = Q.defer()
     @rest.GET '/product-types', (error, response, body) ->
@@ -90,35 +139,49 @@ class ProductImport
         deferred.resolve body
     deferred.promise
 
-  _batch: (productList, numberOfParallelRequest) =>
-    current = _.take productList, numberOfParallelRequest
-    Q.all(current)
-    .then (result) =>
-      if _.size(current) < numberOfParallelRequest
-        @success = true
-      else
-        @_batch _.tail(productList, numberOfParallelRequest), numberOfParallelRequest
-    .fail (error) =>
-      @logger.error "Error on create new product batch processing; #{error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @success = false
-
-  _createProduct: (product) =>
+  _updateProductType: (productType, payload) =>
     deferred = Q.defer()
-    @rest.POST '/products', product, (error, response, body) =>
+    @rest.POST "/product-types/#{productType.id}", payload, (error, response, body) ->
+      if error
+        deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+      else
+        if response.statusCode isnt 201
+          message = "Error on product type update; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          message = 'Product type updated.'
+          deferred.resolve message
+    deferred.promise
+
+  _createProduct: (payload) =>
+    deferred = Q.defer()
+    @rest.POST '/products', payload, (error, response, body) =>
       if error
         @failCounter++
-        deferred.reject "Create product with id: #{product.ProductId} failed. Error: #{error}"
+        deferred.reject "HTTP error on new product creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 201
           @failCounter++
-          message = "Error on new product creation; Request body: \n #{utils.pretty product} \n\n Response body: '#{utils.pretty body}'"
+          message = "Error on new product creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
           @successCounter++
           message = 'New product created.'
           deferred.resolve message
     deferred.promise
+
+  _batch: (list, numberOfParallelRequest) =>
+    current = _.take list, numberOfParallelRequest
+    Q.all(current)
+    .then (result) =>
+      if _.size(current) < numberOfParallelRequest
+        @success = true
+      else
+        @_batch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
+    .fail (error) =>
+      @logger.error "Error batch processing; #{error}"
+      @logger.error "Error stack: #{error.stack}" if error.stack
+      @success = false
 
   _buildProductsData: (data, productType) =>
     products = []
@@ -190,8 +253,8 @@ class ProductImport
 
   _processImages: (item, product, variant) ->
     _.each item, (value, key) =>
-      if _.has(@mapping, key)
-        mapping = @mapping[key]
+      if _.has(@mapping.productMapping, key)
+        mapping = @mapping.productMapping[key]
         url = value[0]
         if not _s.startsWith(url, 'http')
           url = "#{mapping.specialMapping.baseURL}#{url}"
@@ -208,8 +271,8 @@ class ProductImport
 
   _processCurrencies: (item, product, variant) ->
     _.each item, (value, key) =>
-      if _.has(@mapping, key)
-        mapping = @mapping[key]
+      if _.has(@mapping.productMapping, key)
+        mapping = @mapping.productMapping[key]
         if mapping.type is 'special-price'
           price = {}
           currency = item['$'].currencyIso
@@ -311,7 +374,7 @@ class ProductImport
       when 'ltext'
         # take value as it is as it should have proper form already
         val = value
-      when 'enum'
+      when 'enum', 'lenum'
         val = _s.slugify value[0]
       when 'money'
         val = @_getPriceAmount(value[0], mapping)
@@ -341,7 +404,7 @@ class ProductImport
       product[key] = val
 
   _processValue: (product, variant, key, value) =>
-    if _.has(@mapping, key)
-      @_addValue(product, variant, value, @mapping[key])
+    if _.has(@mapping.productMapping, key)
+      @_addValue(product, variant, value, @mapping.productMapping[key])
 
 module.exports = ProductImport
