@@ -24,15 +24,37 @@ class ProductImport
     @failCounter = 0
     @success = false
 
-
   ###
-  Reads given products XML file and creates new products in Sphere.
+  Reads given import XML files and creates/updates product types, categories and products in Sphere.
+  Detailed steps:
+  1) Fetch product type, categories and load import XML files
+
+  2) Build product type updates (creates missing manufacturers)
+  2.1) Send product type updates
+
+  3) Build category creates (new categories only)
+  3.1) send category creates
+
+  4) Fetch categories (get fresh list after category creates)
+
+  5) Build category updates (updates for existing/old categories plus sets parent child relations on all categories)
+  5.1) Send category updates
+
+  6) Build product creates
+  6.1) Send product creates
+
+  7) TODO: Build product updates
+  7.1) TODO: Send product updates
+
+  8) TODO: Build category deletes
+  8.1) TODO: Send category deletes
+
   @param {function} callback The callback function to be invoked when the method finished its work.
   @return Result of the given callback
   ###
   execute: (callback) ->
     @startTime = new Date().getTime()
-    @logger.info 'ProductImport started...'
+    @logger.info 'ProductImport execution started.'
 
     Q.spread [
       @_loadMapping @_options.mapping
@@ -40,27 +62,42 @@ class ProductImport
       @_loadManufacturersXML @_options.manufacturers
       @_loadCategoriesXML @_options.categories
       @_fetchProductTypes()
+      @_fetchCategories()
       ],
-      (mappingData, productsData, manufacturersData, categoriesData, productTypesData) =>
-        @logger.debug "mappingData:\n#{mappingData}"
-        @logger.debug "productsData:\n#{utils.pretty productsData}"
-        @logger.debug "productTypesData:\n#{utils.pretty productTypesData}"
-        @mapping = JSON.parse mappingData
-        @toBeImported = _.size(productsData.Products?.Product)
-        productType = @_getProductType productTypesData
-        manufacturers = @_processManufacturers(manufacturersData, productType) if manufacturersData
-        @_updateProductType(productType, manufacturers) if manufacturers
-        @_updateCategories categoriesData if categoriesData
-        products = @_buildProductsData(productsData, productType)
-        @logger.info "[Products] About to create '#{_.size products}' products."
-        @_batch _.map(products, (p) => @_createProduct p), 100
+      (mapping, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
+        @logger.debug "mapping:\n#{mapping}"
+        @logger.debug "productsXML:\n#{utils.pretty productsXML}"
+        @logger.debug "fetchedProductTypes:\n#{utils.pretty fetchedProductTypes}"
+        @mapping = JSON.parse mapping
+        @productsXML = productsXML
+        @categoriesXML = categoriesXML
+        @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
+        @toBeImported = _.size(productsXML.Products?.Product)
+        @productType = @_getProductType fetchedProductTypes
+        manufacturers = @_buildManufacturers(manufacturersXML, @productType) if manufacturersXML
+        @_updateProductType(@productType, manufacturers) if manufacturers
+    .then (productTypeUpdateResult) =>
+      @categories = @_buildCategories(@categoriesXML) if @categoriesXML
+      creates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
+      @_batch(_.map(creates, (c) => @_createCategory c), 100) if creates
+    .then (createCategoriesResult) =>
+      # fetch created categories to get id's used for parent reference creation
+      @_fetchCategories()
+    .then (fetchedCategories) =>
+      @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.result
+      updates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
+      @_batch(_.map(updates, (c) => @_updateCategory c), 100) if updates
+    .then (updateCategoriesResult) =>
+      @logger.info '[Products] Products import started...'
+      products = @_buildProducts(@productsXML, @productType, @fetchedCategories)
+      @logger.info "[Products] About to create '#{_.size products}' products."
+      @_batch(_.map(products, (p) => @_createProduct p), 100) if products
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback)
     .done (result) =>
       @_processResult(callback)
-
 
   _processResult: (callback) ->
     endTime = new Date().getTime()
@@ -82,15 +119,15 @@ class ProductImport
   _loadCategoriesXML: (path) ->
     utils.xmlToJson(path) if path
 
-  _processManufacturers: (manufacturersData, productType) ->
-    @logger.info '[Manufacturers] Update manufacturers started...'
-    @logger.debug "[Manufacturers] manufacturersData:\n#{utils.pretty manufacturersData}"
+  _buildManufacturers: (data, productType) ->
+    @logger.info '[Manufacturers] Manufacturers import started...'
+    @logger.debug "[Manufacturers] data:\n#{utils.pretty data}"
 
     if not @mapping.productMapping.ManufacturerId
-      @logger.info '[Manufacturers] Mmapping for ManufacturerId is not defined. No manufacturers will be created.'
+      @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
       return
 
-    count = manufacturersData.Manufacturers?['$'].count
+    count = _.size(data.Manufacturers?.Manufacturer)
     if count
       @logger.info "[Manufacturers] Manufacturers found: '#{count}'"
     else
@@ -98,17 +135,19 @@ class ProductImport
       return
 
     attributeName = @mapping.productMapping.ManufacturerId.to
+    # find attribute on product type
     matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
     if not matchedAttr
       throw new Error "Error on manufacturers import. ManufacturerId mapping attributeName: '#{attributeName}' could not be found on product type with id: '#{productType.id}'"
 
     actions = []
+    # extract only keys from product type attribute values
     keys = _.pluck(matchedAttr.type.values, 'key')
-    _.each manufacturersData.Manufacturers.Manufacturer, (m) =>
+    _.each data.Manufacturers.Manufacturer, (m) =>
       key = m.ManufacturerId[0]
       exists = _.contains(keys,  key)
       if not exists
-        # create new addLocalizedEnumValue action
+        # attribute value does not exist yet -> create new addLocalizedEnumValue action
         value = @_getLocalizedValue(m.Translations[0], 'Name')
         action =
           action: 'addLocalizedEnumValue'
@@ -124,11 +163,171 @@ class ProductImport
         version: productType.version
         actions: actions
     else
-      @logger.info "[Manufacturers] No update action for attribute '#{attributeName}' required.'#{_.size actions}'"
+      @logger.info "[Manufacturers] No update action for manufacturers attribute '#{attributeName}' required."
 
-  _updateCategories: (categoriesData) ->
-    @logger.info '[Categories] Update categories started...'
-    @logger.debug "[Categories] categoriesData:\n#{utils.pretty categoriesData}"
+  _buildCategories: (data) ->
+    @logger.info '[Categories] Categories import started...'
+    @logger.debug "[Categories] data:\n#{utils.pretty data}"
+    count = _.size(data.Categories?.Category)
+    if count
+      @logger.info "[Categories] Categories found: '#{count}'"
+    else
+      @logger.info '[Categories] No categories found or undefined. Please check manufacturers input XML.'
+      return
+    categoriesData = data.Categories.Category
+    # get root categories only
+    rootsData = _.filter categoriesData, (c) -> c.ParentId is undefined
+    # get subcategories only
+    subcategoriesData = _.reject categoriesData, (c) -> c.ParentId is undefined
+    # create a list of categories with data prepared for category creation
+    roots = @_getCategoryKeyValuePairs(rootsData)
+    list = [roots]
+    # recursively build categories data
+    @_createSubcategories(roots, subcategoriesData, list)
+    categories = _.flatten list
+    @logger.debug "[Categories] Roots count: '#{_.size roots}'"
+    @logger.info "[Categories] Import candidates count: '#{_.size categories}'"
+    @logger.debug "[Categories] Import candidates data: '#{utils.pretty categories}'"
+
+    categories
+
+  # TODO: do not use slug as external category id (required Sphere support of custom attributes on category)
+  _buildCategoryCreates: (data, fetchedCategories) =>
+    creates = []
+    _.each data, (c) ->
+      exists = _.has(fetchedCategories, c.id)
+      # we are interested in new categories only
+      if not exists
+        name = c.name
+        slug = c.slug
+        # set category external id (over slug as workaround)
+        slug.nl = c.id
+        create =
+          name: name
+          slug: slug
+        creates.push create
+
+    count = _.size(creates)
+    if count > 0
+      @logger.info "[Categories] Create count: '#{count}'"
+      creates
+    else
+      @logger.info "[Categories] No category create required."
+      null
+
+  _buildCategoryUpdates: (data, fetchedCategories) ->
+    updates = []
+    _.each data, (c) =>
+      actions = []
+      newName = c.name
+      oldCategory = @_getCategoryByExternalId(c.id, fetchedCategories)
+      oldName = oldCategory.name
+
+      # check if category name changed
+      if not _.isEqual(newName, oldName)
+        action =
+          action: "changeName"
+          name: newName
+        actions.push action
+
+      parentId = c.parentId
+      parentCategory = @_getCategoryByExternalId(parentId, fetchedCategories) if parentId
+      # check if category need to be assigned to parent
+      if parentCategory
+        action =
+          action: "changeParent"
+          parent:
+            typeId: "category"
+            id: parentCategory.id
+        actions.push action
+
+      if _.size(actions) > 0
+        wrapper =
+          id: oldCategory.id
+          actions:
+            version: oldCategory.version
+            actions: actions
+        updates.push wrapper
+
+    count = _.size(updates)
+    if count > 0
+      @logger.info "[Categories] Update count: '#{count}'"
+      updates
+    else
+      @logger.info "[Categories] No category update required."
+      null
+
+  _transformByCategoryExternalId: (fetchedCategories) =>
+    fetchedCats = {}
+    _.each fetchedCategories, (el) ->
+      externalId = el.slug.nl
+      throw new Error "[Categories] Slug for language 'nl' (workaround: used as 'externalId') in MC is empty; Category id: '#{el.id}'" if not externalId
+      fetchedCats[externalId] = el
+    fetchedCats
+
+  _getCategoryByExternalId: (id, fetchedCats) ->
+    category = fetchedCats[id]
+    throw new Error "[Categories] Unexpected error. Parent category with externalId: '#{id}' not found." if not category
+    category
+
+  _createSubcategories: (categories, subcategoriesData, list) ->
+    _.each categories, (category) =>
+      categoryId = category.id
+      subcategories = _.filter subcategoriesData, (c) -> c.ParentId[0] is categoryId
+      if _.size(subcategories) > 0
+        subs = @_getCategoryKeyValuePairs(subcategories, categoryId)
+        list.push subs
+        @_createSubcategories(subs, subcategoriesData, list)
+
+  _getCategoryKeyValuePairs: (categories, parentId) ->
+    container = []
+    _.each categories, (c) =>
+      names = @_getLocalizedValue(c.Translations[0], 'Name')
+      slugs = @_getLocalizedSlugs(names)
+      category =
+        id: c.CategoryId[0]
+        name: names
+        slug: slugs
+      category.parentId = parentId if parentId
+      container.push category
+    container
+
+  _fetchCategories: ->
+    deferred = Q.defer()
+    @rest.GET '/categories', (error, response, body) ->
+      if error
+        deferred.reject error
+      else
+        deferred.resolve body
+    deferred.promise
+
+  _createCategory: (payload) ->
+    deferred = Q.defer()
+    @rest.POST '/categories', payload, (error, response, body) ->
+      if error
+        deferred.reject "HTTP error on new category creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+      else
+        if response.statusCode isnt 201
+          message = "Error on new category creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          message = 'New category created.'
+          deferred.resolve message
+    deferred.promise
+
+  _updateCategory: (payload) ->
+    deferred = Q.defer()
+    @rest.POST "/categories/#{payload.id}", payload.actions, (error, response, body) ->
+      if error
+        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+      else
+        if response.statusCode isnt 200
+          message = "Error on category type update; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          message = 'Category type updated.'
+          deferred.resolve message
+    deferred.promise
 
   _fetchProductTypes: ->
     deferred = Q.defer()
@@ -145,7 +344,7 @@ class ProductImport
       if error
         deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
       else
-        if response.statusCode isnt 201
+        if response.statusCode isnt 200
           message = "Error on product type update; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
@@ -170,20 +369,26 @@ class ProductImport
           deferred.resolve message
     deferred.promise
 
-  _batch: (list, numberOfParallelRequest) =>
-    current = _.take list, numberOfParallelRequest
-    Q.all(current)
-    .then (result) =>
-      if _.size(current) < numberOfParallelRequest
-        @success = true
-      else
-        @_batch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
-    .fail (error) =>
-      @logger.error "Error batch processing; #{error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @success = false
+  _batch: (list, numberOfParallelRequest) ->
+    deferred = Q.defer()
+    doBatch = (list, numberOfParallelRequest) ->
+      current = _.take list, numberOfParallelRequest
+      Q.all(current)
+      .then (result) ->
+        if _.size(current) < numberOfParallelRequest
+          # @success = true
+          deferred.resolve true
+        else
+          doBatch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
+      .fail (error) ->
+        # @logger.error "Error batch processing; #{error}"
+        # @logger.error "Error stack: #{error.stack}" if error.stack
+        # @success = false
+        deferred.reject error
+     doBatch(list, numberOfParallelRequest)
+     deferred.promise
 
-  _buildProductsData: (data, productType) =>
+  _buildProducts: (data, productType, fetchedCategories) =>
     products = []
     _.each data.Products?.Product, (p) =>
       names = @_getLocalizedValue(p.Descriptions[0], 'Title')
@@ -199,6 +404,9 @@ class ProductImport
           typeId: 'product-type'
         description: descriptions
         variants: []
+
+      # assign categories
+      @_processCategories(product, p)
 
       variantBase =
         attributes: []
@@ -250,6 +458,20 @@ class ProductImport
       @_processImages(item, product, variant)
 
     variant
+
+  _processCategories: (product, data) ->
+    catReferences = []
+    _.each data.Categories?.Category, (c) =>
+      categoryId = c.CategoryId[0]
+      existingCategory = @_getCategoryByExternalId(categoryId, fetchedCategories)
+      id = existingCategory.id
+      reference =
+        typeId: "category"
+        id: id
+      catReferences.push reference
+
+    if _.size(catReferences) > 0
+      product.categories = catReferences
 
   _processImages: (item, product, variant) ->
     _.each item, (value, key) =>
@@ -337,8 +559,8 @@ class ProductImport
       slugs[key] = slug
     slugs
 
-  _getProductType: (productTypesObj) ->
-    productTypes = productTypesObj.results
+  _getProductType: (fetchedProductTypes) ->
+    productTypes = fetchedProductTypes.results
     if _.size(productTypes) == 0
       throw new Error "No product type defined for SPHERE project '#{@_options.config.project_key}'. Please create one before running product import."
 
