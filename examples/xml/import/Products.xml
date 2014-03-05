@@ -6,7 +6,7 @@
     <ItemNumber>50251123 THE SMITH11_1</ItemNumber>
     <Active>1</Active>
     <TaxId>2</TaxId>
-    <ManufacturerId>870</ManufacturerId>
+    <ManufacturerId>1</ManufacturerId>
     <HasVariations>1</HasVariations>
     <Attributes>
       <Boolean hidden="1" code="availability_branch_7">
@@ -28,7 +28,10 @@
     </Attributes>
     <Categories>
       <Category>
-        <CategoryId>17375</CategoryId>
+        <CategoryId>68</CategoryId>
+      </Category>
+       <Category>
+        <CategoryId>68-2</CategoryId>
       </Category>
     </Categories>
     <Descriptions>
@@ -998,7 +1001,7 @@ W]]></Value>
     <ItemNumber>50261154 ARDY 001</ItemNumber>
     <Active>1</Active>
     <TaxId>1</TaxId>
-    <ManufacturerId>901</ManufacturerId>
+    <ManufacturerId>4</ManufacturerId>
     <HasVariations>1</HasVariations>
     <Attributes>
       <Boolean hidden="1" code="availability_branch_7">
@@ -1122,7 +1125,7 @@ W]]></Value>
     </Attributes>
     <Categories>
       <Category>
-        <CategoryId>17375</CategoryId>
+        <CategoryId>68-2</CategoryId>
       </Category>
     </Categories>
     <Descriptions>
@@ -1938,7 +1941,7 @@ W]]></Value>
     <ItemNumber>W34R47 Z0PX0</ItemNumber>
     <Active>1</Active>
     <TaxId>1</TaxId>
-    <ManufacturerId>910</ManufacturerId>
+    <ManufacturerId>5</ManufacturerId>
     <HasVariations>1</HasVariations>
     <Attributes>
       <Boolean hidden="1" code="availability_branch_7">
@@ -1992,7 +1995,7 @@ W]]></Value>
     </Attributes>
     <Categories>
       <Category>
-        <CategoryId>17377</CategoryId>
+        <CategoryId>68</CategoryId>
       </Category>
     </Categories>
     <Descriptions>
@@ -2712,7 +2715,7 @@ W]]></Value>
     <ItemNumber>HARMONY CARDIGAN L/S 165763127</ItemNumber>
     <Active>1</Active>
     <TaxId>1</TaxId>
-    <ManufacturerId>921</ManufacturerId>
+    <ManufacturerId>1</ManufacturerId>
     <HasVariations>1</HasVariations>
     <Attributes>
       <Boolean hidden="1" code="availability_branch_5">
@@ -2900,7 +2903,7 @@ W]]></Value>
     </Attributes>
     <Categories>
       <Category>
-        <CategoryId>17377</CategoryId>
+        <CategoryId>204-1-1-2</CategoryId>
       </Category>
     </Categories>
     <Descriptions>
