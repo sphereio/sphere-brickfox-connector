@@ -77,20 +77,24 @@ class ProductImport
         manufacturers = @_buildManufacturers(manufacturersXML, @productType) if manufacturersXML
         @_updateProductType(@productType, manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
+      @logger.info '[Categories] Categories XML import started...'
+      @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'"
       @categories = @_buildCategories(@categoriesXML) if @categoriesXML
-      creates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      @_batch(_.map(creates, (c) => @_createCategory c), 100) if creates
+      @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
+      @_batch(_.map(@categoryCreates, (c) => @_createCategory c), 100) if @categoryCreates
     .then (createCategoriesResult) =>
-      # fetch created categories to get id's used for parent reference creation
-      @_fetchCategories()
+      # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
+      @_fetchCategories() if @categoryCreates
     .then (fetchedCategories) =>
-      @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.result
-      updates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      @_batch(_.map(updates, (c) => @_updateCategory c), 100) if updates
+      @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
+      @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
+      categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
+      @_batch(_.map(categoryUpdates, (c) => @_updateCategory c), 100) if categoryUpdates
     .then (updateCategoriesResult) =>
-      @logger.info '[Products] Products import started...'
+      @logger.info '[Products] Products XML import started...'
+      @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
       products = @_buildProducts(@productsXML, @productType, @fetchedCategories)
-      @logger.info "[Products] About to create '#{_.size products}' products."
+      @logger.info "[Products] Create count: '#{_.size products}'"
       @_batch(_.map(products, (p) => @_createProduct p), 100) if products
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
@@ -120,7 +124,7 @@ class ProductImport
     utils.xmlToJson(path) if path
 
   _buildManufacturers: (data, productType) ->
-    @logger.info '[Manufacturers] Manufacturers import started...'
+    @logger.info '[Manufacturers] Manufacturers XML import started...'
     @logger.debug "[Manufacturers] data:\n#{utils.pretty data}"
 
     if not @mapping.productMapping.ManufacturerId
@@ -129,9 +133,9 @@ class ProductImport
 
     count = _.size(data.Manufacturers?.Manufacturer)
     if count
-      @logger.info "[Manufacturers] Manufacturers found: '#{count}'"
+      @logger.info "[Manufacturers] Import manufacturers found: '#{count}'"
     else
-      @logger.info '[Manufacturers] No manufacturers found or undefined. Please check manufacturers input XML.'
+      @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
     attributeName = @mapping.productMapping.ManufacturerId.to
@@ -166,13 +170,12 @@ class ProductImport
       @logger.info "[Manufacturers] No update action for manufacturers attribute '#{attributeName}' required."
 
   _buildCategories: (data) ->
-    @logger.info '[Categories] Categories import started...'
     @logger.debug "[Categories] data:\n#{utils.pretty data}"
     count = _.size(data.Categories?.Category)
     if count
-      @logger.info "[Categories] Categories found: '#{count}'"
+      @logger.info "[Categories] Import categories found: '#{count}'"
     else
-      @logger.info '[Categories] No categories found or undefined. Please check manufacturers input XML.'
+      @logger.info '[Categories] No categories to import found or undefined. Please check categories input XML.'
       return
     categoriesData = data.Categories.Category
     # get root categories only
@@ -257,7 +260,7 @@ class ProductImport
       @logger.info "[Categories] No category update required."
       null
 
-  _transformByCategoryExternalId: (fetchedCategories) =>
+  _transformByCategoryExternalId: (fetchedCategories) ->
     fetchedCats = {}
     _.each fetchedCategories, (el) ->
       externalId = el.slug.nl
@@ -406,7 +409,7 @@ class ProductImport
         variants: []
 
       # assign categories
-      @_processCategories(product, p)
+      @_processCategories(product, p, fetchedCategories)
 
       variantBase =
         attributes: []
@@ -459,9 +462,9 @@ class ProductImport
 
     variant
 
-  _processCategories: (product, data) ->
+  _processCategories: (product, data, fetchedCategories) ->
     catReferences = []
-    _.each data.Categories?.Category, (c) =>
+    _.each data.Categories[0]?.Category, (c) =>
       categoryId = c.CategoryId[0]
       existingCategory = @_getCategoryByExternalId(categoryId, fetchedCategories)
       id = existingCategory.id
