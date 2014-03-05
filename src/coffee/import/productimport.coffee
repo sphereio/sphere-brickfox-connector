@@ -33,7 +33,7 @@ class ProductImport
   2.1) Send product type updates
 
   3) Build category creates (new categories only)
-  3.1) send category creates
+  3.1) Send category creates
 
   4) Fetch categories (get fresh list after category creates)
 
@@ -101,6 +101,7 @@ class ProductImport
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback)
     .done (result) =>
+      @success = true
       @_processResult(callback)
 
   _processResult: (callback) ->
@@ -379,14 +380,10 @@ class ProductImport
       Q.all(current)
       .then (result) ->
         if _.size(current) < numberOfParallelRequest
-          # @success = true
           deferred.resolve true
         else
           doBatch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
       .fail (error) ->
-        # @logger.error "Error batch processing; #{error}"
-        # @logger.error "Error stack: #{error.stack}" if error.stack
-        # @success = false
         deferred.reject error
      doBatch(list, numberOfParallelRequest)
      deferred.promise
