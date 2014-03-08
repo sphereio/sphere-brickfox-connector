@@ -5,6 +5,7 @@ OrderExport = require("./export/orderexport")
 OrderStatusImport = require("./import/orderstatusimport")
 {ProductImportLogger, ProductUpdateLogger} = require './loggers'
 
+# TODO replace optimist with commander or something else that supports subcommands.
 argv = require('optimist')
   .usage('Usage: $0
   --projectKey [key]
