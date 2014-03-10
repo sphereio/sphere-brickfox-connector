@@ -133,7 +133,7 @@ class ProductImport
     @logger.info '[Manufacturers] Manufacturers XML import started...'
     @logger.debug "[Manufacturers] data:\n#{utils.pretty data}"
 
-    if not @mapping.productMapping.ManufacturerId
+    if not @mapping.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
       return
 
@@ -144,7 +144,7 @@ class ProductImport
       @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
-    attributeName = @mapping.productMapping.ManufacturerId.to
+    attributeName = @mapping.ManufacturerId.to
     # find attribute on product type
     matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
     if not matchedAttr
@@ -574,8 +574,8 @@ class ProductImport
   ###
   _processImages: (item, variant) ->
     _.each item, (value, key) =>
-      if _.has(@mapping.productMapping, key)
-        mapping = @mapping.productMapping[key]
+      if _.has(@mapping, key)
+        mapping = @mapping[key]
         url = value[0]
         if not _s.startsWith(url, 'http')
           url = "#{mapping.specialMapping.baseURL}#{url}"
@@ -600,8 +600,8 @@ class ProductImport
   ###
   _processCurrencies: (item, product, variant) ->
     _.each item, (value, key) =>
-      if _.has(@mapping.productMapping, key)
-        mapping = @mapping.productMapping[key]
+      if _.has(@mapping, key)
+        mapping = @mapping[key]
         if mapping.type is 'special-price'
           price = {}
           currency = item['$'].currencyIso
@@ -796,7 +796,7 @@ class ProductImport
   # @param {Object} value Value to process
   ###
   _processValue: (product, variant, key, value) =>
-    if _.has(@mapping.productMapping, key)
-      @_addValue(product, variant, value, @mapping.productMapping[key])
+    if _.has(@mapping, key)
+      @_addValue(product, variant, value, @mapping[key])
 
 module.exports = ProductImport
