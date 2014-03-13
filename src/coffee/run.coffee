@@ -3,7 +3,7 @@ ProductImport = require("./import/productimport")
 ProductUpdateImport = require("./import/productupdateimport")
 OrderExport = require("./export/orderexport")
 OrderStatusImport = require("./import/orderstatusimport")
-{ProductImportLogger, ProductUpdateLogger} = require './loggers'
+{ProductImportLogger, ProductUpdateImportLogger} = require './loggers'
 
 # TODO replace optimist with commander or something else that supports subcommands.
 argv = require('optimist')
@@ -57,13 +57,13 @@ handler = switch argv.action
       src: debug
     new ProductImport _.extend options,
       logConfig:
-        # pass logger to node-connect so that it can
+        # pass logger to node-connect so that it can log into the same file
         logger: @logger
       appLogger: @logger
   when "iup"
-    @logger = new ProductUpdateLogger()
+    @logger = new ProductUpdateImportLogger
       src: debug
-    new ProductUpdate _.extend options,
+    new ProductUpdateImport _.extend options,
       logConfig:
         logger: @logger
       appLogger: @logger

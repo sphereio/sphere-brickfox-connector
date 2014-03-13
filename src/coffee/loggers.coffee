@@ -6,7 +6,7 @@ class ProductImportLogger extends Logger
   @path: './brickfox-product-import-logger.log'
   @levelStream: 'debug'
 
-class ProductUpdateLogger extends Logger
+class ProductUpdateImportLogger extends Logger
 
   @appName: 'brickfox-product-update-logger'
   @path: './brickfox-product-update-logger.log'
@@ -15,4 +15,4 @@ class ProductUpdateLogger extends Logger
 
 module.exports =
   ProductImportLogger: ProductImportLogger
-  ProductUpdateLogger: ProductUpdateLogger
+  ProductUpdateImportLogger: ProductUpdateImportLogger

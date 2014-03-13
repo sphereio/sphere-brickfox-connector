@@ -55,31 +55,33 @@ class ProductImport
     @logger.info 'ProductImport execution started.'
 
     Q.spread [
-      @_loadMapping @_options.mapping
+      @_loadMappings @_options.mapping
       @_loadProductsXML @_options.products
       @_loadManufacturersXML @_options.manufacturers
       @_loadCategoriesXML @_options.categories
       @_fetchProductTypes()
       @_fetchCategories()
       ],
-      (mapping, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
-        @logger.debug "mapping:\n#{mapping}"
+      (mappings, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
+        @logger.debug "mappings:\n#{mappings}"
         @logger.debug "productsXML:\n#{utils.pretty productsXML}"
         @logger.debug "fetchedProductTypes:\n#{utils.pretty fetchedProductTypes}"
-        @mapping = JSON.parse mapping
+        @mappings = JSON.parse mappings
+        utils.assertProductIdMappingIsDefined @mappings
+        utils.assertSkuMappingIsDefined @mappings
         @productsXML = productsXML
         @categoriesXML = categoriesXML
         @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
         @toBeImported = _.size(productsXML.Products?.Product)
         @productType = @_getProductType(fetchedProductTypes, @_options)
-        manufacturers = @_buildManufacturers(manufacturersXML, @productType) if manufacturersXML
-        @_updateProductType(@productType.id, manufacturers) if manufacturers
+        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings) if manufacturersXML
+        @_updateProductType(manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
       @logger.info '[Categories] Categories XML import started...'
       @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'"
       @categories = @_buildCategories(@categoriesXML) if @categoriesXML
       @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      @_batch(_.map(@categoryCreates, (c) => @_createCategory c), 100) if @categoryCreates
+      utils.batch(_.map(@categoryCreates, (c) => @_createCategory c), 100) if @categoryCreates
     .then (createCategoriesResult) =>
       # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
       @_fetchCategories() if @categoryCreates
@@ -87,13 +89,13 @@ class ProductImport
       @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
       @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
       categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      @_batch(_.map(categoryUpdates, (c) => @_updateCategory c), 100) if categoryUpdates
+      utils.batch(_.map(categoryUpdates, (c) => @_updateCategory c), 100) if categoryUpdates
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
       @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
-      products = @_buildProducts(@productsXML, @productType, @fetchedCategories)
+      products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings)
       @logger.info "[Products] Create count: '#{_.size products}'"
-      @_batch(_.map(products, (p) => @_createProduct p), 100) if products
+      utils.batch(_.map(products, (p) => @_createProduct p), 100) if products
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
@@ -110,7 +112,7 @@ class ProductImport
                     Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback @success
 
-  _loadMapping: (path) ->
+  _loadMappings: (path) ->
     utils.readFile(path)
 
   _loadProductsXML: (path) ->
@@ -127,13 +129,14 @@ class ProductImport
   #
   # @param {Object} data Data to get manufacturers information from
   # @param {Object} productType Product type with existing manufacturer values
+  # @param {Object} mappings Product import attribute mappings
   # @return {Array} List of product type update actions
   ###
-  _buildManufacturers: (data, productType) ->
+  _buildManufacturers: (data, productType, mappings) ->
     @logger.info '[Manufacturers] Manufacturers XML import started...'
     @logger.debug "[Manufacturers] data:\n#{utils.pretty data}"
 
-    if not @mapping.ManufacturerId
+    if not mappings.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
       return
 
@@ -144,7 +147,7 @@ class ProductImport
       @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
-    attributeName = @mapping.ManufacturerId.to
+    attributeName = mappings.ManufacturerId.to
     # find attribute on product type
     matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
     if not matchedAttr
@@ -153,12 +156,12 @@ class ProductImport
     actions = []
     # extract only keys from product type attribute values
     keys = _.pluck(matchedAttr.type.values, 'key')
-    _.each data.Manufacturers.Manufacturer, (m) =>
+    _.each data.Manufacturers.Manufacturer, (m) ->
       key = m.ManufacturerId[0]
       exists = _.contains(keys,  key)
       if not exists
         # attribute value does not exist yet -> create new addLocalizedEnumValue action
-        value = @_getLocalizedValues(m.Translations[0], 'Name')
+        value = utils.getLocalizedValues(m.Translations[0], 'Name')
         action =
           action: 'addLocalizedEnumValue'
           attributeName: attributeName
@@ -169,9 +172,12 @@ class ProductImport
 
     if _.size(actions) > 0
       @logger.info "[Manufacturers] Update actions to send for attribute '#{attributeName}': '#{_.size actions}'"
-      payload =
-        version: productType.version
-        actions: actions
+      wrapper =
+        id: productType.id
+        payload:
+          version: productType.version
+          actions: actions
+
     else
       @logger.info "[Manufacturers] No update action for manufacturers attribute '#{attributeName}' required."
 
@@ -264,7 +270,7 @@ class ProductImport
       if _.size(actions) > 0
         wrapper =
           id: oldCategory.id
-          actions:
+          payload:
             version: oldCategory.version
             actions: actions
         updates.push wrapper
@@ -313,8 +319,8 @@ class ProductImport
   # @return {Object} Sphere category representation
   ###
   _convertCategory: (categoryItem) ->
-    names = @_getLocalizedValues(categoryItem.Translations[0], 'Name')
-    slugs = @_getLocalizedSlugs(names)
+    names = utils.getLocalizedValues(categoryItem.Translations[0], 'Name')
+    slugs = utils.generateLocalizedSlugs(names)
     category =
       id: categoryItem.CategoryId[0]
       name: names
@@ -333,7 +339,11 @@ class ProductImport
       if error
         deferred.reject error
       else
-        deferred.resolve body
+        if response.statusCode isnt 200
+          message = "Error on fetch categories; \n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          deferred.resolve body
     deferred.promise
 
   ###
@@ -359,20 +369,20 @@ class ProductImport
   ###
   # Updates asynchronously category in Sphere.
   #
-  # @param {Object} payload Update category request as JSON
+  # @param {Object} data Update category request data
   # @return {Object} If success returns promise with success message otherwise rejects with error message
   ###
-  _updateCategory: (payload) ->
+  _updateCategory: (data) ->
     deferred = Q.defer()
-    @rest.POST "/categories/#{payload.id}", payload.actions, (error, response, body) ->
+    @rest.POST "/categories/#{data.id}", data.payload, (error, response, body) ->
       if error
-        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 200
-          message = "Error on category type update; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+          message = "Error on categories update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
-          message = 'Category type updated.'
+          message = "Category with id: '#{data.id}' updated."
           deferred.resolve message
     deferred.promise
 
@@ -387,27 +397,30 @@ class ProductImport
       if error
         deferred.reject error
       else
-        deferred.resolve body
+        if response.statusCode isnt 200
+          message = "Error on fetch product-types; \n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          deferred.resolve body
     deferred.promise
 
   ###
   # Updates asynchronously product type in Sphere.
   #
-  # @param {String} id Product type id
-  # @param {Object} payload Update product type request as JSON
+  # @param {Object} data Update product type data
   # @return {Object} If success returns promise with success message otherwise rejects with error message
   ###
-  _updateProductType: (id, payload) =>
+  _updateProductType: (data) =>
     deferred = Q.defer()
-    @rest.POST "/product-types/#{id}", payload, (error, response, body) ->
+    @rest.POST "/product-types/#{data.id}", data.payload, (error, response, body) ->
       if error
-        deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+        deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 200
-          message = "Error on product type update; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
+          message = "Error on product type update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
-          message = 'Product type updated.'
+          message = "Product type with id: '#{data.id}' updated."
           deferred.resolve message
     deferred.promise
 
@@ -435,26 +448,24 @@ class ProductImport
     deferred.promise
 
   ###
-  # Executes in parallel defined number of asynchronous promise requests.
+  # Updates asynchronously product in Sphere.
   #
-  # @param {Array} list List of promise requests to fire
-  # @param {Array} numberOfParallelRequest Number of requests to be fired in parallel
-  # @return {Boolean} Returns true if all promises could be successfully resolved
+  # @param {Object} data Update product request data
+  # @return {Object} If success returns promise with success message otherwise rejects with error message
   ###
-  _batch: (list, numberOfParallelRequest) ->
+  updateProduct: (data) ->
     deferred = Q.defer()
-    doBatch = (list, numberOfParallelRequest) ->
-      current = _.take list, numberOfParallelRequest
-      Q.all(current)
-      .then (result) ->
-        if _.size(current) < numberOfParallelRequest
-          deferred.resolve true
+    @rest.POST "/products/#{data.id}", data.payload, (error, response, body) ->
+      if error
+        deferred.reject "HTTP error on product update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+      else
+        if response.statusCode isnt 200
+          message = "Error on product update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+          deferred.reject message
         else
-          doBatch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
-      .fail (error) ->
-        deferred.reject error
-     doBatch(list, numberOfParallelRequest)
-     deferred.promise
+          message = "Product with id: '#{data.id}' updated."
+          deferred.resolve message
+    deferred.promise
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.
@@ -462,21 +473,22 @@ class ProductImport
   # @param {Object} data Product XML data
   # @param {Object} productType Product type to use
   # @param {Array} fetchedCategories List of existing categories
+  # @param {Object} mappings Product import attribute mappings
   # @return {Array} List of Sphere product representations
   ###
-  _buildProducts: (data, productType, fetchedCategories) =>
+  buildProducts: (data, productType, fetchedCategories, mappings) =>
     products = []
-    _.each data.Products?.Product, (p) =>
-      names = @_getLocalizedValues(p.Descriptions[0], 'Title')
-      descriptions = @_getLocalizedValues(p.Descriptions[0], 'LongDescription')
-      slugs = @_getLocalizedSlugs(names)
+    _.each data, (p) =>
+      names = utils.getLocalizedValues(p.Descriptions?[0], 'Title')
+      descriptions = utils.getLocalizedValues(p.Descriptions?[0], 'LongDescription')
+      slugs = utils.generateLocalizedSlugs(names)
 
       # create product
       product =
         name: names
         slug: slugs
         productType:
-          id: productType.id
+          id: productType?.id
           typeId: 'product-type'
         description: descriptions
         variants: []
@@ -489,15 +501,15 @@ class ProductImport
       # exclude product attributes which has to be handled differently
       simpleAttributes = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
       _.each simpleAttributes, (value, key) =>
-        @_processValue(product, variantBase, key, value)
+        @_processValue(product, variantBase, key, value, mappings)
 
       # extract Attributes from product
       _.each p.Attributes, (item) =>
-        @_processAttributes(item, product, variantBase)
+        @_processAttributes(item, product, variantBase, mappings)
 
       # add variants
       _.each p.Variations[0].Variation, (v, index, list) =>
-        variant = @_buildVariant(v, product, variantBase)
+        variant = @_buildVariant(v, product, variantBase, mappings)
         if index is 0
           product.masterVariant = variant
         else
@@ -515,33 +527,34 @@ class ProductImport
   # @param {Object} v Variant XML data
   # @param {Object} product New product object
   # @param {Object} variantBase Base attributes to use for new variant
+  # @param {Object} mappings Product import attribute mappings
   # @return {Object} Sphere product variant representation
   ###
-  _buildVariant: (v, product, variantBase) ->
+  _buildVariant: (v, product, variantBase, mappings) ->
     variant = JSON.parse(JSON.stringify(variantBase))
 
     # exclude special attributes, which has to be handled differently
     simpleAttributes = _.omit(v, ['Currencies', 'Descriptions', 'Options', 'Attributes', 'VariationImages', '$'])
     _.each simpleAttributes, (value, key) =>
-      @_processValue(product, variant, key, value)
+      @_processValue(product, variant, key, value, mappings)
 
     # process variant 'Currencies'
-    _.each v.Currencies[0]?.Currency, (item) =>
-      @_processCurrencies(item, product, variant)
+    _.each v.Currencies?[0]?.Currency, (item) =>
+      @_processCurrencies(item, product, variant, mappings)
 
     # process variant 'Options'
-    _.each v.Options[0]?.Option, (item) =>
+    _.each v.Options?[0]?.Option, (item) =>
       key = item['$'].id
       value = item.Translations[0].Translation[0].OptionValue
-      @_processValue(product, variant, key, value)
+      @_processValue(product, variant, key, value, mappings)
 
     # process variant 'Attributes'
     _.each v.Attributes, (item) =>
-      @_processAttributes(item, product, variant)
+      @_processAttributes(item, product, variant, mappings)
 
     # process variant 'VariationImages'
-    _.each v.VariationImages[0]?.VariationImage, (item) =>
-      @_processImages(item, variant)
+    _.each v.VariationImages?[0]?.VariationImage, (item) =>
+      @_processImages(item, variant, mappings)
 
     variant
 
@@ -554,7 +567,7 @@ class ProductImport
   ###
   _processCategories: (product, data, fetchedCategories) ->
     catReferences = []
-    _.each data.Categories[0]?.Category, (c) =>
+    _.each data.Categories?[0]?.Category, (c) =>
       categoryId = c.CategoryId[0]
       existingCategory = @_getCategoryByExternalId(categoryId, fetchedCategories)
       id = existingCategory.id
@@ -571,11 +584,12 @@ class ProductImport
   #
   # @param {Object} item Item to get images from
   # @param {Object} variant Variant object to save images to
+  # @param {Object} mappings Product import attribute mappings
   ###
-  _processImages: (item, variant) ->
-    _.each item, (value, key) =>
-      if _.has(@mapping, key)
-        mapping = @mapping[key]
+  _processImages: (item, variant, mappings) ->
+    _.each item, (value, key) ->
+      if _.has(mappings, key)
+        mapping = mappings[key]
         url = value[0]
         if not _s.startsWith(url, 'http')
           url = "#{mapping.specialMapping.baseURL}#{url}"
@@ -597,11 +611,12 @@ class ProductImport
   # @param {Object} item Item to get currency prices from
   # @param {Object} product Product object to save processed values to
   # @param {Object} variant Variant object to save processed values to
+  # @param {Object} mappings Product import attribute mappings
   ###
-  _processCurrencies: (item, product, variant) ->
+  _processCurrencies: (item, product, variant, mappings) ->
     _.each item, (value, key) =>
-      if _.has(@mapping, key)
-        mapping = @mapping[key]
+      if _.has(mappings, key)
+        mapping = mappings[key]
         if mapping.type is 'special-price'
           price = {}
           currency = item['$'].currencyIso
@@ -637,20 +652,20 @@ class ProductImport
   # @param {Object} product Product object to save processed values to
   # @param {Object} variant Variant object to save processed values to
   ###
-  _processAttributes: (item, product, variant) ->
+  _processAttributes: (item, product, variant, mappings) ->
     if item.Boolean
       _.each item.Boolean, (el) =>
         key = @_getAttributeKey(el)
-        @_processValue(product, variant, key, el.Value[0])
+        @_processValue(product, variant, key, el.Value[0], mappings)
     if item.Integer
       _.each item.Integer, (el) =>
         key = @_getAttributeKey(el)
-        @_processValue(product, variant, key, el.Value[0])
+        @_processValue(product, variant, key, el.Value[0], mappings)
     if item.String
       _.each item.String, (el) =>
         key = @_getAttributeKey(el)
-        value = @_getLocalizedValues(el.Translations[0], 'Value')
-        @_processValue(product, variant, key, value)
+        value = utils.getLocalizedValues(el.Translations[0], 'Value')
+        @_processValue(product, variant, key, value, mappings)
 
   ###
   # Returns attribute's key.
@@ -663,35 +678,6 @@ class ProductImport
     if not key
       key = item.Translations[0].Translation[0].Name[0]
     key
-
-  ###
-  # Returns localized values for all detected languages.
-  #
-  # @param {Object} mainNode Main XML node to get Localizations from
-  # @param {String} name Element name to localize
-  # @return {Object} Localized values
-  ###
-  _getLocalizedValues: (mainNode, name) ->
-    localized = {}
-    _.each mainNode, (item) ->
-      _.each item, (val, index, list) ->
-        lang = list[index]['$'].lang
-        value = utils.xmlVal(list[index], name)
-        localized[lang] = value
-    localized
-
-  ###
-  # Returns slugified values for given localized parameter values.
-  #
-  # @param {Object} mainNode Main XML node to get Localizations from
-  # @return {Object} Localized slugs
-  ###
-  _getLocalizedSlugs: (names) ->
-    slugs = {}
-    _.each names, (value, key, list) ->
-      slug = utils.generateSlug(value)
-      slugs[key] = slug
-    slugs
 
   ###
   # Returns product type. If 'productTypeId' command line parameter has been used,
@@ -760,6 +746,8 @@ class ProductImport
         val = value
       when 'enum', 'lenum'
         val = _s.slugify value[0]
+      when 'number'
+        val = _s.toNumber(value[0])
       when 'money'
         val = @_getPriceAmount(value[0], mapping)
         currency = if mapping.currency then mapping.currency else 'EUR'
@@ -794,9 +782,10 @@ class ProductImport
   # @param {Object} variant Variant object to save processed values to
   # @param {Object} key Mapping key
   # @param {Object} value Value to process
+  # @param {Object} mappings Product import attribute mappings
   ###
-  _processValue: (product, variant, key, value) =>
-    if _.has(@mapping, key)
-      @_addValue(product, variant, value, @mapping[key])
+  _processValue: (product, variant, key, value, mappings) =>
+    if _.has(mappings, key)
+      @_addValue(product, variant, value, mappings[key])
 
 module.exports = ProductImport

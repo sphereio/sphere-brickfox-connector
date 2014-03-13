@@ -47,3 +47,89 @@ exports.xmlToJson = (path) =>
 
 exports.pretty = (data) ->
   JSON.stringify data, null, 4
+
+###
+# Executes in parallel defined number of asynchronous promise requests.
+#
+# @param {Array} list List of promise requests to fire
+# @param {Array} numberOfParallelRequest Number of requests to be fired in parallel
+# @return {Boolean} Returns true if all promises could be successfully resolved
+###
+exports.batch = (list, numberOfParallelRequest) ->
+  deferred = Q.defer()
+  doBatch = (list, numberOfParallelRequest) ->
+    current = _.take list, numberOfParallelRequest
+    Q.all(current)
+    .then (result) ->
+      if _.size(current) < numberOfParallelRequest
+        deferred.resolve result
+      else
+        doBatch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
+    .fail (error) ->
+      deferred.reject error
+   doBatch(list, numberOfParallelRequest)
+   deferred.promise
+
+###
+# Returns localized values for all detected languages.
+#
+# @param {Object} mainNode Main XML node to get Localizations from
+# @param {String} name Element name to localize
+# @return {Object} Localized values
+###
+exports.getLocalizedValues = (mainNode, name) =>
+  localized = {}
+  _.each mainNode, (item) =>
+    _.each item, (val, index, list) =>
+      lang = list[index]['$'].lang
+      value = @xmlVal(list[index], name)
+      localized[lang] = value
+  localized
+
+###
+# Returns slugified values for given localized parameter values.
+#
+# @param {Object} mainNode Main XML node to get Localizations from
+# @return {Object} Localized slugs
+###
+exports.generateLocalizedSlugs = (names) =>
+  slugs = {}
+  _.each names, (value, key, list) =>
+    slug = @generateSlug(value)
+    slugs[key] = slug
+  slugs
+
+###
+# Asserts for existence of required Brickfox product external id mapping
+#
+# @param {Object} mappings Object with attribute mappings
+# @throws {Error} If no mapping for Brickfox field 'ProductId' is defined
+###
+exports.assertProductIdMappingIsDefined = (mappings) ->
+  productExternalIdMapping = mappings.ProductId?.to
+  if not productExternalIdMapping
+    throw new Error "No Brickfox to SPHERE 'ProductId' attribute mapping found. This id is required in order to map Brickfox product updates to existing SPHERE products."
+
+###
+# Asserts SPHERE SKU field mapping is defined
+#
+# @param {Object} mappings Object with attribute mappings
+# @throws {Error} If no mapping for SPHERE field 'sku' is defined
+###
+exports.assertSkuMappingIsDefined = (mappings) ->
+  brickfoxSkuFieldName = _.find mappings, (mapping) -> mapping.to is 'sku'
+  if not brickfoxSkuFieldName
+    throw new Error "Error on product update / import. SPHERE 'sku' attribute mapping could not be found."
+
+exports.buildRemovePriceAction = (price, variantId) ->
+  action =
+    action: 'removePrice'
+    variantId: variantId
+    price: price
+
+exports.buildAddPriceAction = (price, variantId) ->
+  action =
+    action: 'addPrice'
+    variantId: variantId
+    price: price
+
