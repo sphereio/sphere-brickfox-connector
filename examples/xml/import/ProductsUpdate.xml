@@ -1,35 +1,450 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Products count="1">
+<Products count="4" shopsId="3">
   <ProductUpdate num="1">
-    <ProductId>4954</ProductId>
-    <ExternProductId>f5a54bfb83e0945b6f1c2d133bd14</ExternProductId>
+    <ProductId>235240</ProductId>
+    <ExternProductId>50251123 THE SMITH11_1</ExternProductId>
     <Active>1</Active>
     <Variations>
       <Variation>
-        <VariationId>27171</VariationId>
-        <ExternVariationId>94b46d08ad86ad11e7eaf4f41d8a8</ExternVariationId>
+        <VariationId>1507416</VariationId>
+        <ExternVariationId>2000280430243</ExternVariationId>
         <VariationActive>1</VariationActive>
-        <Available>0</Available>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>2</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1507417</VariationId>
+        <ExternVariationId>2000280440242</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
         <ThirdPartyStock>0</ThirdPartyStock>
         <Stock>1</Stock>
         <Currencies>
           <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
-            <PriceGross>14.90</PriceGross>
+            <PriceGross>666.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>777.90</BasePrice>
           </Currency>
         </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
       </Variation>
       <Variation>
-        <VariationId>27172</VariationId>
-        <ExternVariationId>9c45061339428abe59e662224ecd3</ExternVariationId>
+        <VariationId>1507418</VariationId>
+        <ExternVariationId>2000280450241</ExternVariationId>
         <VariationActive>1</VariationActive>
-        <Available>0</Available>
+        <Available>1</Available>
         <ThirdPartyStock>0</ThirdPartyStock>
-        <Stock>7</Stock>
+        <Stock>2</Stock>
         <Currencies>
           <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
-            <PriceGross>14.90</PriceGross>
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
           </Currency>
         </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1507419</VariationId>
+        <ExternVariationId>2000280460240</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>2</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1507420</VariationId>
+        <ExternVariationId>2000280470249</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>1</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1507421</VariationId>
+        <ExternVariationId>2000280480248</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>2</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>349.90</PriceGross>
+            <Rrp>349.90</Rrp>
+            <BasePrice>349.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+    </Variations>
+  </ProductUpdate>
+  <ProductUpdate num="2">
+    <ProductId>250851</ProductId>
+    <ExternProductId>50261154 ARDY 001</ExternProductId>
+    <Active>1</Active>
+    <Variations>
+      <Variation>
+        <VariationId>1634880</VariationId>
+        <ExternVariationId>2000007971134</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1634881</VariationId>
+        <ExternVariationId>2000007981133</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1634882</VariationId>
+        <ExternVariationId>2000007991132</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1634883</VariationId>
+        <ExternVariationId>2000008001137</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1634884</VariationId>
+        <ExternVariationId>2000008011136</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>299.90</PriceGross>
+            <Rrp>299.90</Rrp>
+            <BasePrice>299.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+    </Variations>
+  </ProductUpdate>
+  <ProductUpdate num="3">
+    <ProductId>242850</ProductId>
+    <ExternProductId>W34R47 Z0PX0</ExternProductId>
+    <Active>1</Active>
+    <Variations>
+      <Variation>
+        <VariationId>1575899</VariationId>
+        <ExternVariationId>2000325080242</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>3</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1575900</VariationId>
+        <ExternVariationId>2000325090241</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>3</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1575901</VariationId>
+        <ExternVariationId>2000325100247</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>5</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1575902</VariationId>
+        <ExternVariationId>2000325110246</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>2</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>129.90</PriceGross>
+            <Rrp>129.90</Rrp>
+            <BasePrice>129.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+    </Variations>
+  </ProductUpdate>
+  <ProductUpdate num="4">
+    <ProductId>250268</ProductId>
+    <ExternProductId>HARMONY CARDIGAN L/S 165763127</ExternProductId>
+    <Active>1</Active>
+    <Variations>
+      <Variation>
+        <VariationId>1630118</VariationId>
+        <ExternVariationId>2001586170086</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>4</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1630119</VariationId>
+        <ExternVariationId>2001586180085</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>1</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1630120</VariationId>
+        <ExternVariationId>2001586190084</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>13</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1630121</VariationId>
+        <ExternVariationId>2001586200080</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
+      </Variation>
+      <Variation>
+        <VariationId>1630122</VariationId>
+        <ExternVariationId>2001586210089</ExternVariationId>
+        <VariationActive>1</VariationActive>
+        <Available>1</Available>
+        <ThirdPartyStock>0</ThirdPartyStock>
+        <Stock>0</Stock>
+        <Currencies>
+          <Currency code="Eur" mainCurrency="1" currencyIso="EUR">
+            <PriceGross>99.90</PriceGross>
+            <Rrp>99.90</Rrp>
+            <BasePrice>99.90</BasePrice>
+          </Currency>
+        </Currencies>
+        <Descriptions>
+          <Description lang="de">
+            <BasePriceUnit>Stück</BasePriceUnit>
+            <ContentUnit>Stück</ContentUnit>
+          </Description>
+        </Descriptions>
       </Variation>
     </Variations>
   </ProductUpdate>
