@@ -28,7 +28,7 @@
     "ProductId": {
         "target": "variant",
         "isCustom": "true",
-        "type": "text",
+        "type": "number",
         "to": "productId"
     },
     "15": {
