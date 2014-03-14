@@ -52,7 +52,7 @@ class ProductImport
   ###
   execute: (callback) ->
     @startTime = new Date().getTime()
-    @logger.info 'ProductImport execution started.'
+    @logger.info '[Products] ProductImport execution started.'
 
     Q.spread [
       @_loadMappings @_options.mapping
@@ -62,11 +62,8 @@ class ProductImport
       @_fetchProductTypes()
       @_fetchCategories()
       ],
-      (mappings, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
-        @logger.debug "mappings:\n#{mappings}"
-        @logger.debug "productsXML:\n#{utils.pretty productsXML}"
-        @logger.debug "fetchedProductTypes:\n#{utils.pretty fetchedProductTypes}"
-        @mappings = JSON.parse mappings
+      (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
+        @mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined @mappings
         utils.assertSkuMappingIsDefined @mappings
         @productsXML = productsXML
@@ -107,9 +104,9 @@ class ProductImport
   _processResult: (callback) ->
     endTime = new Date().getTime()
     result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """ProductImport finished with result: #{result}.
-                    #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed.
-                    Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    @logger.info """[Products] ProductImport finished with result: #{result}.
+                    [Products] #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed.
+                    [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback @success
 
   _loadMappings: (path) ->
@@ -134,7 +131,6 @@ class ProductImport
   ###
   _buildManufacturers: (data, productType, mappings) ->
     @logger.info '[Manufacturers] Manufacturers XML import started...'
-    @logger.debug "[Manufacturers] data:\n#{utils.pretty data}"
 
     if not mappings.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
@@ -188,7 +184,6 @@ class ProductImport
   # @return {Array} List of categories
   ###
   _buildCategories: (data) ->
-    @logger.debug "[Categories] data:\n#{utils.pretty data}"
     count = _.size(data.Categories?.Category)
     if count
       @logger.info "[Categories] Import categories found: '#{count}'"
@@ -200,7 +195,6 @@ class ProductImport
       category = @_convertCategory(c)
       categories.push category
     @logger.info "[Categories] Import candidates count: '#{_.size categories}'"
-    @logger.debug "[Categories] Import candidates data: '#{utils.pretty categories}'"
     categories
 
   ###
