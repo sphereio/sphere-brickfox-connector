@@ -50,7 +50,8 @@ class ProductUpdateImport
       @_loadMappings @_options.mapping
       @_loadProductsXML @_options.products
       ],
-      (mappings, productsXML) =>
+      (mappingsJson, productsXML) =>
+        mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined mappings
         utils.assertSkuMappingIsDefined mappings
         @toBeImported = _.size(productsXML.Products?.ProductUpdate)
@@ -289,7 +290,7 @@ class ProductUpdateImport
       stock = variant.tempstock
       inventory =
         sku: sku
-        quantityOnStock: _s.toNumber(stock)
+        quantityOnStock: parseInt(stock, 10)
       creates.push inventory
 
     count = _.size(creates)
@@ -305,7 +306,7 @@ class ProductUpdateImport
       stock = variant.tempstock
       pair =
         newObj:
-          quantityOnStock: _s.toNumber(stock)
+          quantityOnStock: parseInt(stock, 10)
         oldObj: old
 
       updates.push pair
