@@ -17,10 +17,18 @@ exports.readFile = (file) ->
   deferred = Q.defer()
   fs.readFile file, 'utf8', (error, result) ->
     if error
-      message = "Can not read file '#{file}'; #{error}"
-      deferred.reject message
+      deferred.reject "Can not read file '#{file}'; #{error}"
     else
       deferred.resolve result
+  deferred.promise
+
+exports.writeFile = (file, content) ->
+  deferred = Q.defer()
+  fs.writeFile file, content, (error, result) ->
+    if error
+      deferred.reject "Can not write file '#{file}'; #{error}"
+    else
+      deferred.resolve "OK"
   deferred.promise
 
 exports.loadOptionalResource = (path) =>
@@ -100,15 +108,24 @@ exports.generateLocalizedSlugs = (names) =>
   slugs
 
 ###
-# Asserts for existence of required Brickfox product external id mapping
+# Asserts for existence of required Brickfox ProductId mapping
 #
 # @param {Object} mappings Object with attribute mappings
 # @throws {Error} If no mapping for Brickfox field 'ProductId' is defined
 ###
 exports.assertProductIdMappingIsDefined = (mappings) ->
-  productExternalIdMapping = mappings.ProductId?.to
-  if not productExternalIdMapping
-    throw new Error "No Brickfox to SPHERE 'ProductId' attribute mapping found. This id is required in order to map Brickfox product updates to existing SPHERE products."
+  if not mappings.ProductId?.to
+    throw new Error "No Brickfox to SPHERE 'ProductId' attribute mapping found. ProductId is required in order to map Brickfox product updates to existing SPHERE products."
+
+###
+# Asserts for existence of required Brickfox VariationId mapping
+#
+# @param {Object} mappings Object with attribute mappings
+# @throws {Error} If no mapping for Brickfox field 'VariationId' is defined
+###
+exports.assertVariationIdMappingIsDefined = (mappings) ->
+  if not mappings.VariationId?.to
+    throw new Error "No Brickfox to SPHERE 'VariationId' attribute mapping found. VariationId is required in order to export Sphere orders to Brickfox."
 
 ###
 # Asserts SPHERE SKU field mapping is defined
@@ -120,6 +137,21 @@ exports.assertSkuMappingIsDefined = (mappings) ->
   brickfoxSkuFieldName = _.find mappings, (mapping) -> mapping.to is 'sku'
   if not brickfoxSkuFieldName
     throw new Error "Error on product update / import. SPHERE 'sku' attribute mapping could not be found."
+
+exports.getVariantAttValue = (mappings, name, variant) ->
+  value
+  mapping = mappings[name]
+  mappedTo = mapping.to
+  if mapping.isCustom
+    att = _.find variant.attributes, (att) -> att.name is mappedTo
+    value = att.value
+  else
+    value = variant[mappedTo]
+
+  if not value
+    throw new Error "Variant with sku: '#{variant.sku}' does not define required attribute value for Brickfox field name: '#{name}'. Make sure you defined mapping for this field."
+  else
+    value
 
 exports.buildRemovePriceAction = (price, variantId) ->
   action =
