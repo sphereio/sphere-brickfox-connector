@@ -13,15 +13,12 @@ Imports Brickfox product stock and price updates into Sphere.
 class ProductUpdateImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'XML source path is required' unless @_options.products
-    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required' unless @_options.mapping
+    throw new Error 'XML source path argument is required' unless @_options.products
+    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path argument is required' unless @_options.mapping
     @inventorySync = new InventorySync @_options
     @rest = new Rest @_options
     @productImport = new ProductImport @_options
     @logger = @_options.appLogger
-    @successCounter = 0
-    @failCounter = 0
-    @success = false
 
   ###
   # Reads given product import XML file and creates/updates/deletes product prices and stock / inventories
@@ -53,6 +50,7 @@ class ProductUpdateImport
       (mappingsJson, productsXML) =>
         mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined mappings
+        utils.assertVariationIdMappingIsDefined @mappings
         utils.assertSkuMappingIsDefined mappings
         @toBeImported = _.size(productsXML.Products?.ProductUpdate)
         newProducts = @_processProductUpdatesData(productsXML, mappings)
@@ -88,20 +86,19 @@ class ProductUpdateImport
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback)
+      @_processResult(callback, false)
     .done (result) =>
-      @success = true
-      @_processResult(callback)
+      @_processResult(callback, true)
 
-  _processResult: (callback) ->
+  _processResult: (callback, isSuccess) ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
+    result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[ProductsUpdate] ProductUpdateImport finished with result: #{result}.
                     [ProductsUpdate] Price updated for #{@priceUpdatedCount} out of #{@toBeImported} products.
                     [ProductsUpdate] Inventories created: '#{@inventoriesCreated}'
                     [ProductsUpdate] Inventories updated: '#{@inventoriesUpdated}'
                     [ProductsUpdate] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback @success
+    callback isSuccess
 
   _loadMappings: (path) ->
     utils.readFile(path)

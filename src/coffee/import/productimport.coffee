@@ -13,14 +13,13 @@ Imports Brickfox products provided as XML into Sphere.
 class ProductImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'XML source path is required' unless @_options.products
-    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required' unless @_options.mapping
+    throw new Error 'XML source path argument is required' unless @_options.products
+    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path argument is required' unless @_options.mapping
     @sync = new ProductSync @_options
     @rest = new Rest @_options
     @logger = @_options.appLogger
     @successCounter = 0
     @failCounter = 0
-    @success = false
 
   ###
   # Reads given import XML files and creates/updates product types, categories and products in Sphere (product types and categories has to be imported first)
@@ -65,6 +64,7 @@ class ProductImport
       (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
         @mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined @mappings
+        utils.assertVariationIdMappingIsDefined @mappings
         utils.assertSkuMappingIsDefined @mappings
         @productsXML = productsXML
         @categoriesXML = categoriesXML
@@ -96,18 +96,17 @@ class ProductImport
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback)
+      @_processResult(callback, false)
     .done (result) =>
-      @success = true
-      @_processResult(callback)
+      @_processResult(callback, true)
 
-  _processResult: (callback) ->
+  _processResult: (callback, isSuccess) ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
+    result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[Products] ProductImport finished with result: #{result}.
                     [Products] #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed.
                     [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback @success
+    callback isSuccess
 
   _loadMappings: (path) ->
     utils.readFile(path)
