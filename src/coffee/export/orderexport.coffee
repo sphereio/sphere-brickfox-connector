@@ -3,6 +3,7 @@ Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
+libxmljs = require 'libxmljs'
 utils = require '../../lib/utils'
 {Rest} = require('sphere-node-connect')
 
@@ -38,8 +39,9 @@ class OrderExport
     Q.spread [
       @_loadMappings @_options.mapping
       @_getUnSyncedOrders(numberOfDays)
+      @_loadOrdersXsd './examples/xsd/orders.xsd'
       ],
-      (mappingsJson, fetchedOrders) =>
+      (mappingsJson, fetchedOrders, ordersXsd) =>
         @mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined @mappings
         utils.assertVariationIdMappingIsDefined @mappings
@@ -49,20 +51,29 @@ class OrderExport
           @logger.info "[OrderExport] Orders to export count: '#{_.size @fetchedOrders}'"
           xmlOrders = @_ordersToXML(@fetchedOrders)
           content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
-          @_writeFile(@_options.output, content)
+          @_validateXML(content, ordersXsd)
+          @fileName = @_getFileName(@_options.output)
+          @_writeFile(@fileName, content)
         else
           @logger.info "[OrderExport] No unexported orders found."
     .then (writeXMLResult) =>
       if writeXMLResult is 'OK'
-        @logger.info "[OrderExport] Write file '#{@_options.output}' finished."
+        @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
       utils.batch(_.map(@fetchedOrders, (o) => @_addSyncInfo(o.id, o.version, @_options.channelid, o.id)), 100) if _.size(@fetchedOrders) > 0
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback, false)
     .done (result) =>
-      @logger.info "[OrderExport] Updated SyncInfo for '#{_.size result}' orders." if _.size(result) > 0
+      @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
       @_processResult(callback, true)
+
+  _getFileName: (path) ->
+    if _s.endsWith(path, '.xml')
+      return path
+    else
+      timeStamp = new Date().getTime()
+      return "#{path}Orders-#{timeStamp}.xml"
 
   _processResult: (callback, isSuccess) ->
     endTime = new Date().getTime()
@@ -72,6 +83,9 @@ class OrderExport
     callback isSuccess
 
   _loadMappings: (path) ->
+    utils.readFile(path)
+
+  _loadOrdersXsd: (path) ->
     utils.readFile(path)
 
   _writeFile: (path, content) ->
@@ -131,7 +145,8 @@ class OrderExport
     orderXML.e('TotalAmountVat').t(@_toAmount(order.taxedPrice.taxPortions[0].amount.centAmount))
     orderXML.e('TotalAmount').t(@_toAmount(order.taxedPrice.totalGross.centAmount))
 
-    if order.shippingInfo
+    shippingInfo = order.shippingInfo
+    if shippingInfo
       shippingCost = @_toAmount(shippingInfo.price.centAmount)
       orderXML.e('ShippingCost').t(shippingCost)
       orderXML.e('ShippingMethod').t(shippingInfo.shippingMethodName)
@@ -178,5 +193,10 @@ class OrderExport
     el.e('PhonePrivate').t(address.phone) if address.phone
     el.e('EmailAddress').t(address.email) if address.email
 
+  _validateXML: (xml, xsd) ->
+    xmlDoc = libxmljs.parseXmlString xml
+    xsdDoc = libxmljs.parseXmlString xsd
+    result = xmlDoc.validate(xsdDoc)
+    throw new Error "XML validation against XSD schema failed. XML content: \n #{xml}" if not result
 
 module.exports = OrderExport
