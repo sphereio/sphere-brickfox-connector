@@ -13,8 +13,6 @@ Imports Brickfox product stock and price updates into Sphere.
 class ProductUpdateImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'XML source path argument is required' unless @_options.products
-    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path argument is required' unless @_options.mapping
     @inventorySync = new InventorySync @_options
     @rest = new Rest @_options
     @productImport = new ProductImport @_options
@@ -50,7 +48,7 @@ class ProductUpdateImport
       (mappingsJson, productsXML) =>
         mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined mappings
-        utils.assertVariationIdMappingIsDefined @mappings
+        utils.assertVariationIdMappingIsDefined mappings
         utils.assertSkuMappingIsDefined mappings
         @toBeImported = _.size(productsXML.Products?.ProductUpdate)
         newProducts = @_processProductUpdatesData(productsXML, mappings)

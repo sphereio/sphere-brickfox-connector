@@ -1,95 +1,172 @@
 _ = require('underscore')._
-ProductImport = require("./import/productimport")
-ProductUpdateImport = require("./import/productupdateimport")
-OrderExport = require("./export/orderexport")
-OrderStatusImport = require("./import/orderstatusimport")
+program = require 'commander'
+package_json = require '../package.json'
+ProductImport = require './import/productimport'
+ProductUpdateImport = require './import/productupdateimport'
+OrderExport = require './export/orderexport'
+OrderStatusImport = require './import/orderstatusimport'
 {ProductImportLogger, ProductUpdateImportLogger, OrderExportLogger, OrderStatusImportLogger} = require './loggers'
 
-# TODO replace optimist with commander or something else that supports subcommands.
-argv = require('optimist')
-  .usage('Usage: $0
-  --projectKey [key]
-  --clientId [id]
-  --clientSecret [secret]
-  --action [action]
-  --products [XML source path]
-  --manufacturers [XML source path]
-  --categories [XML source path]
-  --output [Write file output path]
-  --productTypeId [id]
-  --numberOfDays [days]
-  --channelId [id]
-  --mapping [JSON source path] --debug')
-  .describe('projectKey', 'Sphere.io project key.')
-  .describe('clientId', 'Sphere.io HTTP API client id.')
-  .describe('clientSecret', 'Sphere.io HTTP API client secret.')
-  .describe('action', 'Action to execute. Supported actions: ip, iup, eo, ios.')
-  .describe('products', 'Path to XML file with products.')
-  .describe('manufacturers', 'Path to XML file with manufacturers.')
-  .describe('categories', 'Path to XML file with categories.')
-  .describe('output', 'Path to the file to write to (required for exports)')
-  .describe('productTypeId', 'Product type ID to use for product creation. If not set first product type fetched from project will be used.')
-  .describe('numberOfDays', 'Retrieves orders from SPHERE created within the specified number of days starting with the present day. Default value is: 7')
-  .describe('channelId', 'Product type ID to use for product creation. If not set first type from list will be used.')
-  .describe('mapping', 'Product import attributes mapping (Brickfox -> SPHERE) file path.')
-  .describe('action ip', 'Import products from brickfox (products, manufacturers, categories and mapping parameters required)')
-  .describe('action iup', 'Import updated products from brickfox (products, mapping parameters required)')
-  .describe('action eo', 'Export orders to brickfox (output, channelId parameters are required)')
-  .describe('action ios', 'Import order status from brickfox (status parameter required)')
-  .describe('debug', 'Enable verbose logging output mode. Due to performance issues avoid using it in production environment.')
-  .demand(['projectKey', 'clientId', 'clientSecret', 'action'])
-  .argv
+module.exports = class
 
-debug = if argv.debug then argv.debug else false
+  @run: (argv) ->
+    program
+      .version package_json.version
+      .usage '[command] [globals] [options]'
+      .option '--projectKey <project-key>', 'your SPHERE.IO project-key'
+      .option '--clientId <client-id>', 'your OAuth client id for the SPHERE.IO API'
+      .option '--clientSecret <client-secret>', 'your OAuth client secret for the SPHERE.IO API'
+      .option '--debug', 'enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment'
 
-options =
-  config:
-    project_key: argv.projectKey
-    client_id: argv.clientId
-    client_secret: argv.clientSecret
-  mapping: argv.mapping
-  products: argv.products
-  manufacturers: argv.manufacturers
-  categories: argv.categories
-  productTypeId: argv.productTypeId
-  numberOfDays: argv.numberOfDays
-  output: argv.output
-  channelid: argv.channelId
-  debug: debug
+    program
+      .command 'import-products'
+      .description 'Imports new and changed Brickfox products from XML into your SPHERE.IO project.'
+      .option '--products <file>', 'XML file containing products to import'
+      .option '--manufacturers [file]', 'XML file containing manufacturers to import'
+      .option '--categories [file]', 'XML file containing categories to import'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .option '--productTypeId [id]', 'Product type ID to use for product creation. If not set first product type fetched from project will be used.'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --productTypeId [id] --mapping <file> --products <file> --manufacturers [file] --categories [file]'
+      .action (opts) ->
 
-handler = switch argv.action
-  when "ip"
-    @logger = new ProductImportLogger
-      src: debug
-    new ProductImport _.extend options,
-      logConfig:
-        # pass logger to node-connect so that it can log into the same file
-        logger: @logger
-      appLogger: @logger
-  when "iup"
-    @logger = new ProductUpdateImportLogger
-      src: debug
-    new ProductUpdateImport _.extend options,
-      logConfig:
-        logger: @logger
-      appLogger: @logger
-  when "eo"
-    @logger = new OrderExportLogger
-      src: debug
-    new OrderExport _.extend options,
-      logConfig:
-        logger: @logger
-      appLogger: @logger
-  when "ios"
-    @logger = new OrderStatusImportLogger
-      src: debug
-    new OrderStatusImport _.extend options,
-      logConfig:
-        logger: @logger
-      appLogger: @logger
-  else
-    console.log "Unsupported action type: #{argv.action}"
-    process.exit 1
+        validateGlobalOpts(opts, 'import-products')
+        validateOpt(opts.mapping, 'mapping', 'import-products')
+        validateOpt(opts.products, 'products', 'import-products')
 
-handler.execute (success) ->
-  process.exit 1 unless success
+        logger = new ProductImportLogger
+          src: if argv.debug then argv.debug else false
+
+        options =
+          config:
+            project_key: opts.parent.projectKey
+            client_id: opts.parent.clientId
+            client_secret: opts.parent.clientSecret
+          mapping: opts.mapping
+          products: opts.products
+          manufacturers: opts.manufacturers
+          categories: opts.categories
+          productTypeId: opts.productTypeId
+          appLogger: logger
+          logConfig:
+            # pass logger to node-connect so that it can log into the same file
+            logger: logger
+
+        handler = new ProductImport options
+        handler.execute (success) ->
+          if success
+            process.exit 0
+          else
+            process.exit 1
+
+    program
+      .command 'import-product-updates'
+      .description 'Imports Brickfox product stock and price changes into your SPHERE.IO project.'
+      .option '--products <file>', 'XML file containing products to import'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>'
+      .action (opts) ->
+
+        validateGlobalOpts(opts, 'import-product-updates')
+        validateOpt(opts.mapping, 'mapping', 'import-product-updates')
+        validateOpt(opts.products, 'products', 'import-product-updates')
+
+        logger = new ProductUpdateImportLogger
+          src: if argv.debug then argv.debug else false
+
+        options =
+          config:
+            project_key: opts.parent.projectKey
+            client_id: opts.parent.clientId
+            client_secret: opts.parent.clientSecret
+          mapping: opts.mapping
+          products: opts.products
+          appLogger: logger
+          logConfig:
+            logger: logger
+
+        handler = new ProductUpdateImport options
+        handler.execute (success) ->
+          if success
+            process.exit 0
+          else
+            process.exit 1
+
+    program
+      .command 'export-orders'
+      .description 'Exports new orders from your SPHERE.IO project into Brickfox XML file.'
+      .option '--output <file>', 'Path to the file the exporter will write the resulting XML into'
+      .option '--numberOfDays [days]', 'Retrieves orders created within the specified number of days starting with the present day. Default value is: 7', 7
+      .option '--channelId <id>', 'SyncInfo (http://commercetools.de/dev/http-api-projects-orders.html#sync-info) channel id which will be updated after succesfull order export'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --channelId <id> --mapping <file> --output <file>'
+      .action (opts) ->
+
+        validateGlobalOpts(opts, 'export-orders')
+        validateOpt(opts.output, 'output', 'export-orders')
+        validateOpt(opts.channelId, 'channelId', 'export-orders')
+        validateOpt(opts.mapping, 'mapping', 'export-orders')
+
+        logger = new OrderExportLogger
+          src: if argv.debug then argv.debug else false
+
+        options =
+          config:
+            project_key: opts.parent.projectKey
+            client_id: opts.parent.clientId
+            client_secret: opts.parent.clientSecret
+          mapping: opts.mapping
+          numberOfDays: opts.numberOfDays
+          output: opts.output
+          channelid: opts.channelId
+          appLogger: logger
+          logConfig:
+            logger: logger
+
+        handler = new OrderExport options
+        handler.execute (success) ->
+          if success
+            process.exit 0
+          else
+            process.exit 1
+
+    program
+      .command 'import-orders-status'
+      .description 'Imports order and order entry status changes from Brickfox into your SPHERE.IO project.'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret>'
+      .action (opts) ->
+
+        validateGlobalOpts(opts, 'import-product-updates')
+
+        logger = new OrderStatusImportLogger
+          src: if argv.debug then argv.debug else false
+
+        options =
+          config:
+            project_key: opts.parent.projectKey
+            client_id: opts.parent.clientId
+            client_secret: opts.parent.clientSecret
+          appLogger: logger
+          logConfig:
+            logger: logger
+
+        handler = new OrderStatusImport options
+        handler.execute (success) ->
+          if success
+            process.exit 0
+          else
+            process.exit 1
+
+    validateOpt = (value, varName, commandName) ->
+      if not value
+        console.error "Missing argument '#{varName}' for command '#{commandName}'!"
+        process.exit 2
+
+    validateGlobalOpts = (opts, commandName) ->
+      validateOpt(opts.parent.projectKey, 'projectKey', commandName)
+      validateOpt(opts.parent.clientId, 'clientId', commandName)
+      validateOpt(opts.parent.clientSecret, 'clientSecret', commandName)
+
+    program.parse argv
+    program.help() if program.args.length is 0
+
+module.exports.run process.argv

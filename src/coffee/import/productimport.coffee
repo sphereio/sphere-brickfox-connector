@@ -13,8 +13,6 @@ Imports Brickfox products provided as XML into Sphere.
 class ProductImport
 
   constructor: (@_options = {}) ->
-    throw new Error 'XML source path argument is required' unless @_options.products
-    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path argument is required' unless @_options.mapping
     @sync = new ProductSync @_options
     @rest = new Rest @_options
     @logger = @_options.appLogger
@@ -40,11 +38,14 @@ class ProductImport
   # 6) Build product creates
   # 6.1) Send product creates
   #
-  # 7) TODO: Build product updates
-  # 7.1) TODO: Send product updates
+  # 7) TODO: Create product inventories / stock
+  # 7.1) TODO: Send product inventories
   #
-  # 8) TODO: Build category deletes
-  # 8.1) TODO: Send category deletes
+  # 8) TODO: Build product updates
+  # 8.1) TODO: Send product updates
+  #
+  # 9) TODO: Build category deletes
+  # 9.1) TODO: Send category deletes
   #
   # @param {function} callback The callback function to be invoked when the method finished its work.
   # @return Result of the given callback
