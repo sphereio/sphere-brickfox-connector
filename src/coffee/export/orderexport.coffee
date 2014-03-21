@@ -13,9 +13,6 @@ Exports SPHERE orders as XML (in compliance with Brickfox order import XSD)
 class OrderExport
 
   constructor: (@_options = {}) ->
-    throw new Error "XML file 'output' path argument to write orders is required" unless @_options.output
-    throw new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path argument is required' unless @_options.mapping
-    throw new Error 'OrderExport SyncInfo channel id argument is required.' unless @_options.channelid
     @rest = new Rest @_options
     @logger = @_options.appLogger
 
@@ -141,18 +138,30 @@ class OrderExport
     @logger.debug "[OrderExport] Processing order with id: '#{order.id}'"
     orderXML.e('OrderId').t(order.id)
     orderXML.e('OrderDate').t(order.createdAt)
+    #<xs:element ref="OrderStatus" minOccurs="0"/>
+    #<xs:element ref="PaymentStatus" minOccurs="0"/>
+    #<xs:element ref="CustomerId" minOccurs="0"/>
+    #<xs:element ref="TotalAmountProducts" minOccurs="0"/>
     orderXML.e('TotalAmountProductsNetto').t(@_toAmount(order.taxedPrice.totalNet.centAmount))
     orderXML.e('TotalAmountVat').t(@_toAmount(order.taxedPrice.taxPortions[0].amount.centAmount))
-    orderXML.e('TotalAmount').t(@_toAmount(order.taxedPrice.totalGross.centAmount))
-
     shippingInfo = order.shippingInfo
-    if shippingInfo
-      shippingCost = @_toAmount(shippingInfo.price.centAmount)
-      orderXML.e('ShippingCost').t(shippingCost)
-      orderXML.e('ShippingMethod').t(shippingInfo.shippingMethodName)
-
+    throw new Error "Can not export order as it does not contain shipping info; order id: '#{order.id}'" if not shippingInfo
+    shippingCost = @_toAmount(shippingInfo.price.centAmount)
+    orderXML.e('ShippingCost').t(shippingCost)
+    #<xs:element ref="PaymentCost" minOccurs="0"/>
+    orderXML.e('TotalAmount').t(@_toAmount(order.taxedPrice.totalGross.centAmount))
+    #<xs:element ref="Comment" minOccurs="0"/>
+    #<xs:element ref="CostsChangings" minOccurs="0"/>
+    # TODO use real data for PaymentMethod
+    orderXML.e('PaymentMethod').t('test')
+    pmValues = orderXML.ele("PaymentMethodValues")
+    # TODO use real data for PaymentMethodValue
+    pmValue = pmValues.ele("PaymentMethodValue", {key: 'testKey', value: 'testValue'})
+    orderXML.e('ShippingMethod').t(shippingInfo.shippingMethodName)
+    billingAddress = if order.billingAddress then order.billingAddress else order.shippingAddress
+    @_addressToXML(billingAddress, orderXML, 'BillingParty')
     @_addressToXML(order.shippingAddress, orderXML, 'DeliveryParty')
-    @_addressToXML(order.billingAddress, orderXML, 'BillingParty') if order.billingAddress
+    #<xs:element ref="Coupons" minOccurs="0"/>
 
     lineItemsXML = orderXML.ele("OrderLines", {'count': order.lineItems.length})
     _.each order.lineItems, (lineItem, index, list) =>
@@ -164,12 +173,13 @@ class OrderExport
     productId = utils.getVariantAttValue(@mappings, 'ProductId', lineItem.variant)
     variationId = utils.getVariantAttValue(@mappings, 'VariationId', lineItem.variant)
     lineItemXML.e('ProductId').t(productId)
-    lineItemXML.e('ItemNumber').t(lineItem.variant.sku)
-    lineItemXML.e('VariationId').t(variationId)
     name = _.values(lineItem.name)[0]
     lineItemXML.e('ProductName').t(name)
+    lineItemXML.e('ItemNumber').t(lineItem.variant.sku)
+    lineItemXML.e('VariationId').t(variationId)
     lineItemXML.e('QuantityOrdered').t(lineItem.quantity)
     lineItemXML.e('ProductsPriceTotal').t(@_toAmount(lineItem.price.value.centAmount))
+    lineItemXML.e('ProductsPrice').t(@_toProductPriceFromTotal(lineItem.price.value.centAmount, lineItem.quantity))
     lineItemXML.e('TaxRate').t(@_toTax(lineItem.taxRate.amount))
 
   _toAmount: (centAmount) ->
@@ -177,6 +187,9 @@ class OrderExport
 
   _toTax: (rate) ->
     rate = _s.numberFormat(_s.toNumber(rate * 100), 2)
+
+  _toProductPriceFromTotal: (centAmount, quantity) ->
+    amount = _s.numberFormat(_s.toNumber(centAmount / quantity / 100), 2)
 
   _addressToXML: (address, xml, name) ->
     el = xml.ele(name)
