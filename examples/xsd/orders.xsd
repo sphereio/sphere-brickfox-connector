@@ -10,7 +10,7 @@
     </xs:element>
     <xs:element name="Order">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="OrderId"/>
                 <xs:element ref="OrderDate"/>
                 <xs:element ref="OrderStatus" minOccurs="0"/>
@@ -31,7 +31,7 @@
                 <xs:element ref="DeliveryParty"/>
                 <xs:element ref="Coupons" minOccurs="0"/>
                 <xs:element ref="OrderLines"/>
-            </xs:choice>
+            </xs:sequence>
             <xs:attribute name="num" type="xs:integer"/>
         </xs:complexType>
     </xs:element>
@@ -56,11 +56,11 @@
     </xs:element>
     <xs:element name="CostsChanging">
       <xs:complexType>
-        <xs:choice maxOccurs="unbounded">
+        <xs:sequence maxOccurs="unbounded">
           <xs:element name="Type" type="CostsChangingType"/>
           <xs:element ref="TypeValue"/>
           <xs:element ref="Value"/>
-        </xs:choice>
+        </xs:sequence>
       </xs:complexType>
     </xs:element>
     <xs:element name="TypeValue" type="xs:decimal"/>
@@ -72,7 +72,7 @@
     <xs:element name="ShippingMethod" type="xs:string"/>
     <xs:element name="BillingParty">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="Company" minOccurs="0"/>
                 <xs:element ref="VatId" minOccurs="0"/>
                 <xs:element ref="FirstName" minOccurs="0"/>
@@ -88,12 +88,12 @@
                 <xs:element ref="Title" minOccurs="0"/>
                 <xs:element ref="EmailAddress"/>
                 <xs:element ref="DateOfBirth" minOccurs="0"/>
-            </xs:choice>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
     <xs:element name="DeliveryParty">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="Company" minOccurs="0"/>
                 <xs:element ref="VatId" minOccurs="0"/>
                 <xs:element ref="FirstName" minOccurs="0"/>
@@ -109,7 +109,7 @@
                 <xs:element ref="Title" minOccurs="0"/>
                 <xs:element ref="EmailAddress"/>
                 <xs:element ref="DateOfBirth" minOccurs="0"/>
-            </xs:choice>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
     <xs:element name="PaymentMethodValues">
@@ -125,7 +125,7 @@
             <xs:attribute name="value" type="xs:string"/>
         </xs:complexType>
     </xs:element>
-	<xs:element name="Coupons">
+    <xs:element name="Coupons">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="Coupon" maxOccurs="unbounded"/>
@@ -134,7 +134,7 @@
   </xs:element>
   <xs:element name="Coupon">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
+      <xs:sequence maxOccurs="unbounded">
         <xs:element ref="Id" minOccurs="0"/>
         <xs:element ref="ExternId" minOccurs="0"/>
         <xs:element ref="Code"/>
@@ -145,7 +145,7 @@
         <xs:element ref="CalculatedRebate"/>
         <xs:element ref="Group" minOccurs="0"/>
         <xs:element ref="OrderLineReferences"/>
-      </xs:choice>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="Id" type="xs:string"/>
@@ -159,11 +159,11 @@
   <xs:element name="CalculatedRebate" type="xs:decimal"/>
   <xs:element name="Group">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
+      <xs:sequence maxOccurs="unbounded">
         <xs:element ref="Id" minOccurs="0"/>
         <xs:element ref="ExternId" minOccurs="0"/>
         <xs:element ref="Title"/>
-      </xs:choice>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OrderLineReferences">
@@ -191,7 +191,7 @@
     </xs:element>
     <xs:element name="OrderLine">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="OrderLineId"/>
                 <xs:element ref="ProductId"/>
                 <xs:element ref="ProductName"/>
@@ -207,7 +207,8 @@
                 <xs:element ref="VatPriceTotal" minOccurs="0"/>
                 <xs:element ref="TaxRate"/>
                 <xs:element ref="OrderLineOptions" minOccurs="0"/>
-            </xs:choice>
+                <xs:element ref="OrderLineAddInfos" minOccurs="0"/>
+            </xs:sequence>
             <xs:attribute name="num" type="xs:integer"/>
         </xs:complexType>
     </xs:element>
@@ -253,4 +254,21 @@
             <xs:enumeration value="" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:element name="OrderLineAddInfos">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="OrderLineAddInfo" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OrderLineAddInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Key" type="xs:string"/>
+                <xs:element name="Value" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="num" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
