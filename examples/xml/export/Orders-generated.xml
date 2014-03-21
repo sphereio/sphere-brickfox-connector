@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<Orders count="100">
+  <!--Zero or more repetitions:-->
+  <Order num="100">
+    <OrderId>string</OrderId>
+    <OrderDate>string</OrderDate>
+    <!--Optional:-->
+    <OrderStatus>string</OrderStatus>
+    <!--Optional:-->
+    <PaymentStatus>string</PaymentStatus>
+    <!--Optional:-->
+    <CustomerId>string</CustomerId>
+    <!--Optional:-->
+    <TotalAmountProducts/>
+    <!--Optional:-->
+    <TotalAmountProductsNetto>1000.00</TotalAmountProductsNetto>
+    <!--Optional:-->
+    <TotalAmountVat>1000.00</TotalAmountVat>
+    <ShippingCost>1000.00</ShippingCost>
+    <!--Optional:-->
+    <PaymentCost>1000.00</PaymentCost>
+    <TotalAmount>1000.00</TotalAmount>
+    <!--Optional:-->
+    <Comment>string</Comment>
+    <!--Optional:-->
+    <CostsChangings>
+      <!--1 or more repetitions:-->
+      <CostsChanging>
+        <Type>100</Type>
+        <TypeValue>1000.00</TypeValue>
+        <Value>1000.00</Value>
+      </CostsChanging>
+    </CostsChangings>
+    <PaymentMethod>string</PaymentMethod>
+    <PaymentMethodValues>
+      <!--Zero or more repetitions:-->
+      <PaymentMethodValue key="string" value="string"/>
+    </PaymentMethodValues>
+    <ShippingMethod>string</ShippingMethod>
+    <BillingParty>
+      <!--Optional:-->
+      <Company>string</Company>
+      <!--Optional:-->
+      <VatId>string</VatId>
+      <!--Optional:-->
+      <FirstName>string</FirstName>
+      <LastName>string</LastName>
+      <Address>string</Address>
+      <!--Optional:-->
+      <Number>string</Number>
+      <!--Optional:-->
+      <AddressAdd>string</AddressAdd>
+      <PostalCode>string</PostalCode>
+      <City>string</City>
+      <Country>string</Country>
+      <!--Optional:-->
+      <State>string</State>
+      <!--Optional:-->
+      <PhonePrivate>string</PhonePrivate>
+      <!--Optional:-->
+      <Title>string</Title>
+      <EmailAddress>string</EmailAddress>
+      <!--Optional:-->
+      <DateOfBirth>string</DateOfBirth>
+    </BillingParty>
+    <DeliveryParty>
+      <!--Optional:-->
+      <Company>string</Company>
+      <!--Optional:-->
+      <VatId>string</VatId>
+      <!--Optional:-->
+      <FirstName>string</FirstName>
+      <LastName>string</LastName>
+      <Address>string</Address>
+      <!--Optional:-->
+      <Number>string</Number>
+      <!--Optional:-->
+      <AddressAdd>string</AddressAdd>
+      <PostalCode>string</PostalCode>
+      <City>string</City>
+      <Country>string</Country>
+      <!--Optional:-->
+      <State>string</State>
+      <!--Optional:-->
+      <PhonePrivate>string</PhonePrivate>
+      <!--Optional:-->
+      <Title>string</Title>
+      <EmailAddress>string</EmailAddress>
+      <!--Optional:-->
+      <DateOfBirth>string</DateOfBirth>
+    </DeliveryParty>
+    <!--Optional:-->
+    <Coupons>
+      <!--1 or more repetitions:-->
+      <Coupon>
+        <!--Optional:-->
+        <Id>string</Id>
+        <!--Optional:-->
+        <ExternId>string</ExternId>
+        <Code>string</Code>
+        <Type>string</Type>
+        <ReduceType>string</ReduceType>
+        <Rebate>1000.00</Rebate>
+        <Title>string</Title>
+        <CalculatedRebate>1000.00</CalculatedRebate>
+        <!--Optional:-->
+        <Group>
+          <!--Optional:-->
+          <Id>string</Id>
+          <!--Optional:-->
+          <ExternId>string</ExternId>
+          <Title>string</Title>
+        </Group>
+        <OrderLineReferences>
+          <!--1 or more repetitions:-->
+          <OrderLineReference>
+            <OrderLineId>string</OrderLineId>
+            <!--Optional:-->
+            <CalculatedRebate>1000.00</CalculatedRebate>
+          </OrderLineReference>
+        </OrderLineReferences>
+      </Coupon>
+    </Coupons>
+    <OrderLines count="100">
+      <!--1 or more repetitions:-->
+      <OrderLine num="100">
+        <OrderLineId>string</OrderLineId>
+        <ProductId>100</ProductId>
+        <ProductName>string</ProductName>
+        <!--Optional:-->
+        <ItemNumber>string</ItemNumber>
+        <!--Optional:-->
+        <EAN>string</EAN>
+        <VariationId>100</VariationId>
+        <QuantityOrdered>100</QuantityOrdered>
+        <!--Optional:-->
+        <ProductsPriceTotal>1000.00</ProductsPriceTotal>
+        <!--Optional:-->
+        <ProductsPriceTotalNetto>1000.00</ProductsPriceTotalNetto>
+        <ProductsPrice>1000.00</ProductsPrice>
+        <!--Optional:-->
+        <ProductsPriceNetto/>
+        <!--Optional:-->
+        <VatPrice/>
+        <!--Optional:-->
+        <VatPriceTotal>1000.00</VatPriceTotal>
+        <TaxRate>1000.00</TaxRate>
+        <!--Optional:-->
+        <OrderLineOptions count="100"/>
+        <!--Optional:-->
+        <OrderLineAddInfos count="100">
+          <!--Zero or more repetitions:-->
+          <OrderLineAddInfo num="100">
+            <Key>string</Key>
+            <Value>string</Value>
+          </OrderLineAddInfo>
+        </OrderLineAddInfos>
+      </OrderLine>
+    </OrderLines>
+  </Order>
+</Orders>
