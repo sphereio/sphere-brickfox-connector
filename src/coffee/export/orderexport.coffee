@@ -40,9 +40,9 @@ class OrderExport
       ],
       (mappingsJson, fetchedOrders, ordersXsd) =>
         mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined mappings
-        utils.assertVariationIdMappingIsDefined mappings
-        utils.assertSkuMappingIsDefined mappings
+        utils.assertProductIdMappingIsDefined mappings.product
+        utils.assertVariationIdMappingIsDefined mappings.product
+        utils.assertSkuMappingIsDefined mappings.product
         @fetchedOrders = fetchedOrders
         if _.size(@fetchedOrders) > 0
           @logger.info "[OrderExport] Orders to export count: '#{_.size @fetchedOrders}'"
@@ -56,15 +56,16 @@ class OrderExport
     .then (writeXMLResult) =>
       if writeXMLResult is 'OK'
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
+        orderUpdates = @_buildOrderSyncInfoUpdates(@fetchedOrders, @_options.channelid) if _.size(@fetchedOrders) > 0
         # update order sync info
-        utils.batch(_.map(@fetchedOrders, (o) => @_addSyncInfo(o.id, o.version, @_options.channelid, o.id)), 100) if _.size(@fetchedOrders) > 0
+        utils.batch(_.map(orderUpdates, (o) => @_updateOrder(o.id, o.payload))) if orderUpdates
+    .then (result) =>
+      @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
+      @_processResult(callback, true)
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback, false)
-    .done (result) =>
-      @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
-      @_processResult(callback, true)
 
   _getFileName: (path) ->
     if _s.endsWith(path, '.xml')
@@ -107,43 +108,39 @@ class OrderExport
         deferred.resolve unsyncedOrders
     deferred.promise
 
-  _addSyncInfo: (orderId, orderVersion, channelId, externalId) ->
-    deferred = Q.defer()
-    data =
-      version: orderVersion
-      actions: [
-        action: 'updateSyncInfo'
-        channel:
-          typeId: 'channel'
-          id: channelId
-        externalId: externalId
-      ]
-    @rest.POST "/orders/#{orderId}", data, (error, response, body) ->
-      if error
-        deferred.reject "Error on setting sync info: " + error
-      else if response.statusCode isnt 200
-        deferred.reject "Problem on setting sync info (status: #{response.statusCode}): " + body
-      else
-        deferred.resolve "Order sync info successfully stored."
-    deferred.promise
+  _buildOrderSyncInfoUpdates: (fetchedOrders, channelId) ->
+    updates = []
 
-  ###
-  # Updates asynchronously category in Sphere.
-  #
-  # @param {Object} data Update category request data
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _updateOrder: (data) ->
+    _.each fetchedOrders, (o) ->
+      wrapper =
+        id: o.id
+        payload:
+          version: o.version
+          actions: [
+            action: 'updateSyncInfo'
+            channel:
+              typeId: 'channel'
+              id: channelId
+            externalId: o.id
+          ]
+      updates.push wrapper
+
+    if _.size(updates) > 0
+      updates
+    else
+      null
+
+  _updateOrder: (id, data) ->
     deferred = Q.defer()
-    @rest.POST "/categories/#{data.id}", data.payload, (error, response, body) ->
+    @rest.POST "/orders/#{id}", data, (error, response, body) ->
       if error
-        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+        deferred.reject "HTTP error on order update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 200
-          message = "Error on categories update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+          message = "Error on order update (status: #{response.statusCode}); Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
-          message = "Category with id: '#{data.id}' updated."
+          message = "Order with id: '#{id}' updated."
           deferred.resolve message
     deferred.promise
 
@@ -187,9 +184,9 @@ class OrderExport
     lineItemsXML = orderXML.ele("OrderLines", {'count': order.lineItems.length})
     _.each order.lineItems, (lineItem, index, list) =>
       lineItemXML = lineItemsXML.ele("OrderLine", {num: index + 1})
-      @_lineItemToXML(lineItem, lineItemXML)
+      @_lineItemToXML(lineItem, lineItemXML, mappings)
 
-  _lineItemToXML: (lineItem, lineItemXML) =>
+  _lineItemToXML: (lineItem, lineItemXML, mappings) =>
     lineItemXML.e('OrderLineId').t(lineItem.id)
     productId = utils.getVariantAttValue(mappings, 'ProductId', lineItem.variant)
     variationId = utils.getVariantAttValue(mappings, 'VariationId', lineItem.variant)
