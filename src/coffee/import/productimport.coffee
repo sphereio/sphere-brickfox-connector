@@ -16,8 +16,6 @@ class ProductImport
     @sync = new ProductSync @_options
     @rest = new Rest @_options
     @logger = @_options.appLogger
-    @successCounter = 0
-    @failCounter = 0
 
   ###
   # Reads given import XML files and creates/updates product types, categories and products in Sphere (product types and categories has to be imported first)
@@ -64,22 +62,22 @@ class ProductImport
       ],
       (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
         @mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined @mappings
-        utils.assertVariationIdMappingIsDefined @mappings
-        utils.assertSkuMappingIsDefined @mappings
+        utils.assertProductIdMappingIsDefined @mappings.product
+        utils.assertVariationIdMappingIsDefined @mappings.product
+        utils.assertSkuMappingIsDefined @mappings.product
         @productsXML = productsXML
         @categoriesXML = categoriesXML
         @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
-        @toBeImported = _.size(productsXML.Products?.Product)
+        #@toBeImported = _.size(productsXML.Products?.Product)
         @productType = @_getProductType(fetchedProductTypes, @_options)
-        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings) if manufacturersXML
+        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.product) if manufacturersXML
         @_updateProductType(manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
       @logger.info '[Categories] Categories XML import started...'
       @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'"
       @categories = @_buildCategories(@categoriesXML) if @categoriesXML
       @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(@categoryCreates, (c) => @_createCategory c), 100) if @categoryCreates
+      utils.batch(_.map(@categoryCreates, (c) => @_createCategory c)) if @categoryCreates
     .then (createCategoriesResult) =>
       # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
       @_fetchCategories() if @categoryCreates
@@ -87,25 +85,28 @@ class ProductImport
       @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
       @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
       categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(categoryUpdates, (c) => @_updateCategory c), 100) if categoryUpdates
+      utils.batch(_.map(categoryUpdates, (c) => @_updateCategory c)) if categoryUpdates
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
       @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
-      products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings)
+      products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.product)
       @logger.info "[Products] Create count: '#{_.size products}'"
-      utils.batch(_.map(products, (p) => @_createProduct p), 100) if products
+      utils.batch(_.map(products, (p) => @_createProduct p)) if products
+    .then (createProductsResult) =>
+      console.log "createProductsResult"
+      @productsCreated = _.size(createProductsResult) or 0
+      @_processResult(callback, true)
     .fail (error) =>
+      @productsCreated = 0
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback, false)
-    .done (result) =>
-      @_processResult(callback, true)
 
   _processResult: (callback, isSuccess) ->
     endTime = new Date().getTime()
     result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[Products] ProductImport finished with result: #{result}.
-                    [Products] #{@successCounter} product(s) out of #{@toBeImported} imported. #{@failCounter} failed.
+                    [Products] Products created: '#{@productsCreated}'
                     [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback isSuccess
 
@@ -132,7 +133,7 @@ class ProductImport
   _buildManufacturers: (data, productType, mappings) ->
     @logger.info '[Manufacturers] Manufacturers XML import started...'
 
-    if not mappings.product.ManufacturerId
+    if not mappings.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
       return
 
@@ -143,7 +144,7 @@ class ProductImport
       @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
-    attributeName = mappings.product.ManufacturerId.to
+    attributeName = mappings.ManufacturerId.to
     # find attribute on product type
     matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
     if not matchedAttr
@@ -373,7 +374,7 @@ class ProductImport
         deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 200
-          message = "Error on categories update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+          message = "Error on category update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
           message = "Category with id: '#{data.id}' updated."
@@ -424,19 +425,16 @@ class ProductImport
   # @param {Object} payload Create product request as JSON
   # @return {Object} If success returns promise with success message otherwise rejects with error message
   ###
-  _createProduct: (payload) =>
+  _createProduct: (payload) ->
     deferred = Q.defer()
-    @rest.POST '/products', payload, (error, response, body) =>
+    @rest.POST '/products', payload, (error, response, body) ->
       if error
-        @failCounter++
         deferred.reject "HTTP error on new product creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
       else
         if response.statusCode isnt 201
-          @failCounter++
           message = "Error on new product creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
           deferred.reject message
         else
-          @successCounter++
           message = 'New product created.'
           deferred.resolve message
     deferred.promise
@@ -495,15 +493,15 @@ class ProductImport
       # exclude product attributes which has to be handled differently
       simpleAttributes = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
       _.each simpleAttributes, (value, key) =>
-        @_processValue(product, variantBase, key, value, mappings.product)
+        @_processValue(product, variantBase, key, value, mappings)
 
       # extract Attributes from product
       _.each p.Attributes, (item) =>
-        @_processAttributes(item, product, variantBase, mappings.product)
+        @_processAttributes(item, product, variantBase, mappings)
 
       # add variants
       _.each p.Variations[0].Variation, (v, index, list) =>
-        variant = @_buildVariant(v, product, variantBase, mappings.product)
+        variant = @_buildVariant(v, product, variantBase, mappings)
         if index is 0
           product.masterVariant = variant
         else

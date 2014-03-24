@@ -63,7 +63,7 @@ exports.pretty = (data) ->
 # @param {Array} numberOfParallelRequest Number of requests to be fired in parallel
 # @return {Boolean} Returns true if all promises could be successfully resolved
 ###
-exports.batch = (list, numberOfParallelRequest) ->
+exports.batch = (list, numberOfParallelRequest = 100) ->
   deferred = Q.defer()
   doBatch = (list, numberOfParallelRequest) ->
     current = _.take list, numberOfParallelRequest

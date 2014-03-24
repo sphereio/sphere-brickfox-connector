@@ -56,17 +56,17 @@ class ProductUpdateImport
         productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
         @newVariants = @_transformToVariantsBySku(newProducts)
         @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"
-        utils.batch(_.map(productIds, (id) => @_queryProductsByExternProductId(id, @productExternalIdMapping)), 100) if productIds
+        utils.batch(_.map(productIds, (id) => @_queryProductsByExternProductId(id, @productExternalIdMapping))) if productIds
     .then (fetchedProducts) =>
       @logger.info "[ProductsUpdate] Fetched products to update count: #{_.size fetchedProducts}"
       priceUpdates = @_buildPriceUpdates(fetchedProducts, @newVariants, @productExternalIdMapping) if fetchedProducts
       @logger.info "[ProductsUpdate] Product price updates count: #{_.size priceUpdates}"
-      utils.batch(_.map(priceUpdates, (p) => @productImport.updateProduct p), 100) if priceUpdates
+      utils.batch(_.map(priceUpdates, (p) => @productImport.updateProduct p)) if priceUpdates
     .then (priceUpdatesResult) =>
       @priceUpdatedCount = _.size priceUpdatesResult
       skus = _.keys(@newVariants)
       @logger.info "[ProductsUpdate] Inventories to fetch: #{_.size skus}"
-      utils.batch(_.map(skus, (sku) => @_queryInventoriesBySku sku), 100) if skus
+      utils.batch(_.map(skus, (sku) => @_queryInventoriesBySku sku)) if skus
     .then (fetchedInventories) =>
       @logger.info "[ProductsUpdate] Fetched inventories count: #{_.size fetchedInventories}"
       createInventoryForSkus = []
@@ -75,18 +75,17 @@ class ProductUpdateImport
       inventoryCreates = @_buildInventoryCreates(createInventoryForSkus, @newVariants) if _.size(createInventoryForSkus) > 0
       inventoryUpdates = @_buildInventoryUpdates(updateInventoryItems, @newVariants) if _.size(updateInventoryItems) > 0
       promises = []
-      promises.push utils.batch(_.map(inventoryUpdates, (inventory) => @_updateInventory(inventory.newObj, inventory.oldObj)), 100) if inventoryUpdates
-      promises.push utils.batch(_.map(inventoryCreates, (inventory) => @_createInventory inventory), 100) if inventoryCreates
+      promises.push utils.batch(_.map(inventoryUpdates, (inventory) => @_updateInventory(inventory.newObj, inventory.oldObj))) if inventoryUpdates
+      promises.push utils.batch(_.map(inventoryCreates, (inventory) => @_createInventory inventory)) if inventoryCreates
       promises
     .spread (updateInventoryResult, createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
       @inventoriesUpdated = _.size(_.filter updateInventoryResult, (r) -> r is 200)
+      @_processResult(callback, true)
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback, false)
-    .done (result) =>
-      @_processResult(callback, true)
 
   _processResult: (callback, isSuccess) ->
     endTime = new Date().getTime()
