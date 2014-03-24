@@ -2,6 +2,7 @@ fs = require 'fs'
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
+api = require '../../lib/sphere'
 utils = require '../../lib/utils'
 {ProductSync} = require('sphere-node-sync')
 {Rest} = require('sphere-node-connect')
@@ -57,8 +58,8 @@ class ProductImport
       @_loadProductsXML @_options.products
       @_loadManufacturersXML @_options.manufacturers
       @_loadCategoriesXML @_options.categories
-      @_fetchProductTypes()
-      @_fetchCategories()
+      api.fetchProductTypes(@rest)
+      api.fetchCategories(@rest)
       ],
       (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
         @mappings = JSON.parse mappingsJson
@@ -71,29 +72,28 @@ class ProductImport
         #@toBeImported = _.size(productsXML.Products?.Product)
         @productType = @_getProductType(fetchedProductTypes, @_options)
         manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.product) if manufacturersXML
-        @_updateProductType(manufacturers) if manufacturers
+        api.updateProductType(@rest, manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
       @logger.info '[Categories] Categories XML import started...'
       @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'"
       @categories = @_buildCategories(@categoriesXML) if @categoriesXML
       @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(@categoryCreates, (c) => @_createCategory c)) if @categoryCreates
+      utils.batch(_.map(@categoryCreates, (c) => api.createCategory(@rest, c))) if @categoryCreates
     .then (createCategoriesResult) =>
       # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
-      @_fetchCategories() if @categoryCreates
+      api.fetchCategories(@rest) if @categoryCreates
     .then (fetchedCategories) =>
       @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
       @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
       categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(categoryUpdates, (c) => @_updateCategory c)) if categoryUpdates
+      utils.batch(_.map(categoryUpdates, (c) => api.updateCategory(@rest, c))) if categoryUpdates
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
       @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
       products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.product)
       @logger.info "[Products] Create count: '#{_.size products}'"
-      utils.batch(_.map(products, (p) => @_createProduct p)) if products
+      utils.batch(_.map(products, (p) => api.createProduct(@rest, p))) if products
     .then (createProductsResult) =>
-      console.log "createProductsResult"
       @productsCreated = _.size(createProductsResult) or 0
       @_processResult(callback, true)
     .fail (error) =>
@@ -322,142 +322,6 @@ class ProductImport
       slug: slugs
     category.parentId = categoryItem.ParentId if categoryItem.ParentId
     category
-
-  ###
-  # Retrieves asynchronously all categories from Sphere.
-  #
-  # @return {Object} If success returns promise with response body otherwise rejects with error message
-  ###
-  _fetchCategories: ->
-    deferred = Q.defer()
-    @rest.GET '/categories', (error, response, body) ->
-      if error
-        deferred.reject error
-      else
-        if response.statusCode isnt 200
-          message = "Error on fetch categories; \n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          deferred.resolve body
-    deferred.promise
-
-  ###
-  # Creates asynchronously category in Sphere.
-  #
-  # @param {Object} payload Create category request as JSON
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _createCategory: (payload) ->
-    deferred = Q.defer()
-    @rest.POST '/categories', payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on new category creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 201
-          message = "Error on new category creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = 'New category created.'
-          deferred.resolve message
-    deferred.promise
-
-  ###
-  # Updates asynchronously category in Sphere.
-  #
-  # @param {Object} data Update category request data
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _updateCategory: (data) ->
-    deferred = Q.defer()
-    @rest.POST "/categories/#{data.id}", data.payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 200
-          message = "Error on category update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = "Category with id: '#{data.id}' updated."
-          deferred.resolve message
-    deferred.promise
-
-  ###
-  # Retrieves asynchronously all product types from Sphere.
-  #
-  # @return {Object} If success returns promise with response body otherwise rejects with error message
-  ###
-  _fetchProductTypes: ->
-    deferred = Q.defer()
-    @rest.GET '/product-types', (error, response, body) ->
-      if error
-        deferred.reject error
-      else
-        if response.statusCode isnt 200
-          message = "Error on fetch product-types; \n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          deferred.resolve body
-    deferred.promise
-
-  ###
-  # Updates asynchronously product type in Sphere.
-  #
-  # @param {Object} data Update product type data
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _updateProductType: (data) =>
-    deferred = Q.defer()
-    @rest.POST "/product-types/#{data.id}", data.payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 200
-          message = "Error on product type update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = "Product type with id: '#{data.id}' updated."
-          deferred.resolve message
-    deferred.promise
-
-  ###
-  # Creates asynchronously product in Sphere.
-  #
-  # @param {Object} payload Create product request as JSON
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _createProduct: (payload) ->
-    deferred = Q.defer()
-    @rest.POST '/products', payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on new product creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 201
-          message = "Error on new product creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = 'New product created.'
-          deferred.resolve message
-    deferred.promise
-
-  ###
-  # Updates asynchronously product in Sphere.
-  #
-  # @param {Object} data Update product request data
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  updateProduct: (data) ->
-    deferred = Q.defer()
-    @rest.POST "/products/#{data.id}", data.payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on product update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 200
-          message = "Error on product update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = "Product with id: '#{data.id}' updated."
-          deferred.resolve message
-    deferred.promise
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.

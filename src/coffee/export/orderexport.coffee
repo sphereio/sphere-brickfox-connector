@@ -4,6 +4,7 @@ _ = require('underscore')._
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
 libxmljs = require 'libxmljs'
+api = require '../../lib/sphere'
 utils = require '../../lib/utils'
 {Rest} = require('sphere-node-connect')
 
@@ -35,7 +36,7 @@ class OrderExport
 
     Q.spread [
       @_loadMappings @_options.mapping
-      @_getUnSyncedOrders(numberOfDays)
+      api.queryUnSyncedOrders(@rest, numberOfDays)
       @_loadOrdersXsd './examples/xsd/orders.xsd'
       ],
       (mappingsJson, fetchedOrders, ordersXsd) =>
@@ -58,7 +59,7 @@ class OrderExport
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
         orderUpdates = @_buildOrderSyncInfoUpdates(@fetchedOrders, @_options.channelid) if _.size(@fetchedOrders) > 0
         # update order sync info
-        utils.batch(_.map(orderUpdates, (o) => @_updateOrder(o.id, o.payload))) if orderUpdates
+        utils.batch(_.map(orderUpdates, (o) => api.updateOrder(@rest, o.id, o.payload))) if orderUpdates
     .then (result) =>
       @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
       @_processResult(callback, true)
@@ -90,24 +91,6 @@ class OrderExport
   _writeFile: (path, content) ->
     utils.writeFile(path, content)
 
-  _getUnSyncedOrders: (numberOfDays) ->
-    deferred = Q.defer()
-    date = new Date()
-    numberOfDays = 7 if numberOfDays is undefined
-    date.setDate(date.getDate() - numberOfDays)
-    d = "#{date.toISOString().substring(0,10)}T00:00:00.000Z"
-    query = encodeURIComponent "createdAt > \"#{d}\""
-    @rest.GET "/orders?limit=0&where=#{query}", (error, response, body) ->
-      if error
-        deferred.reject "Error on fetching orders: " + error
-      else if response.statusCode isnt 200
-        deferred.reject "Problem on fetching orders (status: #{response.statusCode}): " + body
-      else
-        orders = body.results
-        unsyncedOrders = _.filter orders, (o) -> _.size(o.syncInfo) is 0
-        deferred.resolve unsyncedOrders
-    deferred.promise
-
   _buildOrderSyncInfoUpdates: (fetchedOrders, channelId) ->
     updates = []
 
@@ -129,20 +112,6 @@ class OrderExport
       updates
     else
       null
-
-  _updateOrder: (id, data) ->
-    deferred = Q.defer()
-    @rest.POST "/orders/#{id}", data, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on order update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 200
-          message = "Error on order update (status: #{response.statusCode}); Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = "Order with id: '#{id}' updated."
-          deferred.resolve message
-    deferred.promise
 
   _ordersToXML: (orders, mappings) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})

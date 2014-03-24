@@ -2,6 +2,7 @@ fs = require 'fs'
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
+api = require '../../lib/sphere'
 utils = require '../../lib/utils'
 {InventorySync} = require('sphere-node-sync')
 {Rest} = require('sphere-node-connect')
@@ -56,17 +57,17 @@ class ProductUpdateImport
         productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
         @newVariants = @_transformToVariantsBySku(newProducts)
         @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"
-        utils.batch(_.map(productIds, (id) => @_queryProductsByExternProductId(id, @productExternalIdMapping))) if productIds
+        utils.batch(_.map(productIds, (id) => api.queryProductsByExternProductId(@rest, id, @productExternalIdMapping))) if productIds
     .then (fetchedProducts) =>
       @logger.info "[ProductsUpdate] Fetched products to update count: #{_.size fetchedProducts}"
       priceUpdates = @_buildPriceUpdates(fetchedProducts, @newVariants, @productExternalIdMapping) if fetchedProducts
       @logger.info "[ProductsUpdate] Product price updates count: #{_.size priceUpdates}"
-      utils.batch(_.map(priceUpdates, (p) => @productImport.updateProduct p)) if priceUpdates
+      utils.batch(_.map(priceUpdates, (p) => api.updateProduct(@rest, p))) if priceUpdates
     .then (priceUpdatesResult) =>
       @priceUpdatedCount = _.size priceUpdatesResult
       skus = _.keys(@newVariants)
       @logger.info "[ProductsUpdate] Inventories to fetch: #{_.size skus}"
-      utils.batch(_.map(skus, (sku) => @_queryInventoriesBySku sku)) if skus
+      utils.batch(_.map(skus, (sku) => api.queryInventoriesBySku(@rest, sku))) if skus
     .then (fetchedInventories) =>
       @logger.info "[ProductsUpdate] Fetched inventories count: #{_.size fetchedInventories}"
       createInventoryForSkus = []
@@ -75,8 +76,8 @@ class ProductUpdateImport
       inventoryCreates = @_buildInventoryCreates(createInventoryForSkus, @newVariants) if _.size(createInventoryForSkus) > 0
       inventoryUpdates = @_buildInventoryUpdates(updateInventoryItems, @newVariants) if _.size(updateInventoryItems) > 0
       promises = []
-      promises.push utils.batch(_.map(inventoryUpdates, (inventory) => @_updateInventory(inventory.newObj, inventory.oldObj))) if inventoryUpdates
-      promises.push utils.batch(_.map(inventoryCreates, (inventory) => @_createInventory inventory)) if inventoryCreates
+      promises.push utils.batch(_.map(inventoryUpdates, (inventory) => api.updateInventory(@inventorySync, inventory.newObj, inventory.oldObj))) if inventoryUpdates
+      promises.push utils.batch(_.map(inventoryCreates, (inventory) => api.createInventory(@rest, inventory))) if inventoryCreates
       promises
     .spread (updateInventoryResult, createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
@@ -138,98 +139,6 @@ class ProductUpdateImport
         if att.name is productExternalIdMapping
           productIDs.push att.value
     productIDs
-
-  ###
-  # Queries asynchronously for products with given Brickfox product reference id.
-  #
-  # @param {String} id External product id attribute value
-  # @param {String} productExternalIdMapping External product id attribute name
-  # @return {Object} If success returns promise with response body otherwise rejects with error message
-  ###
-  _queryProductsByExternProductId: (id, productExternalIdMapping) ->
-    deferred = Q.defer()
-    predicate = "masterVariant(attributes(name=\"#{productExternalIdMapping}\" and value=#{id}))"
-    query = "/product-projections?where=#{encodeURIComponent(predicate)}&staged=true"
-    @rest.GET query, (error, response, body) ->
-      if error
-        deferred.reject error
-      else
-        if response.statusCode isnt 200
-          message = "Error on query products by extern ProductId; \n Predicate: #{predicate} \n\n GET query: \n #{query} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          customResponse = {}
-          customResponse[productExternalIdMapping] = id
-          customResponse.body = body
-          deferred.resolve customResponse
-    deferred.promise
-
-  ###
-  # Queries inventories by SKU.
-  #
-  # @param {String} sku SKU value
-  # @return {Object} If success returns promise with response body otherwise rejects with error message
-  ###
-  _queryInventoriesBySku: (sku) ->
-    deferred = Q.defer()
-    predicate = "sku=#{sku}"
-    query = "/inventory?where=#{encodeURIComponent(predicate)}"
-    @rest.GET query, (error, response, body) ->
-      if error
-        deferred.reject error
-      else
-        if response.statusCode isnt 200
-          message = "Error on query inventories by sku; \n Predicate: #{predicate} \n\n GET query: \n #{query} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          if body.results[0]
-            deferred.resolve body.results[0]
-          else
-            deferred.resolve sku
-    deferred.promise
-
-  ###
-  # Creates asynchronously inventory in Sphere.
-  #
-  # @param {Object} payload Create inventory request as JSON
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _createInventory: (payload) ->
-    deferred = Q.defer()
-    @rest.POST '/inventory', payload, (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on new inventory creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-      else
-        if response.statusCode isnt 201
-          message = "Error on new inventory creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-          deferred.reject message
-        else
-          message = 'New inventory created.'
-          deferred.resolve message
-    deferred.promise
-
-  ###
-  # Updates asynchronously inventory in Sphere.
-  #
-  # @param {Object} payload
-  # @return {Object} If success returns promise with success message otherwise rejects with error message
-  ###
-  _updateInventory: (new_obj, old_obj) ->
-    deferred = Q.defer()
-    @inventorySync.buildActions(new_obj, old_obj).update (error, response, body) ->
-      if error
-        deferred.reject "HTTP error on inventory update; Error: #{error}; \nNew object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: '#{utils.pretty body}'"
-      else
-        if response.statusCode is 200
-          deferred.resolve 200
-        else if response.statusCode is 304
-          # Inventory entry update not neccessary
-          deferred.resolve 304
-        else
-          message = "Error on inventory update; New object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: '#{utils.pretty body}'"
-          deferred.reject message
-    deferred.promise
-
 
   _buildPriceUpdates: (oldProducts, newVariants, productExternalIdMapping) ->
     updates = []
