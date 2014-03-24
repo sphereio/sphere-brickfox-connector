@@ -56,7 +56,8 @@ class OrderExport
     .then (writeXMLResult) =>
       if writeXMLResult is 'OK'
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
-      utils.batch(_.map(@fetchedOrders, (o) => @_addSyncInfo(o.id, o.version, @_options.channelid, o.id)), 100) if _.size(@fetchedOrders) > 0
+        # update order sync info
+        utils.batch(_.map(@fetchedOrders, (o) => @_addSyncInfo(o.id, o.version, @_options.channelid, o.id)), 100) if _.size(@fetchedOrders) > 0
     .fail (error) =>
       @logger.error "Error on execute method; #{error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
