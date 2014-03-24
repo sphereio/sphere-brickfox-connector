@@ -47,12 +47,12 @@ class ProductUpdateImport
       ],
       (mappingsJson, productsXML) =>
         mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined mappings
-        utils.assertVariationIdMappingIsDefined mappings
-        utils.assertSkuMappingIsDefined mappings
+        utils.assertProductIdMappingIsDefined mappings.product
+        utils.assertVariationIdMappingIsDefined mappings.product
+        utils.assertSkuMappingIsDefined mappings.product
         @toBeImported = _.size(productsXML.Products?.ProductUpdate)
-        newProducts = @_processProductUpdatesData(productsXML, mappings)
-        @productExternalIdMapping = mappings.ProductId.to
+        newProducts = @_processProductUpdatesData(productsXML, mappings.product)
+        @productExternalIdMapping = mappings.product.ProductId.to
         productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
         @newVariants = @_transformToVariantsBySku(newProducts)
         @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"

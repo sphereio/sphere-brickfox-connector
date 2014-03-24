@@ -39,14 +39,14 @@ class OrderExport
       @_loadOrdersXsd './examples/xsd/orders.xsd'
       ],
       (mappingsJson, fetchedOrders, ordersXsd) =>
-        @mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined @mappings
-        utils.assertVariationIdMappingIsDefined @mappings
-        utils.assertSkuMappingIsDefined @mappings
+        mappings = JSON.parse mappingsJson
+        utils.assertProductIdMappingIsDefined mappings
+        utils.assertVariationIdMappingIsDefined mappings
+        utils.assertSkuMappingIsDefined mappings
         @fetchedOrders = fetchedOrders
         if _.size(@fetchedOrders) > 0
           @logger.info "[OrderExport] Orders to export count: '#{_.size @fetchedOrders}'"
-          xmlOrders = @_ordersToXML(@fetchedOrders)
+          xmlOrders = @_ordersToXML(@fetchedOrders, mappings.product)
           content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
           @_validateXML(content, ordersXsd)
           @fileName = @_getFileName(@_options.output)
@@ -127,15 +127,35 @@ class OrderExport
         deferred.resolve "Order sync info successfully stored."
     deferred.promise
 
-  _ordersToXML: (orders) ->
+  ###
+  # Updates asynchronously category in Sphere.
+  #
+  # @param {Object} data Update category request data
+  # @return {Object} If success returns promise with success message otherwise rejects with error message
+  ###
+  _updateOrder: (data) ->
+    deferred = Q.defer()
+    @rest.POST "/categories/#{data.id}", data.payload, (error, response, body) ->
+      if error
+        deferred.reject "HTTP error on category update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+      else
+        if response.statusCode isnt 200
+          message = "Error on categories update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+          deferred.reject message
+        else
+          message = "Category with id: '#{data.id}' updated."
+          deferred.resolve message
+    deferred.promise
+
+  _ordersToXML: (orders, mappings) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})
     root.att('count', orders.length)
     _.each orders, (order, index, list) =>
       orderXML = root.ele("Order", {num: index + 1})
-      @_orderToXML(order, orderXML)
+      @_orderToXML(order, orderXML, mappings)
     root
 
-  _orderToXML: (order, orderXML) =>
+  _orderToXML: (order, orderXML, mappings) =>
     @logger.debug "[OrderExport] Processing order with id: '#{order.id}'"
     orderXML.e('OrderId').t(order.id)
     orderXML.e('OrderDate').t(order.createdAt)
@@ -171,8 +191,8 @@ class OrderExport
 
   _lineItemToXML: (lineItem, lineItemXML) =>
     lineItemXML.e('OrderLineId').t(lineItem.id)
-    productId = utils.getVariantAttValue(@mappings, 'ProductId', lineItem.variant)
-    variationId = utils.getVariantAttValue(@mappings, 'VariationId', lineItem.variant)
+    productId = utils.getVariantAttValue(mappings, 'ProductId', lineItem.variant)
+    variationId = utils.getVariantAttValue(mappings, 'VariationId', lineItem.variant)
     lineItemXML.e('ProductId').t(productId)
     name = _.values(lineItem.name)[0]
     lineItemXML.e('ProductName').t(name)

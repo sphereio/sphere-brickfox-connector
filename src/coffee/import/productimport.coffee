@@ -132,7 +132,7 @@ class ProductImport
   _buildManufacturers: (data, productType, mappings) ->
     @logger.info '[Manufacturers] Manufacturers XML import started...'
 
-    if not mappings.ManufacturerId
+    if not mappings.product.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
       return
 
@@ -143,7 +143,7 @@ class ProductImport
       @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
-    attributeName = mappings.ManufacturerId.to
+    attributeName = mappings.product.ManufacturerId.to
     # find attribute on product type
     matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
     if not matchedAttr
@@ -495,15 +495,15 @@ class ProductImport
       # exclude product attributes which has to be handled differently
       simpleAttributes = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
       _.each simpleAttributes, (value, key) =>
-        @_processValue(product, variantBase, key, value, mappings)
+        @_processValue(product, variantBase, key, value, mappings.product)
 
       # extract Attributes from product
       _.each p.Attributes, (item) =>
-        @_processAttributes(item, product, variantBase, mappings)
+        @_processAttributes(item, product, variantBase, mappings.product)
 
       # add variants
       _.each p.Variations[0].Variation, (v, index, list) =>
-        variant = @_buildVariant(v, product, variantBase, mappings)
+        variant = @_buildVariant(v, product, variantBase, mappings.product)
         if index is 0
           product.masterVariant = variant
         else
