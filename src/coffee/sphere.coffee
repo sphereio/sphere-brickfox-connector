@@ -229,22 +229,16 @@ exports.updateInventory = (sync, new_obj, old_obj) ->
         deferred.reject message
   deferred.promise
 
-exports.queryUnSyncedOrders = (rest, numberOfDays) ->
+exports.queryOrders = (rest, query) ->
   deferred = Q.defer()
-  date = new Date()
-  numberOfDays = 7 if numberOfDays is undefined
-  date.setDate(date.getDate() - numberOfDays)
-  d = "#{date.toISOString().substring(0,10)}T00:00:00.000Z"
-  query = encodeURIComponent "createdAt > \"#{d}\""
+  query = encodeURIComponent query
   rest.GET "/orders?limit=0&where=#{query}", (error, response, body) ->
     if error
-      deferred.reject "Error on fetching orders: " + error
+      deferred.reject "Error on querying orders: " + error
     else if response.statusCode isnt 200
-      deferred.reject "Problem on fetching orders (status: #{response.statusCode}): " + body
+      deferred.reject "Problem on querying orders (status: #{response.statusCode}): " + body
     else
-      orders = body.results
-      unsyncedOrders = _.filter orders, (o) -> _.size(o.syncInfo) is 0
-      deferred.resolve unsyncedOrders
+      deferred.resolve body.results
   deferred.promise
 
 exports.updateOrder = (rest, id, data) ->

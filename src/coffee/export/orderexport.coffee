@@ -33,10 +33,11 @@ class OrderExport
     @startTime = new Date().getTime()
     @logger.info '[OrderExport] OrderExport execution started...'
     numberOfDays = @_options.numberOfDays
+    orderQuery = @_buildOrderQuery numberOfDays
 
     Q.spread [
       @_loadMappings @_options.mapping
-      api.queryUnSyncedOrders(@rest, numberOfDays)
+      api.queryOrders(@rest, orderQuery)
       @_loadOrdersXsd './examples/xsd/orders.xsd'
       ],
       (mappingsJson, fetchedOrders, ordersXsd) =>
@@ -44,10 +45,12 @@ class OrderExport
         utils.assertProductIdMappingIsDefined mappings.product
         utils.assertVariationIdMappingIsDefined mappings.product
         utils.assertSkuMappingIsDefined mappings.product
-        @fetchedOrders = fetchedOrders
-        if _.size(@fetchedOrders) > 0
-          @logger.info "[OrderExport] Orders to export count: '#{_.size @fetchedOrders}'"
-          xmlOrders = @_ordersToXML(@fetchedOrders, mappings.product)
+        if fetchedOrders
+          # TODO refactor as soon as collection query in SPHERE.IO is fixed
+          @unsyncedOrders = _.filter fetchedOrders, (o) -> _.size(o.syncInfo) is 0
+        if _.size(@unsyncedOrders) > 0
+          @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
+          xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.product)
           content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
           @_validateXML(content, ordersXsd)
           @fileName = @_getFileName(@_options.output)
@@ -57,7 +60,7 @@ class OrderExport
     .then (writeXMLResult) =>
       if writeXMLResult is 'OK'
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
-        orderUpdates = @_buildOrderSyncInfoUpdates(@fetchedOrders, @_options.channelid) if _.size(@fetchedOrders) > 0
+        orderUpdates = @_buildOrderSyncInfoUpdates(@unsyncedOrders, @_options.channelid) if _.size(@unsyncedOrders) > 0
         # update order sync info
         utils.batch(_.map(orderUpdates, (o) => api.updateOrder(@rest, o.id, o.payload))) if orderUpdates
     .then (result) =>
@@ -91,10 +94,19 @@ class OrderExport
   _writeFile: (path, content) ->
     utils.writeFile(path, content)
 
-  _buildOrderSyncInfoUpdates: (fetchedOrders, channelId) ->
+  _buildOrderQuery: (numberOfDays) ->
+    # TODO refactor as soon as collection query in SPHERE.IO is fixed. Getting all orders without syncInfo should be enough
+    # i.e.: 'where=syncInfo is empty'
+    date = new Date()
+    numberOfDays = 7 if numberOfDays is undefined
+    date.setDate(date.getDate() - numberOfDays)
+    d = "#{date.toISOString().substring(0,10)}T00:00:00.000Z"
+    query = "createdAt > \"#{d}\""
+
+  _buildOrderSyncInfoUpdates: (unsyncedOrders, channelId) ->
     updates = []
 
-    _.each fetchedOrders, (o) ->
+    _.each unsyncedOrders, (o) ->
       wrapper =
         id: o.id
         payload:
