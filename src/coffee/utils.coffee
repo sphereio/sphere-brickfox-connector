@@ -11,7 +11,19 @@ exports.xmlVal = (elem, attribName, fallback) ->
 exports.generateSlug = (name) ->
   # TODO use some random number too
   timestamp = new Date().getTime()
-  _s.slugify(name).concat("-#{timestamp}").substring(0, 256)
+  randomInt = @getRandomInt(100000000, 10000000000)
+  _s.slugify(name).concat("-#{timestamp}-#{randomInt}")
+
+###
+# Returns a random integer between min and max
+# Using Math.round() will give you a non-uniform distribution!
+#
+# @param {Integer} min integer value
+# @throws {Integer} max integer value
+# @return {Integer} generated integer value
+###
+exports.getRandomInt = (min, max) ->
+  Math.floor(Math.random() * (max - min + 1)) + min
 
 exports.readFile = (file) ->
   deferred = Q.defer()
