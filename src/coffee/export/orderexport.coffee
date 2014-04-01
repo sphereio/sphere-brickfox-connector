@@ -1,12 +1,11 @@
-fs = require 'fs'
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
 libxmljs = require 'libxmljs'
+{Rest} = require('sphere-node-connect')
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
-{Rest} = require('sphere-node-connect')
 
 ###
 Exports SPHERE orders as XML (in compliance with Brickfox order import XSD)

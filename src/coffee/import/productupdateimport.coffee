@@ -1,4 +1,3 @@
-fs = require 'fs'
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
