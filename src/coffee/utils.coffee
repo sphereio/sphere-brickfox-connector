@@ -87,8 +87,28 @@ exports.batch = (list, numberOfParallelRequest = 100) ->
         doBatch _.tail(list, numberOfParallelRequest), numberOfParallelRequest
     .fail (error) ->
       deferred.reject error
-   doBatch(list, numberOfParallelRequest)
-   deferred.promise
+  doBatch(list, numberOfParallelRequest)
+  deferred.promise
+
+###
+# Creates promise for each list element and fires each promise sequentially.
+
+# @param {Object} rest SPHERE.IO API client to use
+# @param {Object} createPromise Function reference to use for promise creation
+# @param {Array} data Date used for promise creation
+# @param {Integer} index Index of the date to start with (default: 0)
+# @return {Array} Promise results to write into
+###
+exports.batchSeq = (rest, createPromise, data, index = 0, allResult = []) =>
+  createPromise(rest, data[index])
+  .then (result) =>
+    newResult = allResult.concat result
+    if (index + 1) < _.size(data)
+      @batchSeq(rest, createPromise, data, index + 1, newResult)
+    else
+      Q(newResult)
+  .fail (error) =>
+    throw error
 
 ###
 # Returns localized values for all detected languages.

@@ -85,7 +85,7 @@ class ProductImport
       @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
       @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
       categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(categoryUpdates, (c) => api.updateCategory(@rest, c))) if categoryUpdates
+      utils.batchSeq(@rest, api.updateCategory, categoryUpdates, 0) if categoryUpdates
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
       @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
