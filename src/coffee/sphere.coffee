@@ -1,6 +1,9 @@
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
+utils = require './utils'
+
+#TODO refactor use with node connect GET / POST functions only (better use sphere-node-client / sync only)
 
 ###
 # Retrieves asynchronously all categories from Sphere.
@@ -9,7 +12,7 @@ _s = require 'underscore.string'
 ###
 exports.fetchCategories = (rest) ->
   deferred = Q.defer()
-  rest.GET '/categories', (error, response, body) ->
+  rest.PAGED '/categories', (error, response, body) ->
     if error
       deferred.reject error
     else
@@ -67,7 +70,7 @@ exports.updateCategory = (rest, data) ->
 ###
 exports.fetchProductTypes = (rest) ->
   deferred = Q.defer()
-  rest.GET '/product-types', (error, response, body) ->
+  rest.PAGED '/product-types', (error, response, body) ->
     if error
       deferred.reject error
     else
@@ -149,7 +152,7 @@ exports.queryProductsByExternProductId = (rest, id, productExternalIdMapping) ->
   deferred = Q.defer()
   predicate = "masterVariant(attributes(name=\"#{productExternalIdMapping}\" and value=#{id}))"
   query = "/product-projections?where=#{encodeURIComponent(predicate)}&staged=true"
-  rest.GET query, (error, response, body) ->
+  rest.PAGED query, (error, response, body) ->
     if error
       deferred.reject error
     else
@@ -173,7 +176,7 @@ exports.queryInventoriesBySku = (rest, sku) ->
   deferred = Q.defer()
   predicate = "sku=#{sku}"
   query = "/inventory?where=#{encodeURIComponent(predicate)}"
-  rest.GET query, (error, response, body) ->
+  rest.PAGED query, (error, response, body) ->
     if error
       deferred.reject error
     else
@@ -217,40 +220,96 @@ exports.updateInventory = (sync, new_obj, old_obj) ->
   deferred = Q.defer()
   sync.buildActions(new_obj, old_obj).update (error, response, body) ->
     if error
-      deferred.reject "HTTP error on inventory update; Error: #{error}; \nNew object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: '#{utils.pretty body}'"
+      deferred.reject "HTTP error on inventory update; Error: #{error}; \nNew object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: #{utils.pretty body}"
     else
       if response.statusCode is 200
         deferred.resolve 200
       else if response.statusCode is 304
-        # Inventory entry update not neccessary
+        # Inventory entry update not necessary
         deferred.resolve 304
       else
-        message = "Error on inventory update; New object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: '#{utils.pretty body}'"
+        message = "Error on inventory update; New object: \n#{utils.pretty new_obj} \nOld object: \n#{utils.pretty old_obj} \n\nResponse body: #{utils.pretty body}"
         deferred.reject message
   deferred.promise
 
-exports.queryOrders = (rest, query) ->
-  deferred = Q.defer()
-  query = encodeURIComponent query
-  rest.GET "/orders?limit=0&where=#{query}", (error, response, body) ->
-    if error
-      deferred.reject "Error on querying orders: " + error
-    else if response.statusCode isnt 200
-      deferred.reject "Problem on querying orders (status: #{response.statusCode}): " + body
-    else
-      deferred.resolve body.results
-  deferred.promise
+exports.queryOrders = (rest, where, expand) ->
+  @get(rest, @pathWhere("/orders", where, null, [expand]))
 
 exports.updateOrder = (rest, id, data) ->
   deferred = Q.defer()
   rest.POST "/orders/#{id}", data, (error, response, body) ->
     if error
-      deferred.reject "HTTP error on order update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+      deferred.reject "HTTP error on order update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: #{utils.pretty body}"
     else
       if response.statusCode isnt 200
-        message = "Error on order update (status: #{response.statusCode}); Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
+        message = "Error on order update (status: #{response.statusCode}); Request body: \n #{utils.pretty data} \n\n Response body: #{utils.pretty body}"
         deferred.reject message
       else
         message = "Order with id: '#{id}' updated."
         deferred.resolve message
   deferred.promise
+
+exports.get = (rest, path) ->
+  d = Q.defer()
+  rest.PAGED path, (error, response, body) ->
+    if error
+      d.reject "HTTP error on GET; Request path: '#{path}'; Error: #{error}; Response body: #{utils.pretty body}"
+    else if response.statusCode is 200
+      d.resolve body
+    else
+      d.reject "GET failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Response body: \n #{utils.pretty body}"
+  d.promise
+
+exports.post = (rest, path, json) ->
+  d = Q.defer()
+  rest.POST path, json, (error, response, body) ->
+    if error
+      d.reject "HTTP error on POST; Request path: '#{path}'; Error: #{error}; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
+    else if response.statusCode is 200 or response.statusCode is 201
+      d.resolve body
+    else
+      d.reject "POST failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
+  d.promise
+
+exports.pathWhere = (path, where, sort = [], expand = [], limit = 0, offset = 0) ->
+  sorting = if not _.isEmpty(sort) then "&" + _.map(sort, (s) -> "sort=" + encodeURIComponent(s)).join("&") else ""
+  expanding = if not _.isEmpty(expand) then "&" + _.map(expand, (e) -> "expand=" + encodeURIComponent(e)).join("&") else ""
+
+  "#{path}?where=#{encodeURIComponent(where)}#{sorting}#{expanding}&limit=#{limit}&offset=#{offset}"
+
+# TODO REMOVE OR MOVE TO TEST CLASS which produces some dummy data to work with
+exports.ensureStates = (rest, defs) ->
+  statePromises = _.map defs, (def) =>
+    @get(rest, @pathWhere('/states', "key=\"#{def.key}\" and type=\"LineItemState\""))
+    .then (list) =>
+      if list.total is 0
+        json =
+          key: def.key
+          type: 'LineItemState'
+          initial: false
+        @post(rest, "/states", json)
+      else
+        list.results[0]
+    .then (state) ->
+      state.definition = def
+      state
+
+  Q.all statePromises
+  .then (createdStates) =>
+    finalPromises = _.map createdStates, (state) =>
+      if (not state.transitions? and state.definition.transitions?) or
+      (state.transitions? and not state.definition.transitions?) or
+      (state.transitions? and state.definition.transitions? and _.size(state.transitions) != _.size(state.definition.transitions))
+        json =
+          if state.definition.transitions?
+            version: state.version
+            actions: [{action: 'setTransitions', transitions: _.map(state.definition.transitions, (tk) -> {typeId: 'state', id: _.find(createdStates, (s) -> s.key is tk).id})}]
+          else
+            version: state.version
+            actions: [{action: 'setTransitions'}]
+
+        @post(rest, "/states/#{state.id}", json)
+      else
+        Q(state)
+
+    Q.all finalPromises

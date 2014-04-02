@@ -24,7 +24,7 @@ module.exports = class
       .option '--products <file>', 'XML file containing products to import'
       .option '--manufacturers [file]', 'XML file containing manufacturers to import'
       .option '--categories [file]', 'XML file containing categories to import'
-      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
       .option '--productTypeId [id]', 'Product type ID to use for product creation. If not set first product type fetched from project will be used.'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --productTypeId [id] --mapping <file> --products <file> --manufacturers [file] --categories [file]'
       .action (opts) ->
@@ -62,7 +62,7 @@ module.exports = class
       .command 'import-product-updates'
       .description 'Imports Brickfox product stock and price changes into your SPHERE.IO project.'
       .option '--products <file>', 'XML file containing products to import'
-      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>'
       .action (opts) ->
 
@@ -97,7 +97,7 @@ module.exports = class
       .option '--output <file>', 'Path to the file the exporter will write the resulting XML into'
       .option '--numberOfDays [days]', 'Retrieves orders created within the specified number of days starting with the present day. Default value is: 7', 7
       .option '--channelId <id>', 'SyncInfo (http://commercetools.de/dev/http-api-projects-orders.html#sync-info) channel id which will be updated after succesfull order export'
-      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO attributes mapping'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --channelId <id> --mapping <file> --output <file>'
       .action (opts) ->
 
@@ -132,10 +132,14 @@ module.exports = class
     program
       .command 'import-orders-status'
       .description 'Imports order and order entry status changes from Brickfox into your SPHERE.IO project.'
-      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret>'
+      .option '--status <file>', 'XML file containing order status to import'
+      .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file>'
       .action (opts) ->
 
-        validateGlobalOpts(opts, 'import-product-updates')
+        validateGlobalOpts(opts, 'import-orders-status')
+        validateOpt(opts.mapping, 'mapping', 'import-orders-status')
+        validateOpt(opts.status, 'status', 'import-orders-status')
 
         logger = new OrderStatusImportLogger
           src: if argv.debug then argv.debug else false
@@ -145,6 +149,8 @@ module.exports = class
             project_key: opts.parent.projectKey
             client_id: opts.parent.clientId
             client_secret: opts.parent.clientSecret
+          mapping: opts.mapping
+          status: opts.status
           appLogger: logger
           logConfig:
             logger: logger
