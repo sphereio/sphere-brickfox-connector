@@ -2,12 +2,12 @@
     "description": "Defines Brickfox to SPHERE attributes mapping required for products and orders synchronization.",
     "order": {
         "lineItemState": {
-           "PaymentOutstanding": "TestState",
-           "Cancelled": "TestState",
-           "ScanIn": "TestState",
-           "Shipped": "TestState",
-           "Returned": "TestState",
-           "Pending": "TestState"
+           "PaymentOutstanding": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"},
+           "Cancelled": {"id": "05fdde63-885c-4008-90ca-5d7c63721ea2", "key": "C"},
+           "ScanIn": {"id": "742293bc-063d-42c5-9370-46086e40b7aa", "key": "B"},
+           "Shipped": {"id": "f06cf37c-ad26-47b2-be46-5bb4da2bd64c", "key": "D"},
+           "Returned": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"},
+           "Pending": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"}
         }
     },
     "product": {
