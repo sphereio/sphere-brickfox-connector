@@ -1,5 +1,5 @@
 {
-    "description": "Defines Brickfox to SPHERE attributes mapping required for products and orders synchronization.",
+    "description": "Defines Brickfox to SPHERE attributes mapping required for product and order synchronization.",
     "order": {
         "lineItemState": {
            "PaymentOutstanding": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"},
