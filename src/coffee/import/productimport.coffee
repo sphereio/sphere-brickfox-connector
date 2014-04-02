@@ -447,7 +447,7 @@ class ProductImport
         mapping = mappings[key]
         url = value[0]
         if not _s.startsWith(url, 'http')
-          url = "#{mapping.specialMapping.baseURL}#{url}"
+          url = "#{mapping.specialMapping.baseURL}#{url}" if mapping.specialMapping?.baseURL
         image =
           url: url
           dimensions:
