@@ -107,7 +107,7 @@ exports.batchSeq = (rest, createPromise, data, index = 0, allResult = []) =>
       @batchSeq(rest, createPromise, data, index + 1, newResult)
     else
       Q(newResult)
-  .fail (error) =>
+  .fail (error) ->
     throw error
 
 ###
