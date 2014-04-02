@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Orders count="2">
   <Order num="1">
-    <OrderId>310118</OrderId>
+    <OrderId>98daebca-768b-481e-8311-cef66c874184</OrderId>
     <OrderStatusChanged>2012-11-09 12:44:37</OrderStatusChanged>
-    <OrderStatus>shipped</OrderStatus>
+    <OrderStatus>Shipped</OrderStatus>
     <ShippingTrackingId>167997120024</ShippingTrackingId>
     <ShippingTrackingUrl>http://nolp.dhl.de/nextt-online-public/set_identcodes.do?lang=de&amp;idc=167997120024</ShippingTrackingUrl>
     <CarrierName>DHL</CarrierName>
     <OrderLines count="2">
       <OrderLine num="1">
-        <OrderLineId>985d867f3b590b68c49d8ddc9338460d</OrderLineId>
-        <OrderLineStatus>shipped</OrderLineStatus>
+        <OrderLineId>f2738bd1-a5b7-4c9c-9d58-d47c00b72d31</OrderLineId>
+        <OrderLineStatus>Shipped</OrderLineStatus>
         <QuantityOrdered>2</QuantityOrdered>
         <QuantityCancelled>0</QuantityCancelled>
         <QuantityShipped>2</QuantityShipped>
         <QuantityReturned>0</QuantityReturned>
       </OrderLine>
       <OrderLine num="2">
-        <OrderLineId>9859906ff83daab0d45673fe3dbf67e7</OrderLineId>
-        <OrderLineStatus>shipped</OrderLineStatus>
+        <OrderLineId>1da71b63-8c01-4769-ba57-d19c6f917c7e</OrderLineId>
+        <OrderLineStatus>Shipped</OrderLineStatus>
         <QuantityOrdered>3</QuantityOrdered>
         <QuantityCancelled>0</QuantityCancelled>
         <QuantityShipped>3</QuantityShipped>
@@ -27,24 +27,24 @@
     </OrderLines>
   </Order>
   <Order num="2">
-    <OrderId>310104</OrderId>
+    <OrderId>38f55948-6fdf-4715-85fd-8b1e267b24bf</OrderId>
     <OrderStatusChanged>2012-11-09 12:44:46</OrderStatusChanged>
-    <OrderStatus>shipped</OrderStatus>
+    <OrderStatus>Shipped</OrderStatus>
     <ShippingTrackingId>00340433981525702741</ShippingTrackingId>
     <ShippingTrackingUrl>http://nolp.dhl.de/nextt-online-public/set_identcodes.do?lang=de&amp;idc=00340433981525702741</ShippingTrackingUrl>
     <CarrierName>DHL</CarrierName>
     <OrderLines count="3">
       <OrderLine num="1">
-        <OrderLineId>c786139080345e33376be0b474de5873</OrderLineId>
-        <OrderLineStatus>shipped</OrderLineStatus>
+        <OrderLineId>f1f214e4-8c05-4606-82c4-ba67a9795b7e</OrderLineId>
+        <OrderLineStatus>Shipped</OrderLineStatus>
         <QuantityOrdered>1</QuantityOrdered>
         <QuantityCancelled>0</QuantityCancelled>
         <QuantityShipped>1</QuantityShipped>
         <QuantityReturned>0</QuantityReturned>
       </OrderLine>
       <OrderLine num="2">
-        <OrderLineId>c786166794cf70f3fb2c4e6bc510cba8</OrderLineId>
-        <OrderLineStatus>shipped</OrderLineStatus>
+        <OrderLineId>ea889c80-d6a6-464d-998e-3acfcf6d3eb2</OrderLineId>
+        <OrderLineStatus>Shipped</OrderLineStatus>
         <QuantityOrdered>1</QuantityOrdered>
         <QuantityCancelled>0</QuantityCancelled>
         <QuantityShipped>1</QuantityShipped>
@@ -52,7 +52,7 @@
       </OrderLine>
       <OrderLine num="3">
         <OrderLineId>c78c4d0138e4e5d0628b9cd57c896e88</OrderLineId>
-        <OrderLineStatus>shipped</OrderLineStatus>
+        <OrderLineStatus>Shipped</OrderLineStatus>
         <QuantityOrdered>1</QuantityOrdered>
         <QuantityCancelled>0</QuantityCancelled>
         <QuantityShipped>1</QuantityShipped>
