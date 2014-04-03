@@ -99,16 +99,19 @@ exports.batch = (list, numberOfParallelRequest = 100) ->
 # @param {Integer} index Index of the date to start with (default: 0)
 # @return {Array} Promise results to write into
 ###
-exports.batchSeq = (rest, createPromise, data, index = 0, allResult = []) =>
+exports.batchSeq = (rest, createPromise, data, index = 0, allResult = [], percent = 0) =>
   createPromise(rest, data[index])
   .then (result) =>
+    dataSize = _.size(data)
+    newIndex = index + 1
+    donePercent = _s.numberFormat((newIndex * 100) / dataSize)
+    if (donePercent - percent) >= 1
+      console.log "Processed #{newIndex} out of #{dataSize}. Done: #{donePercent}%"
     newResult = allResult.concat result
-    if (index + 1) < _.size(data)
-      @batchSeq(rest, createPromise, data, index + 1, newResult)
+    if (newIndex) < dataSize
+      @batchSeq(rest, createPromise, data, newIndex, newResult, donePercent)
     else
       Q(newResult)
-  .fail (error) ->
-    throw error
 
 ###
 # Returns localized values for all detected languages.
