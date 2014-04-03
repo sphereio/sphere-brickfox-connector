@@ -26,22 +26,25 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
 
 #### Product import mapping attributes
 
- - ```target```: Specifies where to save mapped Brickfox value to. Possible values: ```product | variant```
+ - `target`: Specifies where to save mapped Brickfox value to. Possible values: ```product | variant```
 
- - ```isCustom```: Only relevant for targets of type ```variant``` and specifies if value should be mapped to one of the SPHERE.IO [product type](http://commercetools.de/dev/http-api-projects-productTypes.html#product-type) attributes. Possible values ```true | false```
+ - `isCustom`: Only relevant for targets of type ```variant``` and specifies if value should be mapped to one of the SPHERE.IO [product type](http://commercetools.de/dev/http-api-projects-productTypes.html#product-type) attributes. Possible values ```true | false```
 
- - ```type```: Defines attribute type. Possible standard [values](http://commercetools.de/dev/http-api-projects-productTypes.html#attribute-type).
+ - `type`: Defines attribute type. Possible standard [values](http://commercetools.de/dev/http-api-projects-productTypes.html#attribute-type).
 
    Supported special types (require ):
-   - ```special-tax```: Attribute's value will be mapped to configured tax category IDs
+   - `special-tax`: Attribute's value will be mapped to configured tax category IDs
 
-   - ```special-price```: Attribute's value will be mapped to configured customer group ID, channel group ID and country
+   - `special-price`: Attribute's value will be mapped to configured customer group ID, channel group ID and country
 
-   - ```special-image```: Attribute's value will used as URL for creation of variant images. Optional special mapping attribute ```baseURL``` can be used for prefixing of values with base url if non defined
+   - `special-image`: Attribute's value will used as URL for creation of variant images. Optional special mapping attribute `baseURL` can be used for prefixing of values with base url if non defined
 
- - ```to```: Defines SPHERE.IO product attribute name where the mapped value will be saved to. Possible product [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product). Possible variant [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product-variant)
+ - `to`: Defines SPHERE.IO product attribute name where the mapped value will be saved to. Possible product [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product). Possible variant [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product-variant)
 
- To ensure successful synchronization with Brickfox following Brickfox attribute mappings are mandatory: ```VariationId (as product type attribute), ProductId (as product type attribute), ExternVariationId (as variant sku)```
+ To ensure successful synchronization with Brickfox following Brickfox attribute mappings are mandatory:
+   - VariationId (as variant product type attribute)
+   - ProductId (as variant product type attribute)
+   - ExternVariationId (as variant sku)
 
 Product attribute mapping examples
 ```
@@ -90,7 +93,7 @@ node lib/run
   Commands:
 
     import-products [options]  Imports new and changed Brickfox products from XML into your SPHERE.IO project.
-    import-product-updates [options]  Imports Brickfox product stock and price changes into your SPHERE.IO project.
+    import-products-updates [options]  Imports Brickfox product stock and price changes into your SPHERE.IO project.
     export-orders [options]  Exports new orders from your SPHERE.IO project into Brickfox XML file.
     import-orders-status [options]  Imports order and order entry status changes from Brickfox into your SPHERE.IO project.
 
@@ -131,9 +134,9 @@ node lib/run import-products --help
 ### Usage
 
 ```
-node lib/run import-product-updates --help
+node lib/run import-products-updates --help
 
-  Usage: import-product-updates --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>
+  Usage: import-products-updates --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>
 
   Options:
 
