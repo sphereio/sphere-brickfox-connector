@@ -59,16 +59,16 @@ module.exports = class
             process.exit 1
 
     program
-      .command 'import-product-updates'
+      .command 'import-products-updates'
       .description 'Imports Brickfox product stock and price changes into your SPHERE.IO project.'
       .option '--products <file>', 'XML file containing products to import'
       .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>'
       .action (opts) ->
 
-        validateGlobalOpts(opts, 'import-product-updates')
-        validateOpt(opts.mapping, 'mapping', 'import-product-updates')
-        validateOpt(opts.products, 'products', 'import-product-updates')
+        validateGlobalOpts(opts, 'import-products-updates')
+        validateOpt(opts.mapping, 'mapping', 'import-products-updates')
+        validateOpt(opts.products, 'products', 'import-products-updates')
 
         logger = new ProductUpdateImportLogger
           src: if argv.debug then argv.debug else false
