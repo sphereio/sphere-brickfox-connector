@@ -73,8 +73,8 @@ class ProductImport
         manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.product) if manufacturersXML
         api.updateProductType(@rest, manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
-      @logger.info '[Categories] Categories XML import started...'
-      @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'"
+      @logger.info '[Categories] Categories XML import started...' if @categoriesXML
+      @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'" if @categoriesXML
       @categories = @_buildCategories(@categoriesXML) if @categoriesXML
       @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
       utils.batch(_.map(@categoryCreates, (c) => api.createCategory(@rest, c))) if @categoryCreates
@@ -446,8 +446,8 @@ class ProductImport
       if _.has(mappings, key)
         mapping = mappings[key]
         url = value[0]
-        if not _s.startsWith(url, 'http')
-          url = "#{mapping.specialMapping.baseURL}#{url}" if mapping.specialMapping?.baseURL
+        if not _s.startsWith(url, 'http') and mapping.specialMapping?.baseURL
+          url = "#{mapping.specialMapping.baseURL}#{url}"
         image =
           url: url
           dimensions:
@@ -478,9 +478,9 @@ class ProductImport
           price.value =
             centAmount: @_getPriceAmount(value[0], mapping)
             currencyCode: currency
-          country = mapping.specialMapping.country
-          customerGroup = mapping.specialMapping.customerGroup
-          channel = mapping.specialMapping.channel
+          country = mapping.specialMapping?.country
+          customerGroup = mapping.specialMapping?.customerGroup
+          channel = mapping.specialMapping?.channel
           if country
             price.country = mapping.specialMapping.country
           if customerGroup
