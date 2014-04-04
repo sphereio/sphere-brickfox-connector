@@ -32,7 +32,10 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
 
  - `type`: Defines attribute type. Possible standard [values](http://commercetools.de/dev/http-api-projects-productTypes.html#attribute-type).
 
-   Supported special types (require ):
+    Hint: Make sure that localized Brickfox attributes are mapped to localized ltext / lnum SPHERE.IO attributes.
+
+
+   Supported special types:
    - `special-tax`: Attribute's value will be mapped to configured tax category IDs
 
    - `special-price`: Attribute's value will be mapped to configured customer group ID, channel group ID and country
@@ -47,7 +50,7 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
    - ExternVariationId (as variant sku)
 
 Product attribute mapping examples
-```
+```json
 {
     "product": {
       "meta_title": {
