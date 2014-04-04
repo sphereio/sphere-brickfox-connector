@@ -84,10 +84,10 @@ class OrderStatusImport
     endTime = new Date().getTime()
     result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[OrderStatus] OrderStatusImport finished with result: #{result}.
-                    [OrderStatus] Orders processed: '#{@ordersProcessed}'
-                    [OrderStatus] LineItem status changed: '#{@lineItemCounter}'
-                    [OrderStatus] Deliveries created: '#{@deliveriesCounter}'
-                    [OrderStatus] Parcels created: '#{@parcelsCounter}'
+                    [OrderStatus] Orders processed: #{@ordersProcessed or 0}
+                    [OrderStatus] LineItem status changed: #{@lineItemCounter or 0}
+                    [OrderStatus] Deliveries created: #{@deliveriesCounter or 0}
+                    [OrderStatus] Parcels created: #{@parcelsCounter or 0}
                     [OrderStatus] Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback isSuccess
 

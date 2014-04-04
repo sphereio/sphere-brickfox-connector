@@ -80,6 +80,7 @@ class ProductUpdateImport
       promises
     .spread (updateInventoryResult, createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
+      # filter out responses where inventory was not updates (i.e.: value did not change)
       @inventoriesUpdated = _.size(_.filter updateInventoryResult, (r) -> r is 200)
       @_processResult(callback, true)
     .fail (error) =>
@@ -91,9 +92,9 @@ class ProductUpdateImport
     endTime = new Date().getTime()
     result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[ProductsUpdate] ProductUpdateImport finished with result: #{result}.
-                    [ProductsUpdate] Price updated for #{@priceUpdatedCount} out of #{@toBeImported} products.
-                    [ProductsUpdate] Inventories created: '#{@inventoriesCreated}'
-                    [ProductsUpdate] Inventories updated: '#{@inventoriesUpdated}'
+                    [ProductsUpdate] Price updated for #{@priceUpdatedCount or 0} out of #{@toBeImported or 0} products.
+                    [ProductsUpdate] Inventories created: #{@inventoriesCreated or 0}
+                    [ProductsUpdate] Inventories updated: #{@inventoriesUpdated or 0}
                     [ProductsUpdate] Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback isSuccess
 
