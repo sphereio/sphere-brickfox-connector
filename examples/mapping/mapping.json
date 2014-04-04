@@ -55,6 +55,12 @@
             "type": "enum",
             "to": "color"
         },
+        "magento_ean": {
+            "target": "variant",
+            "isCustom": "true",
+            "type": "ltext",
+            "to": "ean"
+        },
         "Rrp": {
             "target": "variant",
             "isCustom": "true",
