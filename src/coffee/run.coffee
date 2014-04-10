@@ -7,6 +7,8 @@ OrderExport = require './export/orderexport'
 OrderStatusImport = require './import/orderstatusimport'
 {ProductImportLogger, ProductUpdateImportLogger, OrderExportLogger, OrderStatusImportLogger} = require './loggers'
 
+# TODO: use SFTP
+
 module.exports = class
 
   @run: (argv) ->
@@ -134,7 +136,8 @@ module.exports = class
       .description 'Imports order and order entry status changes from Brickfox into your SPHERE.IO project.'
       .option '--status <file>', 'XML file containing order status to import'
       .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mapping'
-      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file>'
+      .option '--createStates', 'If set, will setup order line item states and its transitions according to mapping definition'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file> --createStates'
       .action (opts) ->
 
         validateGlobalOpts(opts, 'import-orders-status')
@@ -151,6 +154,7 @@ module.exports = class
             client_secret: opts.parent.clientSecret
           mapping: opts.mapping
           status: opts.status
+          createstates: opts.createStates
           appLogger: logger
           logConfig:
             logger: logger

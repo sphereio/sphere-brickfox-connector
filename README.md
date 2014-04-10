@@ -173,13 +173,14 @@ node lib/run export-orders --help
 ```
 node lib/run import-orders-status --help
 
-  Usage: import-orders-status --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file>
+  Usage: import-orders-status --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file> --createStates
 
   Options:
 
     -h, --help        output usage information
     --status <file>   XML file containing order status to import
     --mapping <file>  JSON file containing Brickfox to SPHERE.IO mapping
+    --createStates    If set, will setup order line item states and its transitions according to mapping definition
 ```
 
 

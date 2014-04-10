@@ -1,13 +1,28 @@
 {
     "description": "Defines Brickfox to SPHERE attributes mapping required for product and order synchronization.",
-    "order": {
-        "lineItemState": {
-           "PaymentOutstanding": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"},
-           "Cancelled": {"id": "05fdde63-885c-4008-90ca-5d7c63721ea2", "key": "C"},
-           "ScanIn": {"id": "742293bc-063d-42c5-9370-46086e40b7aa", "key": "B"},
-           "Shipped": {"id": "f06cf37c-ad26-47b2-be46-5bb4da2bd64c", "key": "D"},
-           "Returned": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"},
-           "Pending": {"id": "7d19df78-0245-4219-a1ab-814a8a644780", "key": "E"}
+    "orderStates": {
+        "states": [
+            {"key": "Initial", "transitions": ["picking", "canceled"]},
+            {"key": "picking",  "transitions": ["readyToShip", "Initial"]},
+            {"key": "readyToShip", "transitions": ["shipped", "Initial"]},
+            {"key": "shipped", "transitions": ["returned", "closed", "Initial"]},
+            {"key": "returned", "transitions": ["returnApproved", "closed", "Initial"]},
+            {"key": "returnApproved", "transitions": ["picking", "canceled", "Initial"]},
+            {"key": "returnNotApproved", "transitions": ["picking", "canceled", "Initial"]},
+            {"key": "lost", "transitions": ["Initial"]},
+            {"key": "lostApproved", "transitions": ["Initial"]},
+            {"key": "lostNotApproved"},
+            {"key": "backorder", "transitions": ["Initial"]},
+            {"key": "canceled", "transitions": ["Initial"]},
+            {"key": "closed", "transitions": ["Initial"]}
+        ],
+        "mapping": {
+            "Pending": [{"from": "Initial", "to": "Initial"}],
+            "PaymentOutstanding": [{"from": "Initial", "to": "Initial"}],
+            "ScanIn": [{"from": "Initial", "to": "Initial"}],
+            "Shipped": [{"from": "Initial", "to": "picking"}, {"from": "picking", "to": "readyToShip"}, {"from": "readyToShip", "to": "shipped"}],
+            "Returned": [{"from": "shipped", "to": "returned"}],
+            "Cancelled": [{"from": "Initial", "to": "canceled"}]
         }
     },
     "product": {

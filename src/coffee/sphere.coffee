@@ -2,6 +2,7 @@ Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
 utils = require './utils'
+{_u} = require 'sphere-node-utils'
 
 #TODO refactor use with node connect GET / POST functions only (better use sphere-node-client / sync only)
 
@@ -249,6 +250,39 @@ exports.updateOrder = (rest, id, data) ->
         deferred.resolve message
   deferred.promise
 
+exports.addDelivery = (rest, order, deliveryItems) ->
+  action =
+    action: 'addDelivery'
+    items: deliveryItems
+
+  json =
+    version: order.version
+    actions: [action]
+
+  @post(rest, "/orders/#{order.id}", json)
+
+exports.addParcel = (rest, order, deliveryId, trackingData, measurements) ->
+  action =
+    action: 'addParcelToDelivery'
+    deliveryId: deliveryId
+
+  action.trackingData = trackingData if trackingData?
+  action.measurements = measurements if measurements?
+
+  json =
+    version: order.version
+    actions: [action]
+
+  @post(rest, "/orders/#{order.id}", json)
+
+
+exports.transitionLineItemStates = (rest, order, actions) ->
+  json =
+    version: order.version
+    actions: actions
+
+  @post(rest, "/orders/#{order.id}", json)
+
 exports.get = (rest, path) ->
   d = Q.defer()
   rest.PAGED path, (error, response, body) ->
@@ -277,12 +311,12 @@ exports.pathWhere = (path, where, sort = [], expand = [], limit = 0, offset = 0)
 
   "#{path}?where=#{encodeURIComponent(where)}#{sorting}#{expanding}&limit=#{limit}&offset=#{offset}"
 
-# TODO REMOVE OR MOVE TO TEST CLASS which produces some dummy data to work with
 exports.ensureStates = (rest, defs) ->
   statePromises = _.map defs, (def) =>
     @get(rest, @pathWhere('/states', "key=\"#{def.key}\" and type=\"LineItemState\""))
     .then (list) =>
       if list.total is 0
+        console.log "Before create new LineItemState with key: '#{def.key}'"
         json =
           key: def.key
           type: 'LineItemState'
@@ -297,14 +331,16 @@ exports.ensureStates = (rest, defs) ->
   Q.all statePromises
   .then (createdStates) =>
     finalPromises = _.map createdStates, (state) =>
-      if (not state.transitions? and state.definition.transitions?) or
-      (state.transitions? and not state.definition.transitions?) or
-      (state.transitions? and state.definition.transitions? and _.size(state.transitions) != _.size(state.definition.transitions))
+      if (not state.transitions and state.definition.transitions) or
+      (state.transitions and not state.definition.transitions) or
+      (state.transitions and state.definition.transitions and _.size(state.transitions) != _.size(state.definition.transitions))
         json =
-          if state.definition.transitions?
+          if state.definition.transitions
+            console.log "Before add transitions to state with key: '#{state.key}'; transitions: \n '#{_u.prettify state.definition.transitions}'"
             version: state.version
             actions: [{action: 'setTransitions', transitions: _.map(state.definition.transitions, (tk) -> {typeId: 'state', id: _.find(createdStates, (s) -> s.key is tk).id})}]
           else
+            console.log "Before removal of all transitions for state with key: '#{state.key}'"
             version: state.version
             actions: [{action: 'setTransitions'}]
 
