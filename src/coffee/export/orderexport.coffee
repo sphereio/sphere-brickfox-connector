@@ -133,9 +133,8 @@ class OrderExport
     root
 
   _orderToXML: (order, orderXML, mappings) =>
-    @logger.debug "[OrderExport] Processing order with id: '#{order.id}'"
-    # TODO use orderNumber for export and for order status synchronization (not order UUID)
-    orderXML.e('OrderId').t(order.id)
+    @logger.debug "[OrderExport] Processing order with orderNumber: '#{order.orderNumber}', id: '#{order.id}'"
+    orderXML.e('OrderId').t(order.orderNumber)
     orderXML.e('OrderDate').t(order.createdAt)
     #<xs:element ref="OrderStatus" minOccurs="0"/>
     #<xs:element ref="PaymentStatus" minOccurs="0"/>
