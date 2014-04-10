@@ -1,10 +1,14 @@
 Q = require 'q'
-_ = require('underscore')._
+_ = require 'underscore'
 _s = require 'underscore.string'
+{ProductSync} = require 'sphere-node-sync'
+{Rest} = require 'sphere-node-connect'
+SphereClient = require 'sphere-node-client'
+{_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
-{ProductSync} = require('sphere-node-sync')
-{Rest} = require('sphere-node-connect')
+
+
 
 ###
 Imports Brickfox products provided as XML into Sphere.
@@ -13,8 +17,10 @@ Imports Brickfox products provided as XML into Sphere.
 class ProductImport
 
   constructor: (@_options = {}) ->
-    @sync = new ProductSync @_options
+    @productSync = new ProductSync @_options
     @rest = new Rest @_options
+    @client = new SphereClient @_options
+    @client.setMaxParallel(100)
     @logger = @_options.appLogger
 
   ###
@@ -68,7 +74,6 @@ class ProductImport
         @productsXML = productsXML
         @categoriesXML = categoriesXML
         @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
-        #@toBeImported = _.size(productsXML.Products?.Product)
         @productType = @_getProductType(fetchedProductTypes, @_options)
         manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.product) if manufacturersXML
         api.updateProductType(@rest, manufacturers) if manufacturers
@@ -88,16 +93,38 @@ class ProductImport
       utils.batchSeq(@rest, api.updateCategory, categoryUpdates, 0) if categoryUpdates
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
-      @logger.info "[Products] Import products found: '#{_.size @productsXML.Products?.Product}'"
-      products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.product)
-      @logger.info "[Products] Create count: '#{_.size products}'"
-      utils.batch(_.map(products, (p) => api.createProduct(@rest, p))) if products
+      @logger.info "[Products] Total products to import: '#{_.size @productsXML.Products?.Product}'"
+      @products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.product)
+      productUpdates = @products.updates
+      if _.size(productUpdates) > 0
+        @logger.info "[Products] Update count: '#{_.size productUpdates}'"
+        productIdMapping = @mappings.product.ProductId.to
+        Q.all _.map productUpdates, (p) =>
+          attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
+          if not attr
+            throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
+          @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
+        .then (fetchedProductsToUpdate) =>
+          counter = 0
+          Q.all _.map productUpdates, (p) =>
+            oldProduct = fetchedProductsToUpdate[counter]?.body?.results[0]
+            throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}" if not oldProduct
+            update = @productSync.buildActions(p, oldProduct).get()
+            counter++
+            # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
+            # TODO: make sure variants are not dropped and created from scratch but updated only.
+            #@client.products.byId(oldProduct.id).update(update)
+    .then (updateProductsResult) =>
+      @productsUpdated = _.size(updateProductsResult)
+      productCreates = @products.creates
+      if productCreates
+        @logger.info "[Products] Create count: '#{_.size productCreates}'"
+        utils.batch(_.map(productCreates, (p) => api.createProduct(@rest, p)))
     .then (createProductsResult) =>
-      @productsCreated = _.size(createProductsResult) or 0
+      @productsCreated = _.size(createProductsResult)
       @_processResult(callback, true)
     .fail (error) =>
-      @productsCreated = 0
-      @logger.error "Error on execute method; #{error}"
+      @logger.error "Error on execute method; #{_u.prettify error}"
       @logger.error "Error stack: #{error.stack}" if error.stack
       @_processResult(callback, false)
 
@@ -105,7 +132,8 @@ class ProductImport
     endTime = new Date().getTime()
     result = if isSuccess then 'SUCCESS' else 'ERROR'
     @logger.info """[Products] ProductImport finished with result: #{result}.
-                    [Products] Products created: '#{@productsCreated}'
+                    [Products] Products updated: #{@productsUpdated or 0}
+                    [Products] Products created: #{@productsCreated or 0}
                     [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
     callback isSuccess
 
@@ -332,7 +360,8 @@ class ProductImport
   # @return {Array} List of Sphere product representations
   ###
   buildProducts: (data, productType, fetchedCategories, mappings) =>
-    products = []
+    productCreates = []
+    productUpdates = []
     _.each data, (p) =>
       names = utils.getLocalizedValues(p.Descriptions?[0], 'Title')
       descriptions = utils.getLocalizedValues(p.Descriptions?[0], 'LongDescription')
@@ -370,9 +399,16 @@ class ProductImport
         else
           product.variants.push variant
 
-      products.push product
-    # return products list
-    products
+      # this flag indicates if product is new or changed i.e.: attributes or description
+      if p['$'].isNew is '1'
+        productCreates.push product
+      else
+        productUpdates.push product
+
+    # return products to create / update
+    wrapper =
+      creates: productCreates
+      updates: productUpdates
 
   ###
   # Processes variant XML data and builds Sphere product variant representation.

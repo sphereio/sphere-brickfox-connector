@@ -113,8 +113,8 @@ class ProductUpdateImport
         to: "tempstock"
     products = @productImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
 
-    if(_.size products) > 0
-      products
+    if(_.size products.creates) > 0
+      products.creates
     else
       null
 
