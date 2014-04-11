@@ -159,8 +159,6 @@ class OrderStatusImport
       else
         @logger.info "No order state change for orderNumber: '#{fetchedOrder.orderNumber}' required."
 
-
-
   _createLineItemStateTransitionActions: (mappings, fetchedOrder, fetchedLine, orderLineStatus, quantity, fetchedStates, date) ->
     actions = []
     lineItemId = fetchedLine.id
