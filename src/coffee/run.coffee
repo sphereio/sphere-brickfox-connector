@@ -18,7 +18,7 @@ module.exports = class
       .option '--projectKey <project-key>', 'your SPHERE.IO project-key'
       .option '--clientId <client-id>', 'your OAuth client id for the SPHERE.IO API'
       .option '--clientSecret <client-secret>', 'your OAuth client secret for the SPHERE.IO API'
-      .option '--debug', 'enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment'
+      .option '--bunyanVerbose', 'enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment'
 
     program
       .command 'import-products'
@@ -36,7 +36,7 @@ module.exports = class
         validateOpt(opts.products, 'products', 'import-products')
 
         logger = new ProductImportLogger
-          src: if argv.debug then argv.debug else false
+          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
 
         options =
           config:
@@ -73,7 +73,7 @@ module.exports = class
         validateOpt(opts.products, 'products', 'import-products-updates')
 
         logger = new ProductUpdateImportLogger
-          src: if argv.debug then argv.debug else false
+          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
 
         options =
           config:
@@ -109,7 +109,7 @@ module.exports = class
         validateOpt(opts.mapping, 'mapping', 'export-orders')
 
         logger = new OrderExportLogger
-          src: if argv.debug then argv.debug else false
+          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
 
         options =
           config:
@@ -145,7 +145,7 @@ module.exports = class
         validateOpt(opts.status, 'status', 'import-orders-status')
 
         logger = new OrderStatusImportLogger
-          src: if argv.debug then argv.debug else false
+          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
 
         options =
           config:

@@ -107,7 +107,7 @@ node lib/run
     --projectKey <project-key>      your SPHERE.IO project-key
     --clientId <client-id>          your OAuth client id for the SPHERE.IO API
     --clientSecret <client-secret>  your OAuth client secret for the SPHERE.IO API
-    --debug                         enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment
+    --bunyanVerbose                 enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment
 ```
 
 For all command specific options please call `node lib/run <command> --help`.
