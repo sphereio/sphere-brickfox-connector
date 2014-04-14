@@ -52,28 +52,26 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
 Product attribute mapping examples
 ```json
 {
-    "product": {
-      "meta_title": {
-            "target": "product",
-            "type": "ltext",
-            "to": "metaTitle"
-        },
-        "ProductId": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "number",
-            "to": "productId"
-        },
-        "PriceGross": {
-            "target": "variant",
-            "type": "special-price",
-            "specialMapping": {
-                "country": "DE",
-                "customerGroup": "4b96b6f9-03b5-420e-8720-e243837482a8",
-                "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
-           	},
-            "to": "prices"
-        }
+  "meta_title": {
+        "target": "product",
+        "type": "ltext",
+        "to": "metaTitle"
+    },
+    "ProductId": {
+        "target": "variant",
+        "isCustom": "true",
+        "type": "number",
+        "to": "productId"
+    },
+    "PriceGross": {
+        "target": "variant",
+        "type": "special-price",
+        "specialMapping": {
+            "country": "DE",
+            "customerGroup": "4b96b6f9-03b5-420e-8720-e243837482a8",
+            "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
+       	},
+        "to": "prices"
     }
 }
 ```
@@ -120,7 +118,7 @@ For all command specific options please call `node lib/run <command> --help`.
 ```
 node lib/run import-products --help
 
-  Usage: import-products --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --productTypeId [id] --mapping <file> --products <file> --manufacturers [file] --categories [file]
+  Usage: import-products --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file> --manufacturers [file] --categories [file]
 
   Options:
 
@@ -129,7 +127,6 @@ node lib/run import-products --help
     --manufacturers [file]  XML file containing manufacturers to import
     --categories [file]     XML file containing categories to import
     --mapping <file>        JSON file containing Brickfox to SPHERE.IO mapping
-    --productTypeId [id]    Product type ID to use for product creation. If not set first product type fetched from project will be used.
 ```
 
 ## Import stock and price updates
@@ -155,14 +152,13 @@ node lib/run import-products-updates --help
 ```
 node lib/run export-orders --help
 
-  Usage: export-orders --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --channelId <id> --mapping <file> --output <file>
+  Usage: export-orders --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --mapping <file> --output <file>
 
   Options:
 
     -h, --help             output usage information
     --output <file>        Path to the file the exporter will write the resulting XML into
     --numberOfDays [days]  Retrieves orders created within the specified number of days starting with the present day. Default value is: 7
-    --channelId <id>       SyncInfo (http://commercetools.de/dev/http-api-projects-orders.html#sync-info) channel id which will be updated after succesfull order export
     --mapping <file>       JSON file containing Brickfox to SPHERE.IO mapping
 ```
 

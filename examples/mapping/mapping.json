@@ -1,6 +1,120 @@
 {
-    "description": "Defines Brickfox to SPHERE attributes mapping required for product and order synchronization.",
-    "orderStates": {
+    "description": "Mappings and configurations required for data synchronization between Brickfox and SPHERE.IO.",
+    "productImport": {
+        "description": "'mapping' - Brickfox to SPHERE product attributes mapping. 'productTypeId' - If not set first product type fetched from project will be used.",
+        "productTypeId": "bfe8c11c-9b4a-4c81-85f8-1ec80bd562ab",
+        "mapping": {
+        	"meta_title": {
+                "target": "product",
+                "type": "ltext",
+                "to": "metaTitle"
+            },
+            "meta_description": {
+                "target": "product",
+                "type": "ltext",
+                "to": "metaDescription"
+            },
+            "searchwords": {
+                "target": "product",
+                "type": "ltext",
+                "to": "metaKeywords"
+            },
+        	"ExternVariationId": {
+        	    "target": "variant",
+                "type": "text",
+                "to": "sku"
+            },
+            "VariationId": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "text",
+                "to": "variationId"
+            },
+            "ProductId": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "number",
+                "to": "productId"
+            },
+            "15": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "enum",
+                "to": "size"
+            },
+            "16": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "enum",
+                "to": "color"
+            },
+            "magento_ean": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "ltext",
+                "to": "ean"
+            },
+            "Rrp": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "money",
+        	    "currency": "EUR",
+                "to": "rrp"
+            },
+            "TaxId": {
+               	"target": "product",
+                "type": "special-tax",
+                "specialMapping": {
+                    "1": "371306f6-3ad8-4114-8ad2-6507df0fbf09",
+                    "2": "00fdb416-a20b-439c-b4cc-a51450f6bb3e"
+               	},
+                "to": "taxCategory"
+            },
+            "PriceGross": {
+                "target": "variant",
+                "type": "special-price",
+                "specialMapping": {
+                    "country": "DE",
+                    "customerGroup": "4b96b6f9-03b5-420e-8720-e243837482a8",
+                    "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
+               	},
+                "to": "prices"
+            },
+            "BasePrice": {
+                "target": "variant",
+                "type": "special-price",
+                "specialMapping": {
+                    "country": "DE",
+                    "customerGroup": "27af5556-3497-4935-9a62-c016730ef580",
+                    "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
+               	},
+                "to": "prices"
+            },
+            "Path": {
+                "target": "variant",
+                "type": "special-image",
+                "specialMapping": {
+                    "baseURL": "http://example.com/"
+               	},
+                "to": "images"
+            },
+            "ManufacturerId": {
+                "target": "variant",
+                "isCustom": "true",
+                "type": "lenum",
+                "to": "brand"
+            }
+        }
+    },
+    "orderExport": {
+        "description": "'channel' - sync channel to create / use after successful order export as XML",
+        "channel": {
+            "key": "BrickfoxOrderXmlExport",
+            "role": ["OrderExport"]
+        }
+    },
+    "orderStatusImport": {
+        "description": "'states' - list of possible order line item states and its transitions. 'mapping' - maps Brickfox to SPHERE.IO line item states.",
         "states": [
             {"key": "Initial", "transitions": ["picking", "canceled"]},
             {"key": "picking",  "transitions": ["readyToShip", "Initial"]},
@@ -23,108 +137,6 @@
             "Shipped": [{"from": "Initial", "to": "picking"}, {"from": "picking", "to": "readyToShip"}, {"from": "readyToShip", "to": "shipped"}],
             "Returned": [{"from": "shipped", "to": "returned"}],
             "Cancelled": [{"from": "Initial", "to": "canceled"}]
-        }
-    },
-    "product": {
-    	"meta_title": {
-            "target": "product",
-            "type": "ltext",
-            "to": "metaTitle"
-        },
-        "meta_description": {
-            "target": "product",
-            "type": "ltext",
-            "to": "metaDescription"
-        },
-        "searchwords": {
-            "target": "product",
-            "type": "ltext",
-            "to": "metaKeywords"
-        },
-    	"ExternVariationId": {
-    	    "target": "variant",
-            "type": "text",
-            "to": "sku"
-        },
-        "VariationId": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "text",
-            "to": "variationId"
-        },
-        "ProductId": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "number",
-            "to": "productId"
-        },
-        "15": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "enum",
-            "to": "size"
-        },
-        "16": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "enum",
-            "to": "color"
-        },
-        "magento_ean": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "ltext",
-            "to": "ean"
-        },
-        "Rrp": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "money",
-    	    "currency": "EUR",
-            "to": "rrp"
-        },
-        "TaxId": {
-           	"target": "product",
-            "type": "special-tax",
-            "specialMapping": {
-                "1": "371306f6-3ad8-4114-8ad2-6507df0fbf09",
-                "2": "00fdb416-a20b-439c-b4cc-a51450f6bb3e"
-           	},
-            "to": "taxCategory"
-        },
-        "PriceGross": {
-            "target": "variant",
-            "type": "special-price",
-            "specialMapping": {
-                "country": "DE",
-                "customerGroup": "4b96b6f9-03b5-420e-8720-e243837482a8",
-                "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
-           	},
-            "to": "prices"
-        },
-        "BasePrice": {
-            "target": "variant",
-            "type": "special-price",
-            "specialMapping": {
-                "country": "DE",
-                "customerGroup": "27af5556-3497-4935-9a62-c016730ef580",
-                "channel": "ad62d775-6d9c-49c0-af3a-3acd60008331"
-           	},
-            "to": "prices"
-        },
-        "Path": {
-            "target": "variant",
-            "type": "special-image",
-            "specialMapping": {
-                "baseURL": "http://example.com/"
-           	},
-            "to": "images"
-        },
-        "ManufacturerId": {
-            "target": "variant",
-            "isCustom": "true",
-            "type": "lenum",
-            "to": "brand"
         }
     }
 }

@@ -68,14 +68,14 @@ class ProductImport
       ],
       (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
         @mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined @mappings.product
-        utils.assertVariationIdMappingIsDefined @mappings.product
-        utils.assertSkuMappingIsDefined @mappings.product
+        utils.assertProductIdMappingIsDefined @mappings.productImport.mapping
+        utils.assertVariationIdMappingIsDefined @mappings.productImport.mapping
+        utils.assertSkuMappingIsDefined @mappings.productImport.mapping
         @productsXML = productsXML
         @categoriesXML = categoriesXML
         @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
-        @productType = @_getProductType(fetchedProductTypes, @_options)
-        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.product) if manufacturersXML
+        @productType = @_getProductType(fetchedProductTypes, @mappings.productImport, @_options.config.project_key)
+        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.productImport.mapping) if manufacturersXML
         api.updateProductType(@rest, manufacturers) if manufacturers
     .then (productTypeUpdateResult) =>
       @logger.info '[Categories] Categories XML import started...' if @categoriesXML
@@ -94,11 +94,11 @@ class ProductImport
     .then (updateCategoriesResult) =>
       @logger.info '[Products] Products XML import started...'
       @logger.info "[Products] Total products to import: '#{_.size @productsXML.Products?.Product}'"
-      @products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.product)
+      @products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.productImport.mapping)
       productUpdates = @products.updates
       if _.size(productUpdates) > 0
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
-        productIdMapping = @mappings.product.ProductId.to
+        productIdMapping = @mappings.productImport.mapping.ProductId.to
         Q.all _.map productUpdates, (p) =>
           attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
           if not attr
@@ -571,27 +571,28 @@ class ProductImport
     key
 
   ###
-  # Returns product type. If 'productTypeId' command line parameter has been used,
-  # product type with given id is returned otherwise first element from the product
-  # type list is returned.
-  #
-  # @param {Object} fetchedProductTypes Product types object
-  # @param {Object} options Command line options
-  # @throws {Error} If no product types were found
-  # @throws {Error} If product type for given product type id was not found
-  # @return {Object} Product type
+  Returns product type. If 'productTypeId' is provided by configuration,
+  product type with given id is returned otherwise first element from the product
+  type list is returned.
+
+  @param {Object} fetchedProductTypes Product types object
+  @param {Object} config Product import configuration
+  @param {Object} projectKey SPHERE.IO project key
+  @throws {Error} If no product types were found
+  @throws {Error} If product type for given product type id was not found
+  @return {Object} Product type
   ###
-  _getProductType: (fetchedProductTypes, options) ->
+  _getProductType: (fetchedProductTypes, config, projectKey) ->
     productTypes = fetchedProductTypes.results
     if _.size(productTypes) == 0
-      throw new Error "No product type defined for SPHERE project '#{options.config.project_key}'. Please create one before running product import."
+      throw new Error "No product type defined for SPHERE project '#{projectKey}'. Please create one before running product import."
 
     productType = null
-    if options.productTypeId
+    if config.productTypeId
       productType = _.find productTypes, (type) ->
-        type.id is options.productTypeId
+        type.id is config.productTypeId
       if not productType
-        throw new Error "SPHERE project '#{options.config.project_key}' does not contain product type with id: '#{options.productTypeId}'"
+        throw new Error "SPHERE project '#{projectKey}' does not contain product type with id: '#{config.productTypeId}'"
     else
       # take first available product type from the list
       productType = productTypes[0]

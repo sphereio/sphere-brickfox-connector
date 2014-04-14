@@ -90,8 +90,8 @@ class OrderStatusImport
     utils.xmlToJson(path)
 
   _fetchOrCreateStates: (options, mappings) ->
-    if options.createstates and _.size(mappings.orderStates?.states) > 0
-      api.ensureStates(@rest, mappings.orderStates.states)
+    if options.createstates and _.size(mappings.orderStatusImport?.states) > 0
+      api.ensureStates(@rest, mappings.orderStatusImport.states)
       .then (result) =>
         @client.states.perPage(0).fetch()
     else
@@ -168,7 +168,7 @@ class OrderStatusImport
     if not size > 0
       throw new Error "Could not find state with required quantity: '#{quantity}'; Brickfox state: '#{orderLineStatus}', lineItem id: '#{lineItemId}', order id: '#{fetchedOrder.id}'"
 
-    transitions = mappings.orderStates.mapping[orderLineStatus]
+    transitions = mappings.orderStatusImport.mapping[orderLineStatus]
     if _.size(transitions) > 0
       _.map transitions, (t) =>
         if t.from isnt t.to

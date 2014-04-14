@@ -3,7 +3,9 @@ _ = require('underscore')._
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
 libxmljs = require 'libxmljs'
-{Rest} = require('sphere-node-connect')
+{Rest} = require 'sphere-node-connect'
+SphereClient = require 'sphere-node-client'
+{_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
 
@@ -14,6 +16,7 @@ class OrderExport
 
   constructor: (@_options = {}) ->
     @rest = new Rest @_options
+    @client = new SphereClient @_options
     @logger = @_options.appLogger
 
   ###
@@ -41,27 +44,30 @@ class OrderExport
       ],
       (mappingsJson, fetchedOrders, ordersXsd) =>
         mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined mappings.product
-        utils.assertVariationIdMappingIsDefined mappings.product
-        utils.assertSkuMappingIsDefined mappings.product
+        utils.assertProductIdMappingIsDefined mappings.productImport.mapping
+        utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
+        utils.assertSkuMappingIsDefined mappings.productImport.mapping
         if fetchedOrders
-          # TODO refactor as soon as collection query in SPHERE.IO is fixed
-          @unsyncedOrders = _.filter fetchedOrders, (o) -> _.size(o.syncInfo) is 0
-        if _.size(@unsyncedOrders) > 0
-          @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
-          xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.product)
-          content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
-          @_validateXML(content, ordersXsd)
-          @fileName = @_getFileName(@_options.output)
-          @_writeFile(@fileName, content)
-        else
-          @logger.info "[OrderExport] No unexported orders found."
+          @client.channels.ensure(mappings.orderExport.channel.key, mappings.orderExport.channel.role)
+          .then (createOrGetChannelResult) =>
+            @channel = createOrGetChannelResult.body
+            # TODO refactor as soon as collection query in SPHERE.IO is fixed
+            @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel)
+            if _.size(@unsyncedOrders) > 0
+              @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
+              xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.productImport.mapping)
+              content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
+              @_validateXML(content, ordersXsd)
+              @fileName = @_getFileName(@_options.output)
+              @_writeFile(@fileName, content)
+            else
+              @logger.info "[OrderExport] No unexported orders found."
     .then (writeXMLResult) =>
       if writeXMLResult is 'OK'
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
-        orderUpdates = @_buildOrderSyncInfoUpdates(@unsyncedOrders, @_options.channelid) if _.size(@unsyncedOrders) > 0
+        orderUpdates = @_buildOrderSyncInfoUpdates(@unsyncedOrders, @channel) if _.size(@unsyncedOrders) > 0
         # update order sync info
-        utils.batch(_.map(orderUpdates, (o) => api.updateOrder(@rest, o.id, o.payload))) if orderUpdates
+        Q.all(_.map(orderUpdates, (o) => @client.orders.byId(o.id).save(o.payload))) if orderUpdates
     .then (result) =>
       @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
       @_processResult(callback, true)
@@ -94,15 +100,15 @@ class OrderExport
     utils.writeFile(path, content)
 
   _buildOrderQuery: (numberOfDays) ->
-    # TODO refactor as soon as collection query in SPHERE.IO is fixed. Getting all orders without syncInfo should be enough
-    # i.e.: 'where=syncInfo is empty'
+    # TODO refactor as soon as collection query in SPHERE.IO is fixed.
     date = new Date()
     numberOfDays = 7 if numberOfDays is undefined
     date.setDate(date.getDate() - numberOfDays)
     d = "#{date.toISOString().substring(0,10)}T00:00:00.000Z"
+    dd = new Date()
     query = "createdAt > \"#{d}\""
 
-  _buildOrderSyncInfoUpdates: (unsyncedOrders, channelId) ->
+  _buildOrderSyncInfoUpdates: (unsyncedOrders, channel) ->
     updates = []
 
     _.each unsyncedOrders, (o) ->
@@ -114,7 +120,7 @@ class OrderExport
             action: 'updateSyncInfo'
             channel:
               typeId: 'channel'
-              id: channelId
+              id: channel.id
             externalId: o.id
           ]
       updates.push wrapper
@@ -123,6 +129,16 @@ class OrderExport
       updates
     else
       null
+
+  ###
+  Returns only orders which haven't been synchronized using the given channel.
+  @param {Array} orders List of order resources.
+  @param {Object} channel SyncInfo channel.
+  @return {Array} List of orders without given channel.
+  ###
+  _filterByUnsyncedOrders: (orders, channel) ->
+    _.filter orders, (order) ->
+      _.size(order.syncInfo) is 0 or _.find order.syncInfo, (syncInfo) -> syncInfo.channel.id isnt channel.id
 
   _ordersToXML: (orders, mappings) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})
@@ -133,7 +149,7 @@ class OrderExport
     root
 
   _orderToXML: (order, orderXML, mappings) =>
-    @logger.debug "[OrderExport] Processing order with orderNumber: '#{order.orderNumber}', id: '#{order.id}'"
+    @logger.info "[OrderExport] Processing order with orderNumber: '#{order.orderNumber}', id: '#{order.id}'"
     orderXML.e('OrderId').t(order.orderNumber)
     orderXML.e('OrderDate').t(order.createdAt)
     #<xs:element ref="OrderStatus" minOccurs="0"/>
