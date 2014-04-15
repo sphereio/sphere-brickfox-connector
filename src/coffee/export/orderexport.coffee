@@ -104,9 +104,7 @@ class OrderExport
     date = new Date()
     numberOfDays = 7 if numberOfDays is undefined
     date.setDate(date.getDate() - numberOfDays)
-    d = "#{date.toISOString().substring(0,10)}T00:00:00.000Z"
-    dd = new Date()
-    query = "createdAt > \"#{d}\""
+    query = "createdAt > \"#{date.toISOString().substring(0,10)}T00:00:00.000Z\""
 
   _buildOrderSyncInfoUpdates: (unsyncedOrders, channel) ->
     updates = []
