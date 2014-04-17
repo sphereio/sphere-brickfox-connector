@@ -15,12 +15,12 @@ exports.generateSlug = (name) ->
   _s.slugify(name).concat("-#{timestamp}-#{randomInt}")
 
 ###
-# Returns a random integer between min and max
-# Using Math.round() will give you a non-uniform distribution!
-#
-# @param {Integer} min integer value
-# @throws {Integer} max integer value
-# @return {Integer} generated integer value
+Returns a random integer between min and max
+Using Math.round() will give you a non-uniform distribution!
+
+@param {Integer} min integer value
+@throws {Integer} max integer value
+@return {Integer} generated integer value
 ###
 exports.getRandomInt = (min, max) ->
   Math.floor(Math.random() * (max - min + 1)) + min
@@ -69,11 +69,11 @@ exports.pretty = (data) ->
   JSON.stringify data, null, 4
 
 ###
-# Executes in parallel defined number of asynchronous promise requests.
-#
-# @param {Array} list List of promise requests to fire
-# @param {Array} numberOfParallelRequest Number of requests to be fired in parallel
-# @return {Boolean} Returns true if all promises could be successfully resolved
+Executes in parallel defined number of asynchronous promise requests.
+
+@param {Array} list List of promise requests to fire
+@param {Array} numberOfParallelRequest Number of requests to be fired in parallel
+@return {Boolean} Returns true if all promises could be successfully resolved
 ###
 exports.batch = (list, numberOfParallelRequest = 100) ->
   deferred = Q.defer()
@@ -91,13 +91,13 @@ exports.batch = (list, numberOfParallelRequest = 100) ->
   deferred.promise
 
 ###
-# Creates promise for each list element and fires each promise sequentially.
+Creates promise for each list element and fires each promise sequentially.
 
-# @param {Object} rest SPHERE.IO API client to use
-# @param {Object} createPromise Function reference to use for promise creation
-# @param {Array} data Date used for promise creation
-# @param {Integer} index Index of the date to start with (default: 0)
-# @return {Array} Promise results to write into
+@param {Object} rest SPHERE.IO API client to use
+@param {Object} createPromise Function reference to use for promise creation
+@param {Array} data Date used for promise creation
+@param {Integer} index Index of the date to start with (default: 0)
+@return {Array} Promise results to write into
 ###
 exports.batchSeq = (rest, createPromise, data, index = 0, allResult = [], percent = 0) =>
   createPromise(rest, data[index])
@@ -114,11 +114,11 @@ exports.batchSeq = (rest, createPromise, data, index = 0, allResult = [], percen
       Q(newResult)
 
 ###
-# Returns localized values for all detected languages.
-#
-# @param {Object} mainNode Main XML node to get Localizations from
-# @param {String} name Element name to localize
-# @return {Object} Localized values
+Returns localized values for all detected languages.
+
+@param {Object} mainNode Main XML node to get Localizations from
+@param {String} name Element name to localize
+@return {Object} Localized values
 ###
 exports.getLocalizedValues = (mainNode, name) =>
   localized = {}
@@ -130,10 +130,10 @@ exports.getLocalizedValues = (mainNode, name) =>
   localized
 
 ###
-# Returns slugified values for given localized parameter values.
-#
-# @param {Object} mainNode Main XML node to get Localizations from
-# @return {Object} Localized slugs
+Returns slugified values for given localized parameter values.
+
+@param {Object} mainNode Main XML node to get Localizations from
+@return {Object} Localized slugs
 ###
 exports.generateLocalizedSlugs = (names) =>
   slugs = {}
@@ -143,30 +143,30 @@ exports.generateLocalizedSlugs = (names) =>
   slugs
 
 ###
-# Asserts for existence of required Brickfox ProductId mapping
-#
-# @param {Object} mappings Object with attribute mappings
-# @throws {Error} If no mapping for Brickfox field 'ProductId' is defined
+Asserts for existence of required Brickfox ProductId mapping
+
+@param {Object} mappings Object with attribute mappings
+@throws {Error} If no mapping for Brickfox field 'ProductId' is defined
 ###
 exports.assertProductIdMappingIsDefined = (mappings) ->
   if not mappings.ProductId?.to
     throw new Error "No Brickfox to SPHERE 'ProductId' attribute mapping found. ProductId is required in order to map Brickfox product updates to existing SPHERE products."
 
 ###
-# Asserts for existence of required Brickfox VariationId mapping
-#
-# @param {Object} mappings Object with attribute mappings
-# @throws {Error} If no mapping for Brickfox field 'VariationId' is defined
+Asserts for existence of required Brickfox VariationId mapping
+
+@param {Object} mappings Object with attribute mappings
+@throws {Error} If no mapping for Brickfox field 'VariationId' is defined
 ###
 exports.assertVariationIdMappingIsDefined = (mappings) ->
   if not mappings.VariationId?.to
     throw new Error "No Brickfox to SPHERE 'VariationId' attribute mapping found. VariationId is required in order to export Sphere orders to Brickfox."
 
 ###
-# Asserts SPHERE SKU field mapping is defined
-#
-# @param {Object} mappings Object with attribute mappings
-# @throws {Error} If no mapping for SPHERE field 'sku' is defined
+Asserts SPHERE SKU field mapping is defined
+
+@param {Object} mappings Object with attribute mappings
+@throws {Error} If no mapping for SPHERE field 'sku' is defined
 ###
 exports.assertSkuMappingIsDefined = (mappings) ->
   brickfoxSkuFieldName = _.find mappings, (mapping) -> mapping.to is 'sku'
@@ -200,3 +200,57 @@ exports.buildAddPriceAction = (price, variantId) ->
     variantId: variantId
     price: price
 
+###
+Transforms a list of categories into a new object (map alike) using external category id as abject property key and category as value.
+
+@param {Array} categories List of existing categories
+@throws {Error} If category external id is not defined
+@return {Array} List of of transformed categories
+###
+exports.transformByCategoryExternalId = (categories) ->
+  map = {}
+  _.each categories, (c) ->
+    # TODO: do not use slug as external category id (required Sphere support of custom attributes on category first)
+    externalId = c.slug.nl
+    throw new Error "[Categories] Slug for language 'nl' (workaround: used as 'externalId') in MC is empty; Category id: '#{c.id}'" if not externalId
+    map[externalId] = c
+  map
+
+###
+Returns category object with given external/Brickfox id. If category with requested external id was not found
+an error is thrown as this id is used as common identifier for synchronization between Brickfox and Sphere categories.
+
+@param {Array} fetchedCategories List of existing categories
+@throws {Error} If category external id is not defined
+@return {Array} List of of transformed categories
+###
+exports.getCategoryByExternalId = (id, categories) ->
+  category = categories[id]
+  throw new Error "Unexpected error. Category with externalId: '#{id}' not found." if not category
+  category
+
+###
+Returns product type. If 'productTypeId' is provided by configuration,
+product type with given id is returned otherwise first element from the product
+type list is returned.
+
+@param {Array} productTypes List of product types
+@param {String} id Product type ID
+@param {String} projectKey SPHERE.IO project key
+@throws {Error} If no product types were found or product type for given product type id was not found
+@return {Object} Product type
+###
+exports.getProductTypeByConfig: (productTypes, id, projectKey) ->
+  if _.size(productTypes) == 0
+    throw new Error "No product type defined for SPHERE project '#{projectKey}'. Please create one before running product import."
+
+  productType = null
+  if id
+    productType = _.find productTypes, (type) ->
+      type.id is id
+    if not productType
+      throw new Error "SPHERE project '#{projectKey}' does not contain product type with id: '#{id}'"
+  else
+    # take first available product type from the list
+    productType = productTypes[0]
+  productType

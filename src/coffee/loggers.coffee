@@ -1,5 +1,17 @@
 {Logger} = require 'sphere-node-utils'
 
+class CategoryImportLogger extends Logger
+
+  @appName: 'brickfox-category-import-logger'
+  @path: './brickfox-category-import-logger.log'
+  @levelStream: 'debug'
+
+class ManufacturersImportLogger extends Logger
+
+  @appName: 'brickfox-manufacturers-import-logger'
+  @path: './brickfox-manufacturers-import-logger.log'
+  @levelStream: 'debug'
+
 class ProductImportLogger extends Logger
 
   @appName: 'brickfox-product-import-logger'

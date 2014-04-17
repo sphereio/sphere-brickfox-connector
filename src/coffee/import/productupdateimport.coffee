@@ -39,7 +39,7 @@ class ProductUpdateImport
   ###
   execute: (callback) ->
     @startTime = new Date().getTime()
-    @logger.info '[ProductsUpdate] ProductUpdateImport execution started.'
+    @logger.info '[ProductsUpdate] Import for '#{@_options.products}' started.'
 
     Q.spread [
       @_loadMappings @_options.mapping
@@ -63,7 +63,7 @@ class ProductUpdateImport
       @logger.info "[ProductsUpdate] Product price updates count: #{_.size priceUpdates}"
       utils.batch(_.map(priceUpdates, (p) => api.updateProduct(@rest, p))) if priceUpdates
     .then (priceUpdatesResult) =>
-      @priceUpdatedCount = _.size priceUpdatesResult
+      @priceUpdatedCount = _.size(priceUpdatesResult)
       skus = _.keys(@newVariants)
       @logger.info "[ProductsUpdate] Inventories to fetch: #{_.size skus}"
       utils.batch(_.map(skus, (sku) => api.queryInventoriesBySku(@rest, sku))) if skus

@@ -2,124 +2,75 @@ Q = require 'q'
 _ = require 'underscore'
 _s = require 'underscore.string'
 {ProductSync} = require 'sphere-node-sync'
-{Rest} = require 'sphere-node-connect'
 SphereClient = require 'sphere-node-client'
 {_u} = require 'sphere-node-utils'
-api = require '../../lib/sphere'
 utils = require '../../lib/utils'
 
 
 
 ###
-Imports Brickfox products provided as XML into Sphere.
+Imports Brickfox products provided as XML into SPHERE.IO
 ###
-# TODO: split up product from category and manufacturers logic
+# TODO: Send product inventories / stock after product update / creation (or maybe creation only???)
+# TODO: Send product updates for products with flag isNew = 0 and make sure product variants are not removed and created again but updated only
+# TODO: Send category deletes for categories without products
 class ProductImport
 
   constructor: (@_options = {}) ->
     @productSync = new ProductSync @_options
-    @rest = new Rest @_options
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
 
-  ###
-  # Reads given import XML files and creates/updates product types, categories and products in Sphere (product types and categories has to be imported first)
-  # Detailed steps:
-  # 1) Fetch product type, categories and load import XML files
-  #
-  # 2) Build product type updates (creates missing manufacturers)
-  # 2.1) Send product type updates
-  #
-  # 3) Build category creates (new categories only)
-  # 3.1) Send category creates
-  #
-  # 4) Fetch categories (get fresh list after category creates)
-  #
-  # 5) Build category updates (updates for existing/old categories plus sets parent child relations on all categories)
-  # 5.1) Send category updates
-  #
-  # 6) Build product creates
-  # 6.1) Send product creates
-  #
-  # 7) TODO: Create product inventories / stock
-  # 7.1) TODO: Send product inventories
-  #
-  # 8) TODO: Build product updates
-  # 8.1) TODO: Send product updates
-  #
-  # 9) TODO: Build category deletes
-  # 9.1) TODO: Send category deletes
-  #
-  # @param {function} callback The callback function to be invoked when the method finished its work.
-  # @return Result of the given callback
-  ###
+
   execute: (callback) ->
     @startTime = new Date().getTime()
-    @logger.info '[Products] ProductImport execution started.'
+    @logger.info '[Products] Import for '#{@_options.products}' started.'
 
     Q.spread [
       @_loadMappings @_options.mapping
       @_loadProductsXML @_options.products
-      @_loadManufacturersXML @_options.manufacturers
-      @_loadCategoriesXML @_options.categories
-      api.fetchProductTypes(@rest)
-      api.fetchCategories(@rest)
+      @client.productTypes.perPage(0).fetch()
+      @client.categories.perPage(0).fetch()
       ],
-      (mappingsJson, productsXML, manufacturersXML, categoriesXML, fetchedProductTypes, fetchedCategories) =>
+      (mappingsJson, productsXML, fetchedProductTypesResult, fetchedCategoriesResult) =>
         @mappings = JSON.parse mappingsJson
         utils.assertProductIdMappingIsDefined @mappings.productImport.mapping
         utils.assertVariationIdMappingIsDefined @mappings.productImport.mapping
         utils.assertSkuMappingIsDefined @mappings.productImport.mapping
-        @productsXML = productsXML
-        @categoriesXML = categoriesXML
-        @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results
-        @productType = @_getProductType(fetchedProductTypes, @mappings.productImport, @_options.config.project_key)
-        manufacturers = @_buildManufacturers(manufacturersXML, @productType, @mappings.productImport.mapping) if manufacturersXML
-        api.updateProductType(@rest, manufacturers) if manufacturers
-    .then (productTypeUpdateResult) =>
-      @logger.info '[Categories] Categories XML import started...' if @categoriesXML
-      @logger.info "[Categories] Fetched categories count before create: '#{_.size @fetchedCategories}'" if @categoriesXML
-      @categories = @_buildCategories(@categoriesXML) if @categoriesXML
-      @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      utils.batch(_.map(@categoryCreates, (c) => api.createCategory(@rest, c))) if @categoryCreates
-    .then (createCategoriesResult) =>
-      # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
-      api.fetchCategories(@rest) if @categoryCreates
-    .then (fetchedCategories) =>
-      @fetchedCategories = @_transformByCategoryExternalId fetchedCategories.results if fetchedCategories
-      @logger.info "[Categories] Fetched count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
-      categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
-      utils.batchSeq(@rest, api.updateCategory, categoryUpdates, 0) if categoryUpdates
-    .then (updateCategoriesResult) =>
-      @logger.info '[Products] Products XML import started...'
-      @logger.info "[Products] Total products to import: '#{_.size @productsXML.Products?.Product}'"
-      @products = @buildProducts(@productsXML.Products?.Product, @productType, @fetchedCategories, @mappings.productImport.mapping)
-      productUpdates = @products.updates
-      if _.size(productUpdates) > 0
-        @logger.info "[Products] Update count: '#{_.size productUpdates}'"
-        productIdMapping = @mappings.productImport.mapping.ProductId.to
-        Q.all _.map productUpdates, (p) =>
-          attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
-          if not attr
-            throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
-          @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
-        .then (fetchedProductsToUpdate) =>
-          counter = 0
+        productsXML = productsXML
+        fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.results)
+        utils.transformByCategoryExternalId
+        productType = utils.getProductTypeByConfig(fetchedProductTypesResult.results, @mappings.productImport.productTypeId, @_options.config.project_key)
+        @logger.info '[Products] Products XML import started...'
+        @logger.info "[Products] Total products to import: '#{_.size productsXML.Products?.Product}'"
+        @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, @mappings.productImport.mapping)
+        productUpdates = @products.updates
+        if _.size(productUpdates) > 0
+          @logger.info "[Products] Update count: '#{_.size productUpdates}'"
+          productIdMapping = @mappings.productImport.mapping.ProductId.to
           Q.all _.map productUpdates, (p) =>
-            oldProduct = fetchedProductsToUpdate[counter]?.body?.results[0]
-            throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}" if not oldProduct
-            update = @productSync.buildActions(p, oldProduct).get()
-            counter++
-            # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
-            # TODO: make sure variants are not dropped and created from scratch but updated only.
-            #@client.products.byId(oldProduct.id).update(update)
+            attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
+            if not attr
+              throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
+            @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
+          .then (fetchedProductsResult) =>
+            counter = 0
+            Q.all _.map productUpdates, (p) =>
+              oldProduct = fetchedProductsResult[counter]?.body?.results[0]
+              if not oldProduct
+                throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}"
+              update = @productSync.buildActions(p, oldProduct).get()
+              counter++
+              # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
+              # TODO: make sure variants are not dropped and created from scratch but updated only.
+              #@client.products.byId(oldProduct.id).update(update)
     .then (updateProductsResult) =>
       @productsUpdated = _.size(updateProductsResult)
       productCreates = @products.creates
       if productCreates
         @logger.info "[Products] Create count: '#{_.size productCreates}'"
-        utils.batch(_.map(productCreates, (p) => api.createProduct(@rest, p)))
+        Q.all(_.map(productCreates, (p) => @client.products.save(p)))
     .then (createProductsResult) =>
       @productsCreated = _.size(createProductsResult)
       @_processResult(callback, true)
@@ -142,213 +93,6 @@ class ProductImport
 
   _loadProductsXML: (path) ->
     utils.xmlToJson(path)
-
-  _loadManufacturersXML: (path) ->
-    utils.xmlToJson(path) if path
-
-  _loadCategoriesXML: (path) ->
-    utils.xmlToJson(path) if path
-
-  ###
-  # If manufacturers mapping is defined builds an array of update actions for mapped product type attribute
-  #
-  # @param {Object} data Data to get manufacturers information from
-  # @param {Object} productType Product type with existing manufacturer values
-  # @param {Object} mappings Product import attribute mappings
-  # @return {Array} List of product type update actions
-  ###
-  _buildManufacturers: (data, productType, mappings) ->
-    @logger.info '[Manufacturers] Manufacturers XML import started...'
-
-    if not mappings.ManufacturerId
-      @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
-      return
-
-    count = _.size(data.Manufacturers?.Manufacturer)
-    if count
-      @logger.info "[Manufacturers] Import manufacturers found: '#{count}'"
-    else
-      @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
-      return
-
-    attributeName = mappings.ManufacturerId.to
-    # find attribute on product type
-    matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
-    if not matchedAttr
-      throw new Error "Error on manufacturers import. ManufacturerId mapping attributeName: '#{attributeName}' could not be found on product type with id: '#{productType.id}'"
-
-    actions = []
-    # extract only keys from product type attribute values
-    keys = _.pluck(matchedAttr.type.values, 'key')
-    _.each data.Manufacturers.Manufacturer, (m) ->
-      key = m.ManufacturerId[0]
-      exists = _.contains(keys,  key)
-      if not exists
-        # attribute value does not exist yet -> create new addLocalizedEnumValue action
-        value = utils.getLocalizedValues(m.Translations[0], 'Name')
-        action =
-          action: 'addLocalizedEnumValue'
-          attributeName: attributeName
-          value:
-            key: key
-            label: value
-        actions.push action
-
-    if _.size(actions) > 0
-      @logger.info "[Manufacturers] Update actions to send for attribute '#{attributeName}': '#{_.size actions}'"
-      wrapper =
-        id: productType.id
-        payload:
-          version: productType.version
-          actions: actions
-
-    else
-      @logger.info "[Manufacturers] No update action for manufacturers attribute '#{attributeName}' required."
-
-  ###
-  # Builds categories list from import data with all attributes (name, slug, parent <-> child relation) required for category creation or update.
-  #
-  # @param {Object} data Data to get categories information from
-  # @return {Array} List of categories
-  ###
-  _buildCategories: (data) ->
-    count = _.size(data.Categories?.Category)
-    if count
-      @logger.info "[Categories] Import categories found: '#{count}'"
-    else
-      @logger.info '[Categories] No categories to import found or undefined. Please check categories input XML.'
-      return
-    categories = []
-    _.each data.Categories.Category, (c) =>
-      category = @_convertCategory(c)
-      categories.push category
-    @logger.info "[Categories] Import candidates count: '#{_.size categories}'"
-    categories
-
-  ###
-  # Builds list of category create object representations.
-  #
-  # @param {Array} data List of category candidates to import
-  # @param {Array} fetchedCategories List of existing categories
-  # @return {Array} List of category create representations
-  ###
-  _buildCategoryCreates: (data, fetchedCategories) =>
-    creates = []
-    _.each data, (c) ->
-      exists = _.has(fetchedCategories, c.id)
-      # we are interested in new categories only
-      if not exists
-        name = c.name
-        slug = c.slug
-        # set category external id (over slug as workaround)
-        # TODO: do not use slug as external category id (required Sphere support of custom attributes on category first)
-        slug.nl = c.id
-        create =
-          name: name
-          slug: slug
-        creates.push create
-
-    count = _.size(creates)
-    if count > 0
-      @logger.info "[Categories] Create count: '#{count}'"
-      creates
-    else
-      @logger.info "[Categories] No category create required."
-      null
-
-  ###
-  # Builds list of category update object representations.
-  #
-  # @param {Array} data List of category candidates to update
-  # @param {Array} fetchedCategories List of existing categories
-  # @return {Array} List of category update representations
-  ###
-  _buildCategoryUpdates: (data, fetchedCategories) ->
-    updates = []
-    _.each data, (c) =>
-      actions = []
-      newName = c.name
-      oldCategory = @_getCategoryByExternalId(c.id, fetchedCategories)
-      oldName = oldCategory.name
-
-      # check if category name changed
-      if not _.isEqual(newName, oldName)
-        action =
-          action: "changeName"
-          name: newName
-        actions.push action
-
-      parentId = c.parentId
-      parentCategory = @_getCategoryByExternalId(parentId, fetchedCategories) if parentId
-      # check if category need to be assigned to parent
-      if parentCategory
-        action =
-          action: "changeParent"
-          parent:
-            typeId: "category"
-            id: parentCategory.id
-        actions.push action
-
-      if _.size(actions) > 0
-        wrapper =
-          id: oldCategory.id
-          payload:
-            version: oldCategory.version
-            actions: actions
-        updates.push wrapper
-
-    count = _.size(updates)
-    if count > 0
-      @logger.info "[Categories] Update count: '#{count}'"
-      updates
-    else
-      @logger.info "[Categories] No category update required."
-      null
-
-  ###
-  # Transforms a list of existing categories into a new object (map alike) using external category id as abject property name (key).
-  #
-  # @param {Array} fetchedCategories List of existing categories
-  # @throws {Error} If category external id is not defined
-  # @return {Array} List of of transformed categories
-  ###
-  _transformByCategoryExternalId: (fetchedCategories) ->
-    map = {}
-    _.each fetchedCategories, (el) ->
-      # TODO: do not use slug as external category id (required Sphere support of custom attributes on category first)
-      externalId = el.slug.nl
-      throw new Error "[Categories] Slug for language 'nl' (workaround: used as 'externalId') in MC is empty; Category id: '#{el.id}'" if not externalId
-      map[externalId] = el
-    map
-
-  ###
-  # Returns category object with given external/Brickfox id. If category with requested external id was not found
-  # an error is thrown as this id is used as common identifier for synchronization between Brickfox and Sphere categories.
-  #
-  # @param {Array} fetchedCategories List of existing categories
-  # @throws {Error} If category external id is not defined
-  # @return {Array} List of of transformed categories
-  ###
-  _getCategoryByExternalId: (id, fetchedCategories) ->
-    category = fetchedCategories[id]
-    throw new Error "Unexpected error. Category with externalId: '#{id}' not found." if not category
-    category
-
-  ###
-  # Converts XML category data into Sphere category representation.
-  #
-  # @param {Object} categoryItem Category data
-  # @return {Object} Sphere category representation
-  ###
-  _convertCategory: (categoryItem) ->
-    names = utils.getLocalizedValues(categoryItem.Translations[0], 'Name')
-    slugs = utils.generateLocalizedSlugs(names)
-    category =
-      id: categoryItem.CategoryId[0]
-      name: names
-      slug: slugs
-    category.parentId = categoryItem.ParentId if categoryItem.ParentId
-    category
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.
@@ -460,7 +204,7 @@ class ProductImport
     catReferences = []
     _.each data.Categories?[0]?.Category, (c) =>
       categoryId = c.CategoryId[0]
-      existingCategory = @_getCategoryByExternalId(categoryId, fetchedCategories)
+      existingCategory = utils.getCategoryByExternalId(categoryId, fetchedCategories)
       id = existingCategory.id
       reference =
         typeId: "category"
@@ -569,34 +313,6 @@ class ProductImport
     if not key
       key = item.Translations[0].Translation[0].Name[0]
     key
-
-  ###
-  Returns product type. If 'productTypeId' is provided by configuration,
-  product type with given id is returned otherwise first element from the product
-  type list is returned.
-
-  @param {Object} fetchedProductTypes Product types object
-  @param {Object} config Product import configuration
-  @param {Object} projectKey SPHERE.IO project key
-  @throws {Error} If no product types were found
-  @throws {Error} If product type for given product type id was not found
-  @return {Object} Product type
-  ###
-  _getProductType: (fetchedProductTypes, config, projectKey) ->
-    productTypes = fetchedProductTypes.results
-    if _.size(productTypes) == 0
-      throw new Error "No product type defined for SPHERE project '#{projectKey}'. Please create one before running product import."
-
-    productType = null
-    if config.productTypeId
-      productType = _.find productTypes, (type) ->
-        type.id is config.productTypeId
-      if not productType
-        throw new Error "SPHERE project '#{projectKey}' does not contain product type with id: '#{config.productTypeId}'"
-    else
-      # take first available product type from the list
-      productType = productTypes[0]
-    productType
 
   ###
   # Convert price into Sphere price amount.
