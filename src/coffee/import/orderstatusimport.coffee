@@ -26,6 +26,7 @@ class OrderStatusImport
     @canceledCounter = 0
     @returnedCounter = 0
     @shippedCounter = 0
+    @success = false
 
   ###
   # Reads given order status import XML file and creates deliveries, parcels and sets line item state
@@ -42,55 +43,33 @@ class OrderStatusImport
   #
   # 5) Build parcels
   # 5.1) Send parcels
-  #
-  # @param {function} callback The callback function to be invoked when the method finished its work.
-  # @return Result of the given callback
   ###
-  execute: (callback) ->
+  execute: (statusXML, mappings) ->
     @startTime = new Date().getTime()
-    @logger.info '[OrderStatus] OrderStatusImport execution started.'
-
-    Q.spread [
-      @_loadMappings @_options.mapping
-      @_loadOrderStatusXML @_options.status
-      ],
-      (mappingsJson, statusXML) =>
-        @mappings = JSON.parse mappingsJson
-        @statusOrders = statusXML.Orders?.Order
-        @logger.info "[OrderStatus] Total order statuses to process: '#{_.size(@statusOrders)}'"
-        utils.batch(_.map(@statusOrders, (order) => api.queryOrders(@rest, "orderNumber=\"#{order.OrderId[0]}\"", 'lineItems[*].state[*].state'))) if @statusOrders
+    @statusOrders = statusXML.Orders?.Order
+    @logger.info "[OrderStatus] Total order statuses to process: '#{_.size(@statusOrders)}'"
+    utils.batch(_.map(@statusOrders, (order) => api.queryOrders(@rest, "orderNumber=\"#{order.OrderId[0]}\"", 'lineItems[*].state[*].state')))
     .then (fetchedOrders) =>
       @logger.info "[OrderStatus] Fetched SPHERE.IO orders: '#{_.size(fetchedOrders)}'"
-      @_fetchOrCreateStates(@_options, @mappings)
+      @_fetchOrCreateStates(@_options.createstates, mappings)
       .then (fetchedStatesResult) =>
         fetchedStates = fetchedStatesResult.body.results
-        @_processOrderStatus(@statusOrders, fetchedOrders, @mappings, fetchedStates)
+        @_processOrderStatus(@statusOrders, fetchedOrders, mappings, fetchedStates)
     .then (priceUpdatesResult) =>
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      @success = false
 
-  _processResult: (callback, isSuccess) ->
+  outputSummary: ->
     endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[OrderStatus] OrderStatusImport finished with result: #{result}.
-                    [OrderStatus] Total orders processed: #{@allOrdersCounter or 0}
-                    [OrderStatus] Total canceled: #{@allCanceledCounter or 0}
-                    [OrderStatus] Total shipped: #{@allShippedCounter or 0}
-                    [OrderStatus] Total returned: #{@allReturnedCounter or 0}
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[OrderStatus] Import result: #{result}.
+                    [OrderStatus] Total orders processed: #{@allOrdersCounter}
+                    [OrderStatus] Total canceled: #{@allCanceledCounter}
+                    [OrderStatus] Total shipped: #{@allShippedCounter}
+                    [OrderStatus] Total returned: #{@allReturnedCounter}
                     [OrderStatus] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
 
-  _loadMappings: (path) ->
-    utils.readFile(path)
-
-  _loadOrderStatusXML: (path) ->
-    utils.xmlToJson(path)
-
-  _fetchOrCreateStates: (options, mappings) ->
-    if options.createstates and _.size(mappings.orderStatusImport?.states) > 0
+  _fetchOrCreateStates: (createStates, mappings) ->
+    if createStates and _.size(mappings.orderStatusImport?.states) > 0
       api.ensureStates(@rest, mappings.orderStatusImport.states)
       .then (result) =>
         @client.states.perPage(0).fetch()
@@ -193,14 +172,13 @@ class OrderStatusImport
   _getMostRecentDelivery: (deliveries) ->
     # we are interested in deliveries without parcels only
     filtered = _.filter deliveries, (d) -> _.size(d.parcels) is 0
-    #console.log "ALL delivery candidates: " + _u.prettify(filtered)
     if _.size(filtered) > 0
       # sort deliveries ascending by date
       sorted = filtered.sort (a, b) ->
         if (a.createdAt > b.createdAt) then return 1
         if (b.createdAt < a.createdAt) then return -1
         return 0
-      #console.log "MOST RECENT delivery: " + _u.prettify(_.last(sorted))
+
       _.last sorted
 
   _getDeliveredQtyForLineItemId: (fetchedOrder, orderLineStatusId) ->

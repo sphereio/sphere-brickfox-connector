@@ -105,6 +105,8 @@ node lib/run
     --projectKey <project-key>      your SPHERE.IO project-key
     --clientId <client-id>          your OAuth client id for the SPHERE.IO API
     --clientSecret <client-secret>  your OAuth client secret for the SPHERE.IO API
+    --mapping <file>                JSON file containing Brickfox to SPHERE.IO mappings
+    --config [file]                 Path to configuration file with data like SFTP credentials and its working folders
     --bunyanVerbose                 enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment
 ```
 
@@ -118,7 +120,7 @@ For all command specific options please call `node lib/run <command> --help`.
 ```
 node lib/run import-products --help
 
-  Usage: import-products --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file> --manufacturers [file] --categories [file]
+  Usage: import-products --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]
 
   Options:
 
@@ -126,7 +128,6 @@ node lib/run import-products --help
     --products <file>       XML file containing products to import
     --manufacturers [file]  XML file containing manufacturers to import
     --categories [file]     XML file containing categories to import
-    --mapping <file>        JSON file containing Brickfox to SPHERE.IO mapping
 ```
 
 ## Import stock and price updates
@@ -136,13 +137,12 @@ node lib/run import-products --help
 ```
 node lib/run import-products-updates --help
 
-  Usage: import-products-updates --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --products <file>
+  Usage: import-products-updates --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file>
 
   Options:
 
     -h, --help         output usage information
     --products <file>  XML file containing products to import
-    --mapping <file>   JSON file containing Brickfox to SPHERE.IO mapping
 ```
 
 ## Export orders
@@ -152,14 +152,13 @@ node lib/run import-products-updates --help
 ```
 node lib/run export-orders --help
 
-  Usage: export-orders --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --mapping <file> --output <file>
+  Usage: export-orders --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --mapping <file> --config [file] --target <file>
 
   Options:
 
     -h, --help             output usage information
-    --output <file>        Path to the file the exporter will write the resulting XML into
+    --target <file>        Path to the file the exporter will write the resulting XML into
     --numberOfDays [days]  Retrieves orders created within the specified number of days starting with the present day. Default value is: 7
-    --mapping <file>       JSON file containing Brickfox to SPHERE.IO mapping
 ```
 
 ## Import order status updates
@@ -169,14 +168,13 @@ node lib/run export-orders --help
 ```
 node lib/run import-orders-status --help
 
-  Usage: import-orders-status --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --status <file> --createStates
+  Usage: import-orders-status --projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --status <file> --createStates
 
   Options:
 
-    -h, --help        output usage information
-    --status <file>   XML file containing order status to import
-    --mapping <file>  JSON file containing Brickfox to SPHERE.IO mapping
-    --createStates    If set, will setup order line item states and its transitions according to mapping definition
+    -h, --help       output usage information
+    --status <file>  XML file containing order status to import
+    --createStates   If set, will setup order line item states and its transitions according to mapping definition
 ```
 
 

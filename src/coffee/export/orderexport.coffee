@@ -3,7 +3,7 @@ _ = require('underscore')._
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
 libxmljs = require 'libxmljs'
-{Rest} = require 'sphere-node-connect'
+{Rest, SphereClient} = require 'sphere-node-connect'
 SphereClient = require 'sphere-node-client'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
@@ -18,6 +18,8 @@ class OrderExport
     @rest = new Rest @_options
     @client = new SphereClient @_options
     @logger = @_options.appLogger
+    @ordersExported = 0
+    @success = false
 
   ###
   # Loads orders from SPHERE with status:
@@ -27,71 +29,69 @@ class OrderExport
   # 2) Write orders to XML file.
   #
   # 3) Update SPHERE orders with sync information
-  #
-  # @param {function} callback The callback function to be invoked when the method finished its work.
-  # @return Result of the given callback
   ###
-  execute: (callback) =>
+  execute: (mappings, targetPath) ->
     @startTime = new Date().getTime()
-    @logger.info '[OrderExport] OrderExport execution started...'
-    numberOfDays = @_options.numberOfDays
-    orderQuery = @_buildOrderQuery numberOfDays
+    orderQuery = @_buildOrderQuery @_options.numberOfDays
 
     Q.spread [
-      @_loadMappings @_options.mapping
       api.queryOrders(@rest, orderQuery)
       @_loadOrdersXsd './examples/xsd/orders.xsd'
-      ],
-      (mappingsJson, fetchedOrders, ordersXsd) =>
-        mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined mappings.productImport.mapping
-        utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
-        utils.assertSkuMappingIsDefined mappings.productImport.mapping
-        if fetchedOrders
-          @client.channels.ensure(mappings.orderExport.channel.key, mappings.orderExport.channel.role)
-          .then (createOrGetChannelResult) =>
-            @channel = createOrGetChannelResult.body
-            # TODO refactor as soon as collection query in SPHERE.IO is fixed
-            @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel)
-            if _.size(@unsyncedOrders) > 0
-              @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
-              xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.productImport.mapping)
-              content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
-              @_validateXML(content, ordersXsd)
-              @fileName = @_getFileName(@_options.output)
-              @_writeFile(@fileName, content)
-            else
-              @logger.info "[OrderExport] No unexported orders found."
-    .then (writeXMLResult) =>
-      if writeXMLResult is 'OK'
+    ], (fetchedOrders, ordersXsd) =>
+      utils.assertProductIdMappingIsDefined mappings.productImport.mapping
+      utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
+      utils.assertSkuMappingIsDefined mappings.productImport.mapping
+      if fetchedOrders
+        @client.channels.ensure(mappings.orderExport.channel.key, mappings.orderExport.channel.role)
+        .then (createOrGetChannelResult) =>
+          @channel = createOrGetChannelResult.body
+          # TODO refactor as soon as collection query in SPHERE.IO is fixed
+          @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel)
+          if _.size(@unsyncedOrders) > 0
+            @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
+            xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.productImport.mapping)
+            content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
+            @_validateXML(content, ordersXsd)
+            @fileName = @_getFileName(targetPath)
+            @_writeFile(@fileName, content)
+          else
+            @logger.info "[OrderExport] No unexported orders found."
+            Q()
+    .then (writeFileResult) =>
+      if writeFileResult is 'CREATED'
         @logger.info "[OrderExport] Successfully created XML file: '#{@fileName}'"
-        orderUpdates = @_buildOrderSyncInfoUpdates(@unsyncedOrders, @channel) if _.size(@unsyncedOrders) > 0
-        # update order sync info
-        Q.all(_.map(orderUpdates, (o) => @client.orders.byId(o.id).save(o.payload))) if orderUpdates
+        syncInfoUpdates = @_buildOrderSyncInfoUpdates(@unsyncedOrders, @channel)
+        Q(syncInfoUpdates)
+      else
+        # nothing to export
+        @success = true
+        Q()
+
+  outputSummary: ->
+    endTime = new Date().getTime()
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[OrderExport] Finished with result: #{result}.
+                    [OrderExport] Orders exported: #{@ordersExported}
+                    [OrderExport] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+
+  doPostProcessing: (syncInfoUpdates) ->
+    Q.all(_.map(syncInfoUpdates, (o) => @client.orders.byId(o.id).save(o.payload)))
     .then (result) =>
-      @logger.info "[OrderExport] Updated order SyncInfo count: '#{_.size result}'" if _.size(result) > 0
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      resultSize = _.size(result)
+      @logger.info "[OrderExport] Updated order SyncInfo count: '#{resultSize}'" if resultSize > 0
+      @ordersExported = resultSize
+      @success = true
+      Q(result)
 
   _getFileName: (path) ->
     if _s.endsWith(path, '.xml')
       return path
     else
       timeStamp = new Date().getTime()
-      return "#{path}Orders-#{timeStamp}.xml"
-
-  _processResult: (callback, isSuccess) ->
-    endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[OrderExport] Finished with result: #{result}.
-                    [OrderExport] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
-
-  _loadMappings: (path) ->
-    utils.readFile(path)
+      if _s.endsWith(path, '/')
+        return "#{path}Orders-#{timeStamp}.xml"
+      else
+        return "#{path}/Orders-#{timeStamp}.xml"
 
   _loadOrdersXsd: (path) ->
     utils.readFile(path)
@@ -101,8 +101,9 @@ class OrderExport
 
   _buildOrderQuery: (numberOfDays) ->
     # TODO refactor as soon as collection query in SPHERE.IO is fixed.
+    # Then we should query for orders which are open and does not have sync info with code 'xyz'.
     date = new Date()
-    numberOfDays = 7 if numberOfDays is undefined
+    numberOfDays = 7 if not numberOfDays
     date.setDate(date.getDate() - numberOfDays)
     query = "createdAt > \"#{date.toISOString().substring(0,10)}T00:00:00.000Z\""
 

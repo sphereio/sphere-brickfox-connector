@@ -40,7 +40,7 @@ exports.writeFile = (file, content) ->
     if error
       deferred.reject "Can not write file '#{file}'; #{error}"
     else
-      deferred.resolve "OK"
+      deferred.resolve 'CREATED'
   deferred.promise
 
 exports.loadOptionalResource = (path) =>
@@ -60,10 +60,15 @@ exports.parseXML = (content) ->
       deferred.resolve result
   deferred.promise
 
-exports.xmlToJson = (path) =>
+exports.xmlToJsonFromPath = (path) ->
   @readFile(path)
   .then (fileContent) =>
     @parseXML(fileContent)
+
+exports.readJsonFromPath = (path) ->
+  @readFile(path)
+  .then (fileContent) ->
+    Q(JSON.parse(fileContent))
 
 exports.pretty = (data) ->
   JSON.stringify data, null, 4
@@ -240,7 +245,7 @@ type list is returned.
 @throws {Error} If no product types were found or product type for given product type id was not found
 @return {Object} Product type
 ###
-exports.getProductTypeByConfig: (productTypes, id, projectKey) ->
+exports.getProductTypeByConfig = (productTypes, id, projectKey) ->
   if _.size(productTypes) == 0
     throw new Error "No product type defined for SPHERE project '#{projectKey}'. Please create one before running product import."
 

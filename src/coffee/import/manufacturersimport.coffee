@@ -1,7 +1,6 @@
 Q = require 'q'
 _ = require 'underscore'
 SphereClient = require 'sphere-node-client'
-{_u} = require 'sphere-node-utils'
 utils = require '../../lib/utils'
 
 
@@ -15,43 +14,27 @@ class ManufacturersImport
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
+    @success = false
+    @manufacturersCreated = 0
 
 
-  execute: (callback) ->
+  execute: (manufacturersXML, mappings) ->
     @startTime = new Date().getTime()
-    @logger.info '[Manufacturers] Import for '#{@_options.manufacturers}' started.'
-
-    Q.spread [
-      @_loadMappings @_options.mapping
-      @_loadManufacturersXML @_options.manufacturers
-      @client.productTypes.perPage(0).fetch()
-      ],
-      (mappingsJson, manufacturersXML, fetchedProductTypesResult) =>
-        @mappings = JSON.parse mappingsJson
-        @productType = utils.getProductTypeByConfig(fetchedProductTypesResult.results, @mappings.productImport.productTypeId, @_options.config.project_key)
-        @updateActions = @_buildManufacturers(manufacturersXML, @productType, @mappings.productImport.mapping) if manufacturersXML
-        @client.productTypes.byId(@productType.id).update({version: @productType.version, actions: @updateActions}) if @updateActions
+    @client.productTypes.perPage(0).fetch()
+    .then (fetchedProductTypesResult) =>
+      productType = utils.getProductTypeByConfig(fetchedProductTypesResult.body.results, mappings.productImport.productTypeId, @_options.config.project_key)
+      @updateActions = @_buildManufacturers(manufacturersXML, productType, mappings.productImport.mapping) if manufacturersXML
+      @client.productTypes.byId(productType.id).update({version: productType.version, actions: @updateActions}) if @updateActions
     .then (productTypeUpdateResult) =>
       @manufacturersCreated = _.size(@updateActions)
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{_u.prettify error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      @success = true
 
-  _processResult: (callback, isSuccess) ->
+  outputSummary: ->
     endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[Manufacturers] Import finished with result: #{result}.
-                    [Manufacturers] Manufacturers created: #{@manufacturersCreated or 0}
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[Manufacturers] Import result: #{result}.
+                    [Manufacturers] Manufacturers created: #{@manufacturersCreated}
                     [Manufacturers] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
-
-  _loadMappings: (path) ->
-    utils.readFile(path)
-
-  _loadManufacturersXML: (path) ->
-    utils.xmlToJson(path)
 
   ###
   # If manufacturers mapping is defined builds an array of update actions for mapped product type attribute

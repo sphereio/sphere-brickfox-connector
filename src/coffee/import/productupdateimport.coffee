@@ -1,11 +1,12 @@
 Q = require 'q'
 _ = require('underscore')._
 _s = require 'underscore.string'
+{InventorySync} = require 'sphere-node-sync'
+{Rest} = require 'sphere-node-connect'
+{_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
-{InventorySync} = require('sphere-node-sync')
-{Rest} = require('sphere-node-connect')
-ProductImport = require("../import/productimport")
+ProductImport = require '../import/productimport'
 
 ###
 Imports Brickfox product stock and price updates into Sphere.
@@ -17,6 +18,11 @@ class ProductUpdateImport
     @rest = new Rest @_options
     @productImport = new ProductImport @_options
     @logger = @_options.appLogger
+    @toBeImported = 0
+    @priceUpdatedCount = 0
+    @inventoriesCreated = 0
+    @inventoriesUpdated = 0
+    @success = false
 
   ###
   # Reads given product import XML file and creates/updates/deletes product prices and stock / inventories
@@ -33,32 +39,20 @@ class ProductUpdateImport
   # 5) Build inventory creates
   # 5.1) Build inventory updates
   # 5.2) Send new inventory creates and updates
-  #
-  # @param {function} callback The callback function to be invoked when the method finished its work.
-  # @return Result of the given callback
   ###
-  execute: (callback) ->
+  execute: (productsXML, mappings) ->
     @startTime = new Date().getTime()
-    @logger.info '[ProductsUpdate] Import for '#{@_options.products}' started.'
-
-    Q.spread [
-      @_loadMappings @_options.mapping
-      @_loadProductsXML @_options.products
-      ],
-      (mappingsJson, productsXML) =>
-        mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined mappings.productImport.mapping
-        utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
-        utils.assertSkuMappingIsDefined mappings.productImport.mapping
-        @toBeImported = _.size(productsXML.Products?.ProductUpdate)
-        newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
-        @productExternalIdMapping = mappings.productImport.mapping.ProductId.to
-        productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
-        @newVariants = @_transformToVariantsBySku(newProducts)
-        @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"
-        utils.batch(_.map(productIds, (id) => api.queryProductsByExternProductId(@rest, id, @productExternalIdMapping))) if productIds
+    utils.assertProductIdMappingIsDefined mappings.productImport.mapping
+    utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
+    utils.assertSkuMappingIsDefined mappings.productImport.mapping
+    @toBeImported = _.size(productsXML.Products?.ProductUpdate)
+    newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
+    @productExternalIdMapping = mappings.productImport.mapping.ProductId.to
+    productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
+    @newVariants = @_transformToVariantsBySku(newProducts)
+    @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"
+    utils.batch(_.map(productIds, (id) => api.queryProductsByExternProductId(@rest, id, @productExternalIdMapping)))
     .then (fetchedProducts) =>
-      @logger.info "[ProductsUpdate] Fetched products to update count: #{_.size fetchedProducts}"
       priceUpdates = @_buildPriceUpdates(fetchedProducts, @newVariants, @productExternalIdMapping) if fetchedProducts
       @logger.info "[ProductsUpdate] Product price updates count: #{_.size priceUpdates}"
       utils.batch(_.map(priceUpdates, (p) => api.updateProduct(@rest, p))) if priceUpdates
@@ -80,29 +74,18 @@ class ProductUpdateImport
       promises
     .spread (updateInventoryResult, createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
-      # filter out responses where inventory was not updates (i.e.: value did not change)
+      # filter out responses where inventory was not updated (i.e.: value did not change)
       @inventoriesUpdated = _.size(_.filter updateInventoryResult, (r) -> r is 200)
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      @success = true
 
-  _processResult: (callback, isSuccess) ->
+  outputSummary: ->
     endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[ProductsUpdate] ProductUpdateImport finished with result: #{result}.
-                    [ProductsUpdate] Price updated for #{@priceUpdatedCount or 0} out of #{@toBeImported or 0} products.
-                    [ProductsUpdate] Inventories created: #{@inventoriesCreated or 0}
-                    [ProductsUpdate] Inventories updated: #{@inventoriesUpdated or 0}
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[ProductsUpdate] Import result: #{result}.
+                    [ProductsUpdate] Price updated for #{@priceUpdatedCount} out of #{@toBeImported} products.
+                    [ProductsUpdate] Inventories created: #{@inventoriesCreated}
+                    [ProductsUpdate] Inventories updated: #{@inventoriesUpdated}
                     [ProductsUpdate] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
-
-  _loadMappings: (path) ->
-    utils.readFile(path)
-
-  _loadProductsXML: (path) ->
-    utils.xmlToJson(path)
 
   _processProductUpdatesData: (data, mappings) =>
     extendedMappings = _.extend _.clone(mappings),
@@ -111,10 +94,10 @@ class ProductUpdateImport
         target: "variant"
         type: "text"
         to: "tempstock"
-    products = @productImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
+    result = @productImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
 
-    if(_.size products.creates) > 0
-      products.creates
+    if(_.size result.updates) > 0
+      result.updates
     else
       null
 
@@ -128,7 +111,7 @@ class ProductUpdateImport
 
   _addUniqueMapEntry: (map, id, object) ->
     if _.has(map, id)
-      throw new Error "Error on map creation. Map already contains an entry with unique id: '#{id}'. Existing value: \n #{map[id]} \n\n New value: #{object}"
+      throw new Error "Error on map creation. Map already contains an entry with unique id: '#{id}'. Existing value: \n #{_u.prettify(map[id])} \n\n New value: #{_u.prettify(object)}"
     else
       map[id] = object
 
@@ -147,11 +130,18 @@ class ProductUpdateImport
       results = _.size(p.body.results)
       externId = p[productExternalIdMapping]
 
+      if results is 0
+        missing =
+          _.chain(oldProducts)
+          .filter((p) -> _.size(p.body.results) is 0)
+          .map((p) -> p[productExternalIdMapping]).value()
+        throw new Error "#{_.size missing} products to update not found in SPHERE.IO by attribute '#{productExternalIdMapping}' with values: #{_u.prettify missing}"
+
       if results > 1
         throw new Error "Make sure '#{productExternalIdMapping}' product type attribute is unique accross all products in SPHERE. #{results} products with same value: '#{externId}' found."
 
       product = p.body.results[0]
-
+      console.log 'kuku: ' + _u.prettify oldProducts
       variantId = product.masterVariant.id
       _.each product.masterVariant.prices, (price) ->
         # remove old price for master variant

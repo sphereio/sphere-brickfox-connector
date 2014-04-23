@@ -6,8 +6,6 @@ before_script:
 - ./create_config.sh
 script:
 - npm test
-- node lib/run.js --projectKey ${SPHERE_PROJECT_KEY} --clientId ${SPHERE_CLIENT_ID}
-  --clientSecret ${SPHERE_CLIENT_SECRET} --action ip --source "examples/xml/import/DummyProducts.xml"
 notifications:
   hipchat:
     rooms:
@@ -18,9 +16,11 @@ notifications:
     format: html
     on_success: change
     on_failure: change
-SPHERE_PROJECT_KEY:
-  secure: ifCuplH4733pWW7tkW+JkoElPCS5W3YfvmH6mNjQtBHUlyTzLEVOGTs1PNkBuyYRZwbeOs3+a0Jj8Kyv65N4+R5wmQLuBfJGWSaY2iFfxPYnk3EJx0BshbrjuVDlMMRzjRFXcGPPzJMpaGv23om+PB6tqxDiykpdLFlpLw5jNHk=
-SPHERE_CLIENT_ID:
-  secure: RyIuFJBuOQMrc3VlWE+aAErzh3mY1ZSxqQmCyAGUhRPnlLjPSF/RQoTr7ZPS6q7jY1rTFREKimBSsG4MCk2+RrGJx0evONoXzIF4Ij+nMBW9kc3usdCGDVLZUpFmY3yjcfNadpF+dkWOIrZlqpXfLKJKRGlsTotjxof9Iln5iEM=
-SPHERE_CLIENT_SECRET:
-  secure: GZ1NRSURarmZLWprsL6lhunTWWoph9i94nR+dTLHh0LyhgSx5MTTNpAZnW5o/hGnD35CXejUuZH5sKby+vGgn/0Si457+bNhtxb8MBkHJZpVUJNMHPabh8tfbS6L7vrSvWmnZM+UaLNPbQmv7eniLz7DSlglvxNkC5MvgNLnoX8=
+env:
+  global:
+    - secure: "TgWVbzuQix6V+YEkOOYjCs4CSzRHUuTgpbSdGkjh9GgwrZmRV2b9glTuHNSeceYWWeeja9WTIBHP0CZyQ424Ky1bEijrkgtIjhxlRlieEZKuMIkeEjxYQUVRy7hCmQsDkPGYjgEqI+vuyIQK6eg7ycw3XygUqkcZjB2htsnbGxY="
+    - secure: "iB5MKg6hj34ruWLRPnzD8c9cQ5FcGc6cimOvwNpLw+W7U7boWVwLMxBb+9WOqECWTKnj59Seoew4zga2guJ3NACQTJpmt2z/0KGD58zzmcrTLDpoDnTjB+0cJnFUkcRMq2DhiGAN/1uM+Hlhix3VkGiZqWI37uDXGcdw4QNoN/A="
+    - secure: "CAecgKjLZXxDp68ohd+/Ejm1zG98e3hUYWYpBvrpNz3Scasyr4KVDcg3u8c0wA3kwJbeMHuqVR62ybZ7YP91VMmMr+4UCT/eDkhIYKwVx6A/oo7t8FrfcxgoI0nNlKoWLgBmXr/lR1x1MMpQflj3rkuBJsSD9HcUdYannzNHleY="
+    - secure: "DagkvoCuZKi31ah6M6jZDevnskDh4Hya1wN2f3/iZgqqaiCrtryq3BxXZUtz8uImD0iMnXKfzmb089JreVfECM9X4EO/TDVT7xK8YYj8ujBYncrcgmCqi79xOxZ+lekBAghOLXR228tndZLLUWz2uIOAdL2MwMJXukmAlvMoZ7c="
+    - secure: "DyCKqmAxpSDbJdFe9KHCVg4oeZKpiZspBS8d6Ne0wILKSzZ2jDNsUO5zrGViGRuU9YWE3+Z+Vyt+EvtOJElxABwSBHwU7yGQHSPNBxwsG+3mjdYJai8rT9FQ8z+dsCy3we9Fy/Jy2CH717bjFgzhCqr1wMEQTjhZgeNNkXU3JV8="
+    - secure: "IKPTxsGg/AHVPVguRck2stJ1d2O+vfULyPt6N8nXF6jKSZrX+BBDdDpqEFyv7jfaHKey6aLbYfkJEhka+cWFeZNBbf+TlWPhEJLAbQzn3Z2H8ITCLHSScNEXvasBM8zTLIobLDmz/2mK0GWr4H/xC8Q7HOsqVk5kaHFUhn/3/aA="

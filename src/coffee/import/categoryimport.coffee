@@ -19,53 +19,41 @@ class CategoryImport
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
+    @categoriesCreated = 0
+    @categoriesUpdated = 0
+    @success = false
 
 
-  execute: (callback) ->
+  execute: (categoriesXML) ->
     @startTime = new Date().getTime()
-    @logger.info '[Categories] Import for '#{@_options.categories}' started.'
-
-    Q.spread [
-      @_loadCategoriesXML @_options.categories
-      @client.categories.perPage(0).fetch()
-      ],
-      (categoriesXML, fetchedCategories) =>
-        @categoriesXML = categoriesXML
-        @fetchedCategories = utils.transformByCategoryExternalId(fetchedCategories.results)
-        @logger.info "[Categories] Fetched SPHERE.IO categories count: '#{_.size @fetchedCategories}'"
-        @categories = @_buildCategories(@categoriesXML)
-        @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-        Q.all(_.map(@categoryCreates, (c) => @client.categories.save(c))) if @categoryCreates
+    @client.categories.perPage(0).fetch()
+    .then (fetchedCategoriesResult) =>
+      @fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.body.results)
+      @logger.info "[Categories] Fetched SPHERE.IO categories count: '#{_.size @fetchedCategories}'"
+      @categories = @_buildCategories(categoriesXML)
+      @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
+      Q.all(_.map(@categoryCreates, (c) => @client.categories.save(c))) if @categoryCreates
     .then (createCategoriesResult) =>
       @categoriesCreated = _.size(@categoryCreates)
       # fetch created categories to get id's used for parent reference creation. Required only if new categories created.
       @client.categories.perPage(0).fetch() if @categoryCreates
-    .then (fetchedCategories) =>
-      @fetchedCategories = utils.transformByCategoryExternalId(fetchedCategories.results) if fetchedCategories
-      @logger.info "[Categories] Fetched SPHERE.IO categories count after create: '#{_.size @fetchedCategories}'" if fetchedCategories
+    .then (fetchedCategoriesResult) =>
+      @fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.body.results) if fetchedCategoriesResult
+      @logger.info "[Categories] Fetched SPHERE.IO categories count after create: '#{_.size @fetchedCategories}'" if fetchedCategoriesResult
       @categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
       # TODO replace batchSeq with process provided by sphere-node-client (test it!)
       utils.batchSeq(@rest, api.updateCategory, @categoryUpdates, 0) if @categoryUpdates
     .then (updateCategoriesResult) =>
       @categoriesUpdated = _.size(@categoryUpdates)
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{_u.prettify error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      @success = true
 
-  _processResult: (callback, isSuccess) ->
+  outputSummary: ->
     endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[Categories] Import finished with result: #{result}.
-                    [Categories] Created: #{@categoriesCreated or 0}
-                    [Categories] Updated: #{@categoriesUpdated or 0}
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[Categories] Import result: #{result}.
+                    [Categories] Created: #{@categoriesCreated}
+                    [Categories] Updated: #{@categoriesUpdated}
                     [Categories] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
-
-  _loadCategoriesXML: (path) ->
-    utils.xmlToJson(path)
-
 
   ###
   # Builds categories list from import data with all attributes (name, slug, parent <-> child relation) required for category creation or update.
@@ -84,7 +72,8 @@ class CategoryImport
     _.each data.Categories.Category, (c) =>
       category = @_convertCategory(c)
       categories.push category
-    @logger.info "[Categories] Import candidates count: '#{_.size categories}'"
+
+    @logger.debug "[Categories] Import candidates count: '#{_.size categories}'"
     categories
 
   ###
@@ -127,7 +116,7 @@ class CategoryImport
   ###
   _buildCategoryUpdates: (data, fetchedCategories) ->
     updates = []
-    _.each data, (c) =>
+    _.each data, (c) ->
       actions = []
       newName = c.name
       oldCategory = utils.getCategoryByExternalId(c.id, fetchedCategories)

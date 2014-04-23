@@ -21,47 +21,38 @@ class ProductImport
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
+    @productsUpdated = 0
+    @productsCreated = 0
+    @success = false
 
-
-  execute: (callback) ->
+  execute: (productsXML, mappings) ->
     @startTime = new Date().getTime()
-    @logger.info '[Products] Import for '#{@_options.products}' started.'
-
     Q.spread [
-      @_loadMappings @_options.mapping
-      @_loadProductsXML @_options.products
       @client.productTypes.perPage(0).fetch()
       @client.categories.perPage(0).fetch()
-      ],
-      (mappingsJson, productsXML, fetchedProductTypesResult, fetchedCategoriesResult) =>
-        @mappings = JSON.parse mappingsJson
-        utils.assertProductIdMappingIsDefined @mappings.productImport.mapping
-        utils.assertVariationIdMappingIsDefined @mappings.productImport.mapping
-        utils.assertSkuMappingIsDefined @mappings.productImport.mapping
-        productsXML = productsXML
-        fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.results)
-        utils.transformByCategoryExternalId
-        productType = utils.getProductTypeByConfig(fetchedProductTypesResult.results, @mappings.productImport.productTypeId, @_options.config.project_key)
-        @logger.info '[Products] Products XML import started...'
-        @logger.info "[Products] Total products to import: '#{_.size productsXML.Products?.Product}'"
-        @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, @mappings.productImport.mapping)
-        productUpdates = @products.updates
-        if _.size(productUpdates) > 0
-          @logger.info "[Products] Update count: '#{_.size productUpdates}'"
-          productIdMapping = @mappings.productImport.mapping.ProductId.to
-          Q.all _.map productUpdates, (p) =>
-            attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
-            if not attr
-              throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
-            @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
-          .then (fetchedProductsResult) =>
-            counter = 0
+    ], (fetchedProductTypesResult, fetchedCategoriesResult) =>
+      utils.assertProductIdMappingIsDefined mappings.productImport.mapping
+      utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
+      utils.assertSkuMappingIsDefined mappings.productImport.mapping
+      fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.body.results)
+      productType = utils.getProductTypeByConfig(fetchedProductTypesResult.body.results, mappings.productImport.productTypeId, @_options.config.project_key)
+      @logger.info "[Products] Total products to import: '#{_.size productsXML.Products?.Product}'"
+      @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, mappings.productImport.mapping)
+      productUpdates = @products.updates
+      if _.size(productUpdates) > 0
+        @logger.info "[Products] Update count: '#{_.size productUpdates}'"
+        productIdMapping = mappings.productImport.mapping.ProductId.to
+        Q.all _.map productUpdates, (p) =>
+          attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
+          if not attr
+            throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
+          @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
+          .then (fetchedProductResult) =>
             Q.all _.map productUpdates, (p) =>
-              oldProduct = fetchedProductsResult[counter]?.body?.results[0]
+              oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
                 throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}"
               update = @productSync.buildActions(p, oldProduct).get()
-              counter++
               # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
               # TODO: make sure variants are not dropped and created from scratch but updated only.
               #@client.products.byId(oldProduct.id).update(update)
@@ -73,26 +64,15 @@ class ProductImport
         Q.all(_.map(productCreates, (p) => @client.products.save(p)))
     .then (createProductsResult) =>
       @productsCreated = _.size(createProductsResult)
-      @_processResult(callback, true)
-    .fail (error) =>
-      @logger.error "Error on execute method; #{_u.prettify error}"
-      @logger.error "Error stack: #{error.stack}" if error.stack
-      @_processResult(callback, false)
+      @success = true
 
-  _processResult: (callback, isSuccess) ->
+  outputSummary: ->
     endTime = new Date().getTime()
-    result = if isSuccess then 'SUCCESS' else 'ERROR'
-    @logger.info """[Products] ProductImport finished with result: #{result}.
-                    [Products] Products updated: #{@productsUpdated or 0}
-                    [Products] Products created: #{@productsCreated or 0}
+    result = if @success then 'SUCCESS' else 'ERROR'
+    @logger.info """[Products] Import result: #{result}.
+                    [Products] Products updated: #{@productsUpdated}
+                    [Products] Products created: #{@productsCreated}
                     [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
-    callback isSuccess
-
-  _loadMappings: (path) ->
-    utils.readFile(path)
-
-  _loadProductsXML: (path) ->
-    utils.xmlToJson(path)
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.
@@ -202,7 +182,7 @@ class ProductImport
   ###
   _processCategories: (product, data, fetchedCategories) ->
     catReferences = []
-    _.each data.Categories?[0]?.Category, (c) =>
+    _.each data.Categories?[0]?.Category, (c) ->
       categoryId = c.CategoryId[0]
       existingCategory = utils.getCategoryByExternalId(categoryId, fetchedCategories)
       id = existingCategory.id
