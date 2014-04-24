@@ -36,6 +36,7 @@ module.exports = class
       .option '--products <file>', 'XML file containing products to import'
       .option '--manufacturers [file]', 'XML file containing manufacturers to import'
       .option '--categories [file]', 'XML file containing categories to import'
+      .option '--safeCreate', 'If defined, importer will check for product existence (by ProductId attribute mapping) in SPHERE.IO before sending create new product request'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]'
       .action (opts) ->
 
@@ -46,6 +47,7 @@ module.exports = class
           validateOpt(opts.parent.mapping, 'mapping', cons.CMD_IMPORT_PRODUCTS)
           loadResources(opts, logger)
           .then (resources) ->
+            resources.options.safeCreate = opts.safeCreate
             importer = new CategoryImport resources.options
             processSftpImport(resources, importer, 'categories')
             .then (result) ->
@@ -64,6 +66,7 @@ module.exports = class
           validateOpt(opts.products, 'products', cons.CMD_IMPORT_PRODUCTS)
 
           options = createBaseOptions(opts, logger)
+          options.safeCreate = opts.safeCreate
           mapping = null
 
           utils.readJsonFromPath(opts.parent.mapping)
@@ -299,7 +302,7 @@ module.exports = class
       .then (files) ->
         if _.size(files) > 0
           sortedFiles = files.sort()
-          logger.info sortedFiles, "Processing #{files.length} files..."
+          logger.info sortedFiles, "Processing #{files.length} file(s)..."
           Qutils.processList sortedFiles, (fileName) ->
             importFn(importer, "#{tmpPath}/#{fileName}", mapping, logger)
             .then (result) ->
@@ -348,28 +351,28 @@ module.exports = class
       .then (tmpPathResult) ->
         tmpPath = tmpPathResult
         exportFn(exporter, tmpPath, mapping)
-        .then (exportResult) ->
-          fs.list(tmpPath)
-          .then (files) ->
-            if _.size(files) > 0
-              sftpClient.openSftp()
-              .then (sftp) ->
-                targetFolder = config.sftp_directories.export[code].target
-                Qutils.processList files, (fileName) ->
-                  logger.info "Uploading: '#{fileName}' to SFTP target: '#{targetFolder}'"
-                  sftpClient.safePutFile(sftp, "#{tmpPath}/#{fileName}", "#{targetFolder}/#{fileName}")
-                .then ->
-                  exporter.doPostProcessing(exportResult)
-                .then ->
-                  exporter.outputSummary()
-                  logger.info "Successfully uploaded #{_.size files} file(s)"
-                  sftpClient.close(sftp)
-                  Q()
-                .fail (error) ->
-                  sftpClient.close(sftp)
-                  Q.reject error
-            else
-              exporter.outputSummary()
+      .then (exportResult) ->
+        fs.list(tmpPath)
+        .then (files) ->
+          if _.size(files) > 0
+            sftpClient.openSftp()
+            .then (sftp) ->
+              targetFolder = config.sftp_directories.export[code].target
+              Qutils.processList files, (fileName) ->
+                logger.info "Uploading: '#{fileName}' to SFTP target: '#{targetFolder}'"
+                sftpClient.safePutFile(sftp, "#{tmpPath}/#{fileName}", "#{targetFolder}/#{fileName}")
+              .then ->
+                exporter.doPostProcessing(exportResult)
+              .then ->
+                exporter.outputSummary()
+                logger.info "Successfully uploaded #{_.size files} file(s)"
+                sftpClient.close(sftp)
+                Q()
+              .fail (error) ->
+                sftpClient.close(sftp)
+                Q.reject error
+          else
+            exporter.outputSummary()
 
     exportFn = (exporter, targetPath, mapping) ->
       throw new Error 'You must provide exporter function to be processed' unless exporter

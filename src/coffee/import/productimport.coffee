@@ -23,6 +23,7 @@ class ProductImport
     @logger = @_options.appLogger
     @productsUpdated = 0
     @productsCreated = 0
+    @productsCreateSkipped = 0
     @success = false
 
   execute: (productsXML, mappings) ->
@@ -43,27 +44,36 @@ class ProductImport
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
         productIdMapping = mappings.productImport.mapping.ProductId.to
         Q.all _.map productUpdates, (p) =>
-          attr = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
-          if not attr
-            throw new Error "Attribute '#{productIdMapping}' not defined for Brickfox product: \n#{_u.prettify p}"
-          @client.productProjections.where("masterVariant(attributes(name=\"#{productIdMapping}\" and value=\"#{attr.value}\"))").staged().fetch()
+          @_findAttributeAndFetch(p, productIdMapping)
           .then (fetchedProductResult) =>
-            Q.all _.map productUpdates, (p) =>
+            oldProduct = fetchedProductResult?.body?.results[0]
+            if not oldProduct
+              throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}"
+            update = @productSync.buildActions(p, oldProduct).get()
+            # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
+            # TODO: make sure variants are not dropped and created from scratch but updated only.
+            #@client.products.byId(oldProduct.id).update(update)
+    .then (updateProductsResult) =>
+      #@productsUpdated = _.size(updateProductsResult)
+      productCreates = @products.creates
+      if _.size(productCreates) > 0
+        @logger.info "[Products] Create count: '#{_.size productCreates}'"
+        if @_options.safeCreate
+          productIdMapping = mappings.productImport.mapping.ProductId.to
+          Q.all _.map productCreates, (p) =>
+            @_findAttributeAndFetch(p, productIdMapping)
+            .then (fetchedProductResult) =>
               oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
-                throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}"
-              update = @productSync.buildActions(p, oldProduct).get()
-              # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
-              # TODO: make sure variants are not dropped and created from scratch but updated only.
-              #@client.products.byId(oldProduct.id).update(update)
-    .then (updateProductsResult) =>
-      @productsUpdated = _.size(updateProductsResult)
-      productCreates = @products.creates
-      if productCreates
-        @logger.info "[Products] Create count: '#{_.size productCreates}'"
-        Q.all(_.map(productCreates, (p) => @client.products.save(p)))
+                # product does not exist yet, create it
+                @client.products.save(p)
+              else
+                @productsCreateSkipped++
+                Q()
+        else
+          Q.all(_.map(productCreates, (p) => @client.products.save(p)))
     .then (createProductsResult) =>
-      @productsCreated = _.size(createProductsResult)
+      @productsCreated = _.size(createProductsResult - @productsCreateSkipped)
       @success = true
 
   outputSummary: ->
@@ -72,7 +82,14 @@ class ProductImport
     @logger.info """[Products] Import result: #{result}.
                     [Products] Products updated: #{@productsUpdated}
                     [Products] Products created: #{@productsCreated}
+                    [Products] Products create skipped: #{@productsCreateSkipped}
                     [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+
+  _findAttributeAndFetch: (product, attributeName) ->
+    attr = _.find product.masterVariant.attributes, (a) -> a.name is attributeName
+    if not attr
+      throw new Error "Attribute '#{attributeName}' not defined for Brickfox product: \n#{_u.prettify p}"
+    @client.productProjections.where("masterVariant(attributes(name=\"#{attributeName}\" and value=\"#{attr.value}\"))").staged().fetch()
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.
