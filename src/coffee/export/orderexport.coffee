@@ -1,5 +1,5 @@
 Q = require 'q'
-_ = require('underscore')._
+_ = require 'lodash-node'
 _s = require 'underscore.string'
 builder = require 'xmlbuilder'
 libxmljs = require 'libxmljs'

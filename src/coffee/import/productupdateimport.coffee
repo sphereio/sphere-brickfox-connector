@@ -1,5 +1,5 @@
 Q = require 'q'
-_ = require('underscore')._
+_ = require 'lodash-node'
 _s = require 'underscore.string'
 {InventorySync} = require 'sphere-node-sync'
 {Rest} = require 'sphere-node-connect'

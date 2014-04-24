@@ -1,5 +1,5 @@
 Q = require 'q'
-_ = require 'underscore'
+_ = require 'lodash-node'
 SphereClient = require 'sphere-node-client'
 utils = require '../../lib/utils'
 

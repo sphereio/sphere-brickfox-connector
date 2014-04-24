@@ -1,5 +1,5 @@
 Q = require 'q'
-_ = require('underscore')._
+_ = require 'lodash-node'
 _s = require 'underscore.string'
 utils = require './utils'
 {_u} = require 'sphere-node-utils'

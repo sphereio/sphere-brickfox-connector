@@ -1,6 +1,6 @@
 Q = require 'q'
 fs = require 'q-io/fs'
-_ = require 'underscore'
+_ = require 'lodash-node'
 program = require 'commander'
 tmp = require 'tmp'
 {Sftp, ProjectCredentialsConfig, _u, Qutils} = require 'sphere-node-utils'

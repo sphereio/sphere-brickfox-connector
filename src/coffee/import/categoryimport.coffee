@@ -1,5 +1,5 @@
 Q = require 'q'
-_ = require 'underscore'
+_ = require 'lodash-node'
 _s = require 'underscore.string'
 {Rest} = require 'sphere-node-connect'
 SphereClient = require 'sphere-node-client'
