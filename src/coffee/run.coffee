@@ -349,10 +349,8 @@ module.exports = class
         tmpPath = tmpPathResult
         exportFn(exporter, tmpPath, mapping)
         .then (exportResult) ->
-          #console.log 'exportResult: ' + utils.pretty exportResult
           fs.list(tmpPath)
           .then (files) ->
-            #console.log 'files: ' + utils.pretty files
             if _.size(files) > 0
               sftpClient.openSftp()
               .then (sftp) ->

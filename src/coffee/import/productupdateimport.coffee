@@ -141,7 +141,6 @@ class ProductUpdateImport
         throw new Error "Make sure '#{productExternalIdMapping}' product type attribute is unique accross all products in SPHERE. #{results} products with same value: '#{externId}' found."
 
       product = p.body.results[0]
-      console.log 'kuku: ' + _u.prettify oldProducts
       variantId = product.masterVariant.id
       _.each product.masterVariant.prices, (price) ->
         # remove old price for master variant
