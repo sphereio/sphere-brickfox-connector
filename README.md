@@ -128,6 +128,7 @@ node lib/run import-products --help
     --products <file>       XML file containing products to import
     --manufacturers [file]  XML file containing manufacturers to import
     --categories [file]     XML file containing categories to import
+    --safeCreate            If defined, importer will check for product existence (by ProductId attribute mapping) in SPHERE.IO before sending create new product request
 ```
 
 ## Import stock and price updates
