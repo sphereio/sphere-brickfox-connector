@@ -42,7 +42,7 @@ class CategoryImport
       @logger.info "[Categories] Fetched SPHERE.IO categories count after create: '#{_.size @fetchedCategories}'" if fetchedCategoriesResult
       @categoryUpdates = @_buildCategoryUpdates(@categories, @fetchedCategories) if @categories
       # TODO replace batchSeq with process provided by sphere-node-client (test it!)
-      utils.batchSeq(@rest, api.updateCategory, @categoryUpdates, 0) if @categoryUpdates
+      utils.batchSeq(@rest, api.updateCategory, @categoryUpdates, @logger, 0) if @categoryUpdates
     .then (updateCategoriesResult) =>
       @categoriesUpdated = _.size(@categoryUpdates)
       @success = true

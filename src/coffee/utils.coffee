@@ -99,22 +99,22 @@ exports.batch = (list, numberOfParallelRequest = 100) ->
 Creates promise for each list element and fires each promise sequentially.
 
 @param {Object} rest SPHERE.IO API client to use
-@param {Object} createPromise Function reference to use for promise creation
-@param {Array} data Date used for promise creation
+@param {Object} createPromiseFn Function reference to use for promise creation
+@param {Array} dataList List with data to use for promise creations
 @param {Integer} index Index of the date to start with (default: 0)
 @return {Array} Promise results to write into
 ###
-exports.batchSeq = (rest, createPromise, data, index = 0, allResult = [], percent = 0) =>
-  createPromise(rest, data[index])
+exports.batchSeq = (rest, createPromiseFn, dataList, logger, index = 0, allResult = [], percent = 0) =>
+  createPromiseFn(rest, dataList[index])
   .then (result) =>
-    dataSize = _.size(data)
+    dataSize = _.size(dataList)
     newIndex = index + 1
     donePercent = _s.numberFormat((newIndex * 100) / dataSize)
     if (donePercent - percent) >= 1
-      console.log "Processed #{newIndex} out of #{dataSize}. Done: #{donePercent}%"
+      logger.info "Processed #{newIndex} out of #{dataSize}. Done: #{donePercent}%"
     newResult = allResult.concat result
     if (newIndex) < dataSize
-      @batchSeq(rest, createPromise, data, newIndex, newResult, donePercent)
+      @batchSeq(rest, createPromiseFn, dataList, logger, newIndex, newResult, donePercent)
     else
       Q(newResult)
 

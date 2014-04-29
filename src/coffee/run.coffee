@@ -1,9 +1,10 @@
+nutil = require 'util'
 Q = require 'q'
 fs = require 'q-io/fs'
 _ = require 'lodash-node'
 program = require 'commander'
 tmp = require 'tmp'
-{Sftp, ProjectCredentialsConfig, _u, Qutils} = require 'sphere-node-utils'
+{ExtendedLogger, Sftp, ProjectCredentialsConfig, _u, Qutils} = require 'sphere-node-utils'
 package_json = require '../package.json'
 CategoryImport = require './import/categoryimport'
 ManufacturersImport = require './import/manufacturersimport'
@@ -12,12 +13,14 @@ ProductUpdateImport = require './import/productupdateimport'
 OrderExport = require './export/orderexport'
 OrderStatusImport = require './import/orderstatusimport'
 utils = require './utils'
-cons = require './constants'
-{ProductImportLogger, ProductUpdateImportLogger, OrderExportLogger, OrderStatusImportLogger} = require './loggers'
+CONS = require './constants'
 
 
-# TODO: use SFTP
+
 module.exports = class
+
+  # workaround to make sure that all logger streams are flushed properly before node terminates
+  process.on 'exit', => process.exit(@exitCode)
 
   @run: (argv) ->
     program
@@ -27,11 +30,14 @@ module.exports = class
       .option '--clientId <client-id>', 'your OAuth client id for the SPHERE.IO API'
       .option '--clientSecret <client-secret>', 'your OAuth client secret for the SPHERE.IO API'
       .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mappings'
-      .option '--config [file]', 'Path to configuration file with data like SFTP credentials and its working folders'
+      .option '--config [file]', 'path to configuration file with data like SFTP credentials and its working folders'
+      .option '--sphereHost [host]', 'SPHERE.IO API host to connecto to'
+      .option '--logLevel [level]', 'specifies log level (error|warn|info|debug|trace) [info]', 'info'
+      .option '--logDir [directory]', 'specifies log file directory [.]', '.'
       .option '--bunyanVerbose', 'enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment'
 
     program
-      .command cons.CMD_IMPORT_PRODUCTS
+      .command CONS.CMD_IMPORT_PRODUCTS
       .description 'Imports new and changed Brickfox products from XML into your SPHERE.IO project.'
       .option '--products <file>', 'XML file containing products to import'
       .option '--manufacturers [file]', 'XML file containing manufacturers to import'
@@ -40,11 +46,10 @@ module.exports = class
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]'
       .action (opts) ->
 
-        logger = new ProductImportLogger
-          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
+        logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', cons.CMD_IMPORT_PRODUCTS)
+          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_PRODUCTS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.safeCreate = opts.safeCreate
@@ -57,13 +62,14 @@ module.exports = class
               importer = new ProductImport resources.options
               processSftpImport(resources, importer, 'products')
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, cons.CMD_IMPORT_PRODUCTS)
-          validateOpt(opts.products, 'products', cons.CMD_IMPORT_PRODUCTS)
+          validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
+          validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS)
 
           options = createBaseOptions(opts, logger)
           options.safeCreate = opts.safeCreate
@@ -83,35 +89,36 @@ module.exports = class
             importer = new ProductImport options
             importFn(importer, opts.products, mapping, logger)
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
 
     program
-      .command cons.CMD_IMPORT_PRODUCTS_UPDATES
+      .command CONS.CMD_IMPORT_PRODUCTS_UPDATES
       .description 'Imports Brickfox product stock and price changes into your SPHERE.IO project.'
       .option '--products <file>', 'XML file containing products to import'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file>'
       .action (opts) ->
 
-        logger = new ProductUpdateImportLogger
-          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
+        logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', cons.CMD_IMPORT_PRODUCTS_UPDATES)
+          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           loadResources(opts, logger)
           .then (resources) ->
             importer = new ProductUpdateImport resources.options
             processSftpImport(resources, importer, 'productUpdates')
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, cons.CMD_IMPORT_PRODUCTS_UPDATES)
-          validateOpt(opts.products, 'products', cons.CMD_IMPORT_PRODUCTS_UPDATES)
+          validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
+          validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
 
           options = createBaseOptions(opts, logger)
 
@@ -120,37 +127,38 @@ module.exports = class
             importer = new ProductUpdateImport options
             importFn(importer, opts.products, mapping, logger)
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
 
     program
-      .command cons.CMD_EXPORT_ORDERS
+      .command CONS.CMD_EXPORT_ORDERS
       .description 'Exports new orders from your SPHERE.IO project into Brickfox XML file.'
       .option '--target <file>', 'Path to the file the exporter will write the resulting XML into'
       .option '--numberOfDays [days]', 'Retrieves orders created within the specified number of days starting with the present day. Default value is: 7'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --mapping <file> --config [file] --target <file>'
       .action (opts) ->
 
-        logger = new OrderExportLogger
-          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
+        logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', cons.CMD_EXPORT_ORDERS)
+          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_EXPORT_ORDERS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.numberOfDays = opts.numberOfDays
             exporter = new OrderExport resources.options
             processSftpExport(resources, exporter, 'orders')
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, cons.CMD_EXPORT_ORDERS)
-          validateOpt(opts.target, 'target', cons.CMD_EXPORT_ORDERS)
+          validateGlobalOpts(opts, CONS.CMD_EXPORT_ORDERS)
+          validateOpt(opts.target, 'target', CONS.CMD_EXPORT_ORDERS)
 
           options = createBaseOptions(opts, logger)
           options.numberOfDays = opts.numberOfDays
@@ -163,41 +171,43 @@ module.exports = class
               exporter.doPostProcessing(exportResult)
             .then ->
               exporter.outputSummary()
-              process.exit(0)
+              @exitCode = 0
             .fail (error) ->
               exporter.outputSummary()
               logger.error error, 'Oops, something went wrong!'
-              process.exit(1)
+              logger.error error.stack if error.stack
+              @exitCode = 1
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
 
     program
-      .command cons.CMD_IMPORT_ORDERS_STATUS
+      .command CONS.CMD_IMPORT_ORDERS_STATUS
       .description 'Imports order and order entry status changes from Brickfox into your SPHERE.IO project.'
       .option '--status <file>', 'XML file containing order status to import'
       .option '--createStates', 'If set, will setup order line item states and its transitions according to mapping definition'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --status <file> --createStates'
       .action (opts) ->
 
-        logger = new OrderStatusImportLogger
-          src: if argv.bunyanVerbose then argv.bunyanVerbose else false
+        logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', cons.CMD_IMPORT_ORDERS_STATUS)
+          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_ORDERS_STATUS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.createstates = opts.createStates
             importer = new OrderStatusImport resources.options
             processSftpImport(resources, importer, 'orderStatus')
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, cons.CMD_IMPORT_ORDERS_STATUS)
-          validateOpt(opts.status, 'status', cons.CMD_IMPORT_ORDERS_STATUS)
+          validateGlobalOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
+          validateOpt(opts.status, 'status', CONS.CMD_IMPORT_ORDERS_STATUS)
 
           options = createBaseOptions(opts, logger)
           options.createstates = opts.createStates
@@ -207,15 +217,16 @@ module.exports = class
             importer = new OrderStatusImport options
             importFn(importer, opts.status, mapping, logger)
           .then ->
-            process.exit(0)
+            @exitCode = 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
-            process.exit(1)
+            logger.error error.stack if error.stack
+            @exitCode = 1
 
     validateOpt = (value, varName, commandName) ->
       if not value
         console.error "Missing required argument '#{varName}' for command '#{commandName}'!"
-        process.exit 2
+        process.exit(2)
 
     validateGlobalOpts = (opts, commandName) ->
       validateOpt(opts.parent.projectKey, 'projectKey', commandName)
@@ -224,6 +235,9 @@ module.exports = class
       validateOpt(opts.parent.mapping, 'mapping', commandName)
 
     initSftp = (host, username, password, logger) ->
+      throw new Error 'You must provide host in order to connect to SFTP' unless host
+      throw new Error 'You must provide username in order to connect to SFTP' unless username
+      throw new Error 'You must provide password in order to connect to SFTP' unless password
       options =
         host: host
         username: username
@@ -231,6 +245,7 @@ module.exports = class
         logger: logger
 
       sftp = new Sftp options
+
 
     ###
     Simple temporary directory creation, it will be removed on process exit.
@@ -245,16 +260,30 @@ module.exports = class
           d.resolve path
       d.promise
 
+    createLogger = (opts) ->
+      logger = new ExtendedLogger
+        additionalFields:
+          project_key: opts.parent.projectKey
+          operation_type: opts._name
+        logConfig:
+          name: "#{package_json.name}-#{package_json.version}"
+          streams: [
+            {level: 'info', stream: process.stderr}
+            {level: opts.parent.logLevel, path: "#{opts.parent.logDir}/brickfox-logger.log"}
+          ]
+          src: if opts.parent.bunyanVerbose then true else false
+
+      process.on 'SIGUSR2', -> logger.reopenFileStreams()
+      logger
+
     createBaseOptions = (opts, logger) ->
       options =
         config:
           project_key: opts.parent.projectKey
           client_id: opts.parent.clientId
           client_secret: opts.parent.clientSecret
+        logConfig: logger.bunyanLogger
         appLogger: logger
-        logConfig:
-          # pass logger to node-connect so that it can log into the same file
-          logger: logger
 
     loadResources = (opts, logger) ->
       resources = {}
@@ -265,13 +294,16 @@ module.exports = class
             project_key: opts.parent.projectKey
             client_id: opts.parent.clientId
             client_secret: opts.parent.clientSecret
+          logConfig: logger.bunyanLogger
           appLogger: logger
-          logConfig:
-            # pass logger to node-connect so that it can log into the same file
-            logger: logger
+          baseConfig:
+            host = opts.parent.sphereHost if opts.parent.sphereHost
         utils.readJsonFromPath(opts.parent.config)
       .then (configResult) ->
-        resources.config = configResult
+        # get configuration for given project key
+        projectConfig = configResult[opts.parent.projectKey]
+        throw new Error  "No configuration for projectKey: '#{opts.parent.projectKey}' in '#{opts.parent.config}' found." if not projectConfig
+        resources.config = projectConfig
         utils.readJsonFromPath(opts.parent.mapping)
       .then (mappingResult) ->
         resources.mapping = mappingResult

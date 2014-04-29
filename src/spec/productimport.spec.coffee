@@ -1,15 +1,27 @@
 Q = require 'q'
 _ = require 'lodash-node'
+{ExtendedLogger} = require 'sphere-node-utils'
 Config = require '../config'
 ProductImport = require('../lib/import/productimport')
-{ProductImportLogger} = require '../lib/loggers'
+package_json = require '../package.json'
 
 describe 'ProductImport', ->
 
+  logger = new ExtendedLogger
+    additionalFields:
+      project_key: 'testProjectKey'
+      operation_type: 'product-import'
+    logConfig:
+      name: "#{package_json.name}-#{package_json.version}"
+      streams: [
+        {level: 'info', stream: process.stderr}
+        {level: 'info', path: "./brickfox-logger.log"}
+      ]
+
   beforeEach ->
     @importer = new ProductImport _.extend _.clone(Config),
-      logger: new ProductImportLogger
-      appLogger: new ProductImportLogger
+      logger: logger
+      appLogger: logger
       source: '/sourcepath'
       mapping: '/mappingpath'
 
