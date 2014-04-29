@@ -4,45 +4,7 @@ _s = require 'underscore.string'
 utils = require './utils'
 {_u} = require 'sphere-node-utils'
 
-#TODO refactor use with node connect GET / POST functions only (better use sphere-node-client / sync only)
-
-###
-# Retrieves asynchronously all categories from Sphere.
-#
-# @return {Object} If success returns promise with response body otherwise rejects with error message
-###
-exports.fetchCategories = (rest) ->
-  deferred = Q.defer()
-  rest.PAGED '/categories', (error, response, body) ->
-    if error
-      deferred.reject error
-    else
-      if response.statusCode isnt 200
-        message = "Error on fetch categories; \n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        deferred.resolve body
-  deferred.promise
-
-###
-# Creates asynchronously category in Sphere.
-#
-# @param {Object} payload Create category request as JSON
-# @return {Object} If success returns promise with success message otherwise rejects with error message
-###
-exports.createCategory = (rest, payload) ->
-  deferred = Q.defer()
-  rest.POST '/categories', payload, (error, response, body) ->
-    if error
-      deferred.reject "HTTP error on new category creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-    else
-      if response.statusCode isnt 201
-        message = "Error on new category creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        message = 'New category created.'
-        deferred.resolve message
-  deferred.promise
+#TODO refactor use with node connect GET / POST functions only (better use sphere-node-client / sync)
 
 ###
 # Updates asynchronously category in Sphere.
@@ -61,64 +23,6 @@ exports.updateCategory = (rest, data) ->
         deferred.reject message
       else
         message = "Category with id: '#{data.id}' updated."
-        deferred.resolve message
-  deferred.promise
-
-###
-# Retrieves asynchronously all product types from Sphere.
-#
-# @return {Object} If success returns promise with response body otherwise rejects with error message
-###
-exports.fetchProductTypes = (rest) ->
-  deferred = Q.defer()
-  rest.PAGED '/product-types', (error, response, body) ->
-    if error
-      deferred.reject error
-    else
-      if response.statusCode isnt 200
-        message = "Error on fetch product-types; \n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        deferred.resolve body
-  deferred.promise
-
-###
-# Updates asynchronously product type in Sphere.
-#
-# @param {Object} data Update product type data
-# @return {Object} If success returns promise with success message otherwise rejects with error message
-###
-exports.updateProductType = (rest, data) ->
-  deferred = Q.defer()
-  rest.POST "/product-types/#{data.id}", data.payload, (error, response, body) ->
-    if error
-      deferred.reject "HTTP error on product type update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-    else
-      if response.statusCode isnt 200
-        message = "Error on product type update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        message = "Product type with id: '#{data.id}' updated."
-        deferred.resolve message
-  deferred.promise
-
-###
-# Creates asynchronously product in Sphere.
-#
-# @param {Object} payload Create product request as JSON
-# @return {Object} If success returns promise with success message otherwise rejects with error message
-###
-exports.createProduct = (rest, payload) ->
-  deferred = Q.defer()
-  rest.POST '/products', payload, (error, response, body) ->
-    if error
-      deferred.reject "HTTP error on new product creation; Error: #{error}; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-    else
-      if response.statusCode isnt 201
-        message = "Error on new product creation; Request body: \n #{utils.pretty payload} \n\n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        message = 'New product created.'
         deferred.resolve message
   deferred.promise
 
@@ -236,20 +140,6 @@ exports.updateInventory = (sync, new_obj, old_obj) ->
 exports.queryOrders = (rest, where, expand) ->
   @get(rest, @pathWhere("/orders", where, null, [expand]))
 
-exports.updateOrder = (rest, id, data) ->
-  deferred = Q.defer()
-  rest.POST "/orders/#{id}", data, (error, response, body) ->
-    if error
-      deferred.reject "HTTP error on order update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: #{utils.pretty body}"
-    else
-      if response.statusCode isnt 200
-        message = "Error on order update (status: #{response.statusCode}); Request body: \n #{utils.pretty data} \n\n Response body: #{utils.pretty body}"
-        deferred.reject message
-      else
-        message = "Order with id: '#{id}' updated."
-        deferred.resolve message
-  deferred.promise
-
 exports.addDelivery = (rest, order, deliveryItems) ->
   action =
     action: 'addDelivery'
@@ -282,28 +172,6 @@ exports.transitionLineItemStates = (rest, order, actions) ->
     actions: actions
 
   @post(rest, "/orders/#{order.id}", json)
-
-exports.get = (rest, path) ->
-  d = Q.defer()
-  rest.PAGED path, (error, response, body) ->
-    if error
-      d.reject "HTTP error on GET; Request path: '#{path}'; Error: #{error}; Response body: #{utils.pretty body}"
-    else if response.statusCode is 200
-      d.resolve body
-    else
-      d.reject "GET failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Response body: \n #{utils.pretty body}"
-  d.promise
-
-exports.post = (rest, path, json) ->
-  d = Q.defer()
-  rest.POST path, json, (error, response, body) ->
-    if error
-      d.reject "HTTP error on POST; Request path: '#{path}'; Error: #{error}; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
-    else if response.statusCode is 200 or response.statusCode is 201
-      d.resolve body
-    else
-      d.reject "POST failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
-  d.promise
 
 exports.pathWhere = (path, where, sort = [], expand = [], limit = 0, offset = 0) ->
   sorting = if not _.isEmpty(sort) then "&" + _.map(sort, (s) -> "sort=" + encodeURIComponent(s)).join("&") else ""
@@ -349,3 +217,25 @@ exports.ensureStates = (rest, defs) ->
         Q(state)
 
     Q.all finalPromises
+
+exports.get = (rest, path) ->
+  d = Q.defer()
+  rest.PAGED path, (error, response, body) ->
+    if error
+      d.reject "HTTP error on GET; Request path: '#{path}'; Error: #{error}; Response body: #{utils.pretty body}"
+    else if response.statusCode is 200
+      d.resolve body
+    else
+      d.reject "GET failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Response body: \n #{utils.pretty body}"
+  d.promise
+
+exports.post = (rest, path, json) ->
+  d = Q.defer()
+  rest.POST path, json, (error, response, body) ->
+    if error
+      d.reject "HTTP error on POST; Request path: '#{path}'; Error: #{error}; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
+    else if response.statusCode is 200 or response.statusCode is 201
+      d.resolve body
+    else
+      d.reject "POST failed. StatusCode: '#{response.statusCode}'; Request path: '#{path}'; \n Request body: \n #{utils.pretty json} \n\n Response body: \n #{utils.pretty body}"
+  d.promise
