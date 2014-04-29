@@ -70,7 +70,7 @@ class OrderStatusImport
 
   _fetchOrCreateStates: (createStates, mappings) ->
     if createStates and _.size(mappings.orderStatusImport?.states) > 0
-      api.ensureStates(@rest, mappings.orderStatusImport.states)
+      api.ensureStates(@rest, mappings.orderStatusImport.states, @logger)
       .then (result) =>
         @client.states.perPage(0).fetch()
     else

@@ -179,12 +179,12 @@ exports.pathWhere = (path, where, sort = [], expand = [], limit = 0, offset = 0)
 
   "#{path}?where=#{encodeURIComponent(where)}#{sorting}#{expanding}&limit=#{limit}&offset=#{offset}"
 
-exports.ensureStates = (rest, defs) ->
+exports.ensureStates = (rest, defs, logger) ->
   statePromises = _.map defs, (def) =>
     @get(rest, @pathWhere('/states', "key=\"#{def.key}\" and type=\"LineItemState\""))
     .then (list) =>
       if list.total is 0
-        console.log "Before create new LineItemState with key: '#{def.key}'"
+        logger.info "Before create new LineItemState with key: '#{def.key}'"
         json =
           key: def.key
           type: 'LineItemState'
@@ -204,11 +204,11 @@ exports.ensureStates = (rest, defs) ->
       (state.transitions and state.definition.transitions and _.size(state.transitions) != _.size(state.definition.transitions))
         json =
           if state.definition.transitions
-            console.log "Before add transitions to state with key: '#{state.key}'; transitions: \n '#{_u.prettify state.definition.transitions}'"
+            logger.info "Before add transitions to state with key: '#{state.key}'; transitions: \n '#{_u.prettify state.definition.transitions}'"
             version: state.version
             actions: [{action: 'setTransitions', transitions: _.map(state.definition.transitions, (tk) -> {typeId: 'state', id: _.find(createdStates, (s) -> s.key is tk).id})}]
           else
-            console.log "Before removal of all transitions for state with key: '#{state.key}'"
+            logger.info "Before removal of all transitions for state with key: '#{state.key}'"
             version: state.version
             actions: [{action: 'setTransitions'}]
 
