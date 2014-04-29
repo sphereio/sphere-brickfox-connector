@@ -269,7 +269,7 @@ module.exports = class
           name: "#{package_json.name}-#{package_json.version}"
           streams: [
             {level: 'info', stream: process.stderr}
-            {level: opts.parent.logLevel, path: "#{opts.parent.logDir}/brickfox-logger.log"}
+            {level: opts.parent.logLevel, path: "#{opts.parent.logDir}/sphere-brickfox-connector.log"}
           ]
           src: if opts.parent.bunyanVerbose then true else false
 
