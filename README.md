@@ -106,7 +106,9 @@ node lib/run
     --clientId <client-id>          your OAuth client id for the SPHERE.IO API
     --clientSecret <client-secret>  your OAuth client secret for the SPHERE.IO API
     --mapping <file>                JSON file containing Brickfox to SPHERE.IO mappings
-    --config [file]                 Path to configuration file with data like SFTP credentials and its working folders
+    --config [file]                 path to configuration file with data like SFTP credentials and its working folders
+    --logLevel [level]              specifies log level (error|warn|info|debug|trace) [info]
+    --logDir [directory]            specifies log file directory [.]
     --bunyanVerbose                 enables bunyan verbose logging output mode. Due to performance issues avoid using it in production environment
 ```
 
