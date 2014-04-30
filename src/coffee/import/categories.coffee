@@ -12,7 +12,7 @@ utils = require '../../lib/utils'
 ###
 Imports Brickfox categories provided as XML into SPHERE.IO
 ###
-class CategoryImport
+class Categories
 
   constructor: (@_options = {}) ->
     @rest = new Rest @_options
@@ -188,4 +188,4 @@ class CategoryImport
     category.parentId = categoryItem.ParentId if categoryItem.ParentId
     category
 
-module.exports = CategoryImport
+module.exports = Categories

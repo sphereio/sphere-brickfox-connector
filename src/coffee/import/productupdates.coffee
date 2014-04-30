@@ -6,17 +6,17 @@ _s = require 'underscore.string'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
-ProductImport = require '../import/productimport'
+Products = require '../import/products'
 
 ###
 Imports Brickfox product stock and price updates into Sphere.
 ###
-class ProductUpdateImport
+class ProductUpdates
 
   constructor: (@_options = {}) ->
     @inventorySync = new InventorySync @_options
     @rest = new Rest @_options
-    @productImport = new ProductImport @_options
+    @productsImport = new Products @_options
     @logger = @_options.appLogger
     @toBeImported = 0
     @priceUpdatedCount = 0
@@ -94,7 +94,7 @@ class ProductUpdateImport
         target: "variant"
         type: "text"
         to: "tempstock"
-    result = @productImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
+    result = @productsImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
 
     if(_.size result.updates) > 0
       result.updates
@@ -209,4 +209,4 @@ class ProductUpdateImport
     else
       null
 
-module.exports = ProductUpdateImport
+module.exports = ProductUpdates

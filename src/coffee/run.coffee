@@ -6,12 +6,12 @@ program = require 'commander'
 tmp = require 'tmp'
 {ExtendedLogger, Sftp, ProjectCredentialsConfig, _u, Qutils} = require 'sphere-node-utils'
 package_json = require '../package.json'
-CategoryImport = require './import/categoryimport'
-ManufacturersImport = require './import/manufacturersimport'
-ProductImport = require './import/productimport'
-ProductUpdateImport = require './import/productupdateimport'
-OrderExport = require './export/orderexport'
-OrderStatusImport = require './import/orderstatusimport'
+Categories = require './import/categories'
+Manufacturers = require './import/manufacturers'
+Products = require './import/products'
+ProductUpdates = require './import/productupdates'
+Orders = require './export/orders'
+OrderStatus = require './import/orderstatus'
 utils = require './utils'
 CONS = require './constants'
 
@@ -53,13 +53,13 @@ module.exports = class
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.safeCreate = opts.safeCreate
-            importer = new CategoryImport resources.options
+            importer = new Categories resources.options
             processSftpImport(resources, importer, 'categories')
             .then (result) ->
-              importer = new ManufacturersImport resources.options
+              importer = new Manufacturers resources.options
               processSftpImport(resources, importer, 'manufacturers')
             .then (result) ->
-              importer = new ProductImport resources.options
+              importer = new Products resources.options
               processSftpImport(resources, importer, 'products')
           .then ->
             @exitCode = 0
@@ -79,14 +79,14 @@ module.exports = class
           .then (mappingResult) ->
             mapping = mappingResult
             if opts.categories
-              importer = new CategoryImport options
+              importer = new Categories options
               importFn(importer, opts.categories, mapping, logger)
           .then (result) ->
             if opts.manufacturers
-              importer = new ManufacturersImport options
+              importer = new Manufacturers options
               importFn(importer, opts.manufacturers, mapping, logger)
           .then (result) ->
-            importer = new ProductImport options
+            importer = new Products options
             importFn(importer, opts.products, mapping, logger)
           .then ->
             @exitCode = 0
@@ -108,7 +108,7 @@ module.exports = class
           validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           loadResources(opts, logger)
           .then (resources) ->
-            importer = new ProductUpdateImport resources.options
+            importer = new ProductUpdates resources.options
             processSftpImport(resources, importer, 'productUpdates')
           .then ->
             @exitCode = 0
@@ -124,7 +124,7 @@ module.exports = class
 
           utils.readJsonFromPath(opts.parent.mapping)
           .then (mapping) ->
-            importer = new ProductUpdateImport options
+            importer = new ProductUpdates options
             importFn(importer, opts.products, mapping, logger)
           .then ->
             @exitCode = 0
@@ -148,7 +148,7 @@ module.exports = class
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.numberOfDays = opts.numberOfDays
-            exporter = new OrderExport resources.options
+            exporter = new Orders resources.options
             processSftpExport(resources, exporter, 'orders')
           .then ->
             @exitCode = 0
@@ -165,7 +165,7 @@ module.exports = class
 
           utils.readJsonFromPath(opts.parent.mapping)
           .then (mapping) ->
-            exporter = new OrderExport options
+            exporter = new Orders options
             exportFn(exporter, opts.target, mapping)
             .then (exportResult) ->
               exporter.doPostProcessing(exportResult)
@@ -197,7 +197,7 @@ module.exports = class
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.createstates = opts.createStates
-            importer = new OrderStatusImport resources.options
+            importer = new OrderStatus resources.options
             processSftpImport(resources, importer, 'orderStatus')
           .then ->
             @exitCode = 0
@@ -214,7 +214,7 @@ module.exports = class
 
           utils.readJsonFromPath(opts.parent.mapping)
           .then (mapping) ->
-            importer = new OrderStatusImport options
+            importer = new OrderStatus options
             importFn(importer, opts.status, mapping, logger)
           .then ->
             @exitCode = 0

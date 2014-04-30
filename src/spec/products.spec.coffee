@@ -2,10 +2,10 @@ Q = require 'q'
 _ = require 'lodash-node'
 {ExtendedLogger} = require 'sphere-node-utils'
 Config = require '../config'
-ProductImport = require('../lib/import/productimport')
+Products = require('../lib/import/products')
 package_json = require '../package.json'
 
-describe 'ProductImport', ->
+describe 'Products', ->
 
   logger = new ExtendedLogger
     additionalFields:
@@ -19,7 +19,7 @@ describe 'ProductImport', ->
       ]
 
   beforeEach ->
-    @importer = new ProductImport _.extend _.clone(Config),
+    @importer = new Products _.extend _.clone(Config),
       logger: logger
       appLogger: logger
       source: '/sourcepath'
@@ -34,11 +34,11 @@ describe 'ProductImport', ->
     expect(@importer._options.mapping).toBe '/mappingpath'
 
   xit 'should throw error if source path is not given', ->
-    expect(-> new ProductImport).toThrow new Error 'XML source path is required'
+    expect(-> new Products).toThrow new Error 'XML source path is required'
 
   xit 'should throw error if mapping path is not given', ->
     options = _.extend _.clone(Config), source: '/sourcepath'
-    expect(-> new ProductImport options).toThrow new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required'
+    expect(-> new Products options).toThrow new Error 'Product import attributes mapping (Brickfox -> SPHERE) file path is required'
 
   xit 'should execute', (done) ->
     createMock = ->

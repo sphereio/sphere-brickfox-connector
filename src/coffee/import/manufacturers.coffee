@@ -8,7 +8,7 @@ utils = require '../../lib/utils'
 ###
 Imports Brickfox manufacturers provided as XML into SPHERE.IO
 ###
-class ManufacturersImport
+class Manufacturers
 
   constructor: (@_options = {}) ->
     @client = new SphereClient @_options
@@ -88,4 +88,4 @@ class ManufacturersImport
       @logger.info "[Manufacturers] No update action for manufacturers attribute '#{attributeName}' required."
       null
 
-module.exports = ManufacturersImport
+module.exports = Manufacturers

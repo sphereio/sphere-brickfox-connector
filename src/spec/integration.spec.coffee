@@ -1,6 +1,6 @@
 # TODO
 Config = require '../config'
-ProductImport = require('../lib/import/productimport')
+Products = require('../lib/import/products')
 Q = require('q')
 
 # Increase timeout
@@ -8,7 +8,7 @@ jasmine.getEnv().defaultTimeoutInterval = 10000
 
 xdescribe '#execute', ->
   beforeEach (done) ->
-    @importer = new ProductImport Config
+    @importer = new Products Config
     done()
 
   it 'Nothing to do', (done) ->

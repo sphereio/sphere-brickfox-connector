@@ -12,7 +12,7 @@ utils = require '../../lib/utils'
 ###
 Exports SPHERE orders as XML (in compliance with Brickfox order import XSD)
 ###
-class OrderExport
+class Orders
 
   constructor: (@_options = {}) ->
     @rest = new Rest @_options
@@ -225,4 +225,4 @@ class OrderExport
     result = xmlDoc.validate(xsdDoc)
     throw new Error "XML validation against XSD schema failed. XML content: \n #{xml}" if not result
 
-module.exports = OrderExport
+module.exports = Orders

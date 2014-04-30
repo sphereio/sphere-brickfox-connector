@@ -12,7 +12,7 @@ utils = require '../utils'
 ###
 Imports Brickfox order status updates into SPHERE.IO.
 ###
-class OrderStatusImport
+class OrderStatus
 
   constructor: (@_options = {}) ->
     @rest = new Rest @_options
@@ -209,4 +209,4 @@ class OrderStatusImport
     if fetchedOrder.orderNumber isnt statusOrderId
       throw new Error "Order status sync aborted as fetched order id: '#{fetchedOrder.id}' is not equal to '#{statusOrderId}'"
 
-module.exports = OrderStatusImport
+module.exports = OrderStatus

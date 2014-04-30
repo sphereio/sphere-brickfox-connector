@@ -14,7 +14,7 @@ Imports Brickfox products provided as XML into SPHERE.IO
 # TODO: Send product inventories / stock after product update / creation (or maybe creation only???)
 # TODO: Send product updates for products with flag isNew = 0 and make sure product variants are not removed and created again but updated only
 # TODO: Send category deletes for categories without products
-class ProductImport
+class Products
 
   constructor: (@_options = {}) ->
     @productSync = new ProductSync @_options
@@ -393,4 +393,4 @@ class ProductImport
     if _.has(mappings, key)
       @_addValue(product, variant, value, mappings[key])
 
-module.exports = ProductImport
+module.exports = Products
