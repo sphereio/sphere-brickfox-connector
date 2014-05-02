@@ -2,6 +2,7 @@ Q = require 'q'
 _ = require 'lodash-node'
 _s = require 'underscore.string'
 {InventorySync} = require 'sphere-node-sync'
+SphereClient = require 'sphere-node-client'
 {Rest} = require 'sphere-node-connect'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
@@ -16,6 +17,8 @@ class ProductUpdates
   constructor: (@_options = {}) ->
     @inventorySync = new InventorySync @_options
     @rest = new Rest @_options
+    @client = new SphereClient @_options
+    @client.setMaxParallel(100)
     @productsImport = new Products @_options
     @logger = @_options.appLogger
     @toBeImported = 0
@@ -50,32 +53,41 @@ class ProductUpdates
     @productExternalIdMapping = mappings.productImport.mapping.ProductId.to
     productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
     @newVariants = @_transformToVariantsBySku(newProducts)
-    @logger.info "[ProductsUpdate] Product updates count: #{_.size productIds}"
+    @logger.info "[ProductsUpdate] Product updates: #{_.size productIds}"
     utils.batch(_.map(productIds, (id) => api.queryProductsByExternProductId(@rest, id, @productExternalIdMapping)))
     .then (fetchedProducts) =>
       priceUpdates = @_buildPriceUpdates(fetchedProducts, @newVariants, @productExternalIdMapping) if fetchedProducts
-      @logger.info "[ProductsUpdate] Product price updates count: #{_.size priceUpdates}"
-      utils.batch(_.map(priceUpdates, (p) => api.updateProduct(@rest, p))) if priceUpdates
+      @logger.info "[ProductsUpdate] Product price updates: #{_.size priceUpdates}"
+      Q.all(_.map(priceUpdates, (p) => @client.products.byId(p.id).update(p.payload))) if priceUpdates
     .then (priceUpdatesResult) =>
       @priceUpdatedCount = _.size(priceUpdatesResult)
       skus = _.keys(@newVariants)
       @logger.info "[ProductsUpdate] Inventories to fetch: #{_.size skus}"
-      utils.batch(_.map(skus, (sku) => api.queryInventoriesBySku(@rest, sku))) if skus
+      @createInventoryForSkus = []
+      @updateInventoryItems = []
+      if _.size(skus) > 0
+        Q.all _.map skus, (sku) =>
+          @client.inventoryEntries.where("sku=#{sku}").all().fetch()
+          .then (fetchedInventoryResult) =>
+            inventory = fetchedInventoryResult.body.results[0]
+            if inventory
+              @updateInventoryItems.push(inventory)
+            else
+              @createInventoryForSkus.push(sku)
     .then (fetchedInventories) =>
-      @logger.info "[ProductsUpdate] Fetched inventories count: #{_.size fetchedInventories}"
-      createInventoryForSkus = []
-      updateInventoryItems = []
-      _.each fetchedInventories, (i) -> if _.isObject(i) then updateInventoryItems.push(i) else createInventoryForSkus.push(i)
-      inventoryCreates = @_buildInventoryCreates(createInventoryForSkus, @newVariants) if _.size(createInventoryForSkus) > 0
-      inventoryUpdates = @_buildInventoryUpdates(updateInventoryItems, @newVariants) if _.size(updateInventoryItems) > 0
-      promises = []
-      promises.push utils.batch(_.map(inventoryUpdates, (inventory) => api.updateInventory(@inventorySync, inventory.newObj, inventory.oldObj))) if inventoryUpdates
-      promises.push utils.batch(_.map(inventoryCreates, (inventory) => api.createInventory(@rest, inventory))) if inventoryCreates
-      promises
-    .spread (updateInventoryResult, createInventoryResult) =>
+      inventoryUpdates = @_buildInventoryUpdates(@updateInventoryItems, @newVariants) if _.size(@updateInventoryItems) > 0
+      if inventoryUpdates
+        @logger.info "[ProductsUpdate] Inventories to update: #{_.size inventoryUpdates}"
+        Q.all(_.map(inventoryUpdates, (i) => @inventorySync.buildActions(i.newObj, i.oldObj).update()))
+    .then (updateInventoryResult) =>
+      @inventoriesUpdated = _.size(_.filter updateInventoryResult, (r) -> r.statusCode is 200)
+      @inventoriesUpdateSkipped = _.size(updateInventoryResult) - @inventoriesUpdated
+      inventoryCreates = @_buildInventoryCreates(@createInventoryForSkus, @newVariants) if _.size(@createInventoryForSkus) > 0
+      if inventoryCreates
+        @logger.info "[ProductsUpdate] Inventories to create: #{_.size inventoryCreates}"
+        Q.all(_.map(inventoryCreates, (i) => @client.inventoryEntries.save(i))) if inventoryCreates
+    .then (createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
-      # filter out responses where inventory was not updated (i.e.: value did not change)
-      @inventoriesUpdated = _.size(_.filter updateInventoryResult, (r) -> r is 200)
       @success = true
 
   outputSummary: ->
@@ -85,6 +97,7 @@ class ProductUpdates
                     [ProductsUpdate] Price updated for #{@priceUpdatedCount} out of #{@toBeImported} products.
                     [ProductsUpdate] Inventories created: #{@inventoriesCreated}
                     [ProductsUpdate] Inventories updated: #{@inventoriesUpdated}
+                    [ProductsUpdate] Inventories update skipped: #{@inventoriesUpdateSkipped}
                     [ProductsUpdate] Processing time: #{(endTime - @startTime) / 1000} seconds."""
 
   _processProductUpdatesData: (data, mappings) =>
@@ -123,9 +136,9 @@ class ProductUpdates
           productIDs.push att.value
     productIDs
 
-  _buildPriceUpdates: (oldProducts, newVariants, productExternalIdMapping) ->
+  _buildPriceUpdates: (oldProducts, newVariants, productExternalIdMapping) =>
     updates = []
-    _.each oldProducts, (p) ->
+    _.each oldProducts, (p) =>
       actions = []
       results = _.size(p.body.results)
       externId = p[productExternalIdMapping]
@@ -142,27 +155,28 @@ class ProductUpdates
 
       product = p.body.results[0]
       variantId = product.masterVariant.id
-      _.each product.masterVariant.prices, (price) ->
-        # remove old price for master variant
-        action = utils.buildRemovePriceAction(price, variantId)
-        actions.push action
-        # create new price for master variant
-        newVariant = newVariants[product.masterVariant.sku]
-        _.each newVariant.prices, (newPrice) ->
-          action = utils.buildAddPriceAction(newPrice, variantId)
-          actions.push action
 
-      _.each product.variants, (v) ->
+      if _.size(product.masterVariant.prices) > 0
+        _.each product.masterVariant.prices, (price) =>
+          # remove old price for master variant
+          actions.push utils.buildRemovePriceAction(price, variantId)
+          # create new price for master variant
+          actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, product.masterVariant.sku)
+      else
+        # no old prices found
+        actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, product.masterVariant.sku)
+
+      _.each product.variants, (v) =>
         variantId = v.id
-        _.each v.prices, (price) ->
-          # remove old price for variant
-          action = utils.buildRemovePriceAction(price, variantId)
-          actions.push action
-          # create new price for variant
-          newVariant = newVariants[v.sku]
-          _.each newVariant.prices, (newPrice) ->
-            action = utils.buildAddPriceAction(newPrice, variantId)
-            actions.push action
+        if _.size(product.masterVariant.prices) > 0
+          _.each v.prices, (price) =>
+            # remove old price for variant
+            actions.push utils.buildRemovePriceAction(price, variantId)
+            # create new price for variant
+            actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, v.sku)
+        else
+          # no old prices found
+          actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, v.sku)
 
       # this will sort the actions ranked in asc order (first 'remove' then 'add')
       actions = _.sortBy actions, (a) -> a.action is 'addPrice'
@@ -172,8 +186,18 @@ class ProductUpdates
         payload:
           version: product.version
           actions: actions
+
       updates.push wrapper
     updates
+
+  _buildAddPriceActions: (variantId, newVariants, productExternalIdMapping, externId, sku) ->
+    actions = []
+    newVariant = newVariants[sku]
+    throw new Error "Import data does not define price for existing product with '#{productExternalIdMapping}' = '#{externId}' and SKU = '#{sku}'" if not newVariant
+    _.each newVariant.prices, (newPrice) ->
+      actions.push utils.buildAddPriceAction(newPrice, variantId)
+
+    actions
 
   _buildInventoryCreates: (skus, newVariants) ->
     creates = []
