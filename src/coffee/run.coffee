@@ -170,6 +170,7 @@ module.exports = class
             .then (exportResult) ->
               exporter.doPostProcessing(exportResult)
             .then ->
+              # output result after order export post processing
               exporter.outputSummary()
               @exitCode = 0
             .fail (error) ->
