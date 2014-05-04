@@ -1,9 +1,8 @@
 Q = require 'q'
 _ = require 'lodash-node'
 _s = require 'underscore.string'
-{InventorySync} = require 'sphere-node-sync'
+{ProductSync, InventorySync} = require 'sphere-node-sync'
 SphereClient = require 'sphere-node-client'
-{Rest} = require 'sphere-node-connect'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
@@ -15,8 +14,8 @@ Imports Brickfox product stock and price updates into Sphere.
 class ProductUpdates
 
   constructor: (@_options = {}) ->
+    @productSync = new ProductSync @_options
     @inventorySync = new InventorySync @_options
-    @rest = new Rest @_options
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @productsImport = new Products @_options
@@ -49,16 +48,17 @@ class ProductUpdates
     utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
     utils.assertSkuMappingIsDefined mappings.productImport.mapping
     @toBeImported = _.size(productsXML.Products?.ProductUpdate)
-    newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
+    @newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
     @productExternalIdMapping = mappings.productImport.mapping.ProductId.to
-    productIds = @_getProductExternalIDs(newProducts, @productExternalIdMapping) if newProducts
-    @newVariants = @_transformToVariantsBySku(newProducts)
+    productIds = @_getProductExternalIDs(@newProducts, @productExternalIdMapping) if @newProducts
+    @newVariants = @_transformToVariantsBySku(@newProducts)
     @logger.info "[ProductsUpdate] Product updates: #{_.size productIds}"
-    utils.batch(_.map(productIds, (id) => api.queryProductsByExternProductId(@rest, id, @productExternalIdMapping)))
+    Q.all(_.map(productIds, (id) => @client.productProjections.where("masterVariant(attributes(name=\"#{@productExternalIdMapping}\" and value=#{id}))").staged().fetch()))
     .then (fetchedProducts) =>
-      priceUpdates = @_buildPriceUpdates(fetchedProducts, @newVariants, @productExternalIdMapping) if fetchedProducts
-      @logger.info "[ProductsUpdate] Product price updates: #{_.size priceUpdates}"
-      Q.all(_.map(priceUpdates, (p) => @client.products.byId(p.id).update(p.payload))) if priceUpdates
+      priceUpdates = @_buildPriceUpdates(fetchedProducts, @newProducts, @productExternalIdMapping)
+      @priceUpdatedCount = _.size(priceUpdates)
+      @logger.info "[ProductsUpdate] Product price updates: #{@priceUpdatedCount}"
+      Q.all(_.map(priceUpdates, (p) => @client.products.byId(p.id).update(p.payload))) if _.size(priceUpdates) > 0
     .then (priceUpdatesResult) =>
       @priceUpdatedCount = _.size(priceUpdatesResult)
       skus = _.keys(@newVariants)
@@ -94,7 +94,8 @@ class ProductUpdates
     endTime = new Date().getTime()
     result = if @success then 'SUCCESS' else 'ERROR'
     @logger.info """[ProductsUpdate] Import result: #{result}.
-                    [ProductsUpdate] Price updated for #{@priceUpdatedCount} out of #{@toBeImported} products.
+                    [ProductsUpdate] Products(s) processed: #{@toBeImported}
+                    [ProductsUpdate] Price(s) updated: #{@priceUpdatedCount}
                     [ProductsUpdate] Inventories created: #{@inventoriesCreated}
                     [ProductsUpdate] Inventories updated: #{@inventoriesUpdated}
                     [ProductsUpdate] Inventories update skipped: #{@inventoriesUpdateSkipped}
@@ -131,73 +132,37 @@ class ProductUpdates
   _getProductExternalIDs: (products, productExternalIdMapping) ->
     productIDs = []
     _.each products, (p) ->
-      _.each p.masterVariant.attributes, (att) ->
-        if att.name is productExternalIdMapping
-          productIDs.push att.value
+      productId = null
+      att = _.find p.masterVariant.attributes, (a) -> a.name is productExternalIdMapping
+      if att
+        productIDs.push att.value
+      else
+        throw new Error "Product price/stock update data does not contain required attribute: 'productExternalIdMapping'; Product update data: \n #{p}"
     productIDs
 
-  _buildPriceUpdates: (oldProducts, newVariants, productExternalIdMapping) =>
+  _validateProductExists: (oldProduct, newProduct, productExternalIdMapping) ->
+    if not oldProduct
+      att = _.find newProduct.masterVariant.attributes, (a) -> a.name is productExternalIdMapping
+      throw new Error "Products to update not found in SPHERE.IO by attribute name: '#{productExternalIdMapping}' and value: '#{att.value}'"
+
+  _buildPriceUpdates: (oldProducts, newProducts, productExternalIdMapping) =>
     updates = []
-    _.each oldProducts, (p) =>
-      actions = []
-      results = _.size(p.body.results)
-      externId = p[productExternalIdMapping]
+    # we are interested in price changes only
+    options = [{type: 'prices', group: 'white'}]
 
-      if results is 0
-        missing =
-          _.chain(oldProducts)
-          .filter((p) -> _.size(p.body.results) is 0)
-          .map((p) -> p[productExternalIdMapping]).value()
-        throw new Error "#{_.size missing} products to update not found in SPHERE.IO by attribute '#{productExternalIdMapping}' with values: #{_u.prettify missing}"
+    _.each oldProducts, (val, index, list) =>
+      oldProduct = val?.body?.results[0]
+      newProduct = newProducts[index]
+      @_validateProductExists(oldProduct, newProduct, productExternalIdMapping)
+      update = @productSync.config(options).buildActions(newProduct, oldProduct).get()
+      if update
+        wrapper =
+          id: oldProduct.id
+          payload: update
 
-      if results > 1
-        throw new Error "Make sure '#{productExternalIdMapping}' product type attribute is unique accross all products in SPHERE. #{results} products with same value: '#{externId}' found."
+        updates.push wrapper
 
-      product = p.body.results[0]
-      variantId = product.masterVariant.id
-
-      if _.size(product.masterVariant.prices) > 0
-        _.each product.masterVariant.prices, (price) =>
-          # remove old price for master variant
-          actions.push utils.buildRemovePriceAction(price, variantId)
-          # create new price for master variant
-          actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, product.masterVariant.sku)
-      else
-        # no old prices found
-        actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, product.masterVariant.sku)
-
-      _.each product.variants, (v) =>
-        variantId = v.id
-        if _.size(product.masterVariant.prices) > 0
-          _.each v.prices, (price) =>
-            # remove old price for variant
-            actions.push utils.buildRemovePriceAction(price, variantId)
-            # create new price for variant
-            actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, v.sku)
-        else
-          # no old prices found
-          actions = actions.concat @_buildAddPriceActions(variantId, newVariants, productExternalIdMapping, externId, v.sku)
-
-      # this will sort the actions ranked in asc order (first 'remove' then 'add')
-      actions = _.sortBy actions, (a) -> a.action is 'addPrice'
-
-      wrapper =
-        id: product.id
-        payload:
-          version: product.version
-          actions: actions
-
-      updates.push wrapper
     updates
-
-  _buildAddPriceActions: (variantId, newVariants, productExternalIdMapping, externId, sku) ->
-    actions = []
-    newVariant = newVariants[sku]
-    throw new Error "Import data does not define price for existing product with '#{productExternalIdMapping}' = '#{externId}' and SKU = '#{sku}'" if not newVariant
-    _.each newVariant.prices, (newPrice) ->
-      actions.push utils.buildAddPriceAction(newPrice, variantId)
-
-    actions
 
   _buildInventoryCreates: (skus, newVariants) ->
     creates = []

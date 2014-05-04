@@ -46,31 +46,6 @@ exports.updateProduct = (rest, data) ->
         deferred.resolve message
   deferred.promise
 
-###
-# Queries asynchronously for products with given Brickfox product reference id.
-#
-# @param {String} id External product id attribute value
-# @param {String} productExternalIdMapping External product id attribute name
-# @return {Object} If success returns promise with response body otherwise rejects with error message
-###
-exports.queryProductsByExternProductId = (rest, id, productExternalIdMapping) ->
-  deferred = Q.defer()
-  predicate = "masterVariant(attributes(name=\"#{productExternalIdMapping}\" and value=#{id}))"
-  query = "/product-projections?where=#{encodeURIComponent(predicate)}&staged=true"
-  rest.PAGED query, (error, response, body) ->
-    if error
-      deferred.reject error
-    else
-      if response.statusCode isnt 200
-        message = "Error on query products by extern ProductId; \n Predicate: #{predicate} \n\n GET query: \n #{query} \n\n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        customResponse = {}
-        customResponse[productExternalIdMapping] = id
-        customResponse.body = body
-        deferred.resolve customResponse
-  deferred.promise
-
 exports.queryOrders = (rest, where, expand) ->
   @get(rest, @pathWhere("/orders", where, null, [expand]))
 
