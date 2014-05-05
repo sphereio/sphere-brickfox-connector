@@ -322,12 +322,9 @@ module.exports = class
           host: opts.parent.sftpHost
           username: opts.parent.sftpUsername
           password: opts.parent.sftpPassword
-        if not host
-          throw new Error "Missing sftp 'host'; --sftpHost: '#{opts.parent.sftpHost}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
-        if not username
-          throw new Error "Missing sftp 'username'; --sftpUsername: '#{opts.parent.sftpUsername}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
-        if not password
-          throw new Error "Missing sftp 'password'; --sftpPassword: '#{opts.parent.sftpPassword}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
+        throw new Error "Missing sftp host; --sftpCredentials: '#{opts.parent.sftpCredentials}'" if not host
+        throw new Error "Missing sftp username; --sftpCredentials: '#{opts.parent.sftpCredentials}'" if not username
+        throw new Error "Missing sftp password; --sftpCredentials: '#{opts.parent.sftpCredentials}'" if not password
         resources.sftpClient = initSftp(host, username, password, logger)
         Q(resources)
 
