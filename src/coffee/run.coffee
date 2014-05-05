@@ -26,11 +26,15 @@ module.exports = class
     program
       .version package_json.version
       .usage '[command] [globals] [options]'
-      .option '--projectKey <project-key>', 'your SPHERE.IO project-key'
-      .option '--clientId <client-id>', 'your OAuth client id for the SPHERE.IO API'
-      .option '--clientSecret <client-secret>', 'your OAuth client secret for the SPHERE.IO API'
+      .option '--projectKey <project-key>', 'your SPHERE.IO project-key. Optional if SFTP id used'
+      .option '--clientId <client-id>', 'your OAuth client id for the SPHERE.IO API. Optional if SFTP id used'
+      .option '--clientSecret <client-secret>', 'your OAuth client secret for the SPHERE.IO API. Optional if SFTP id used'
       .option '--mapping <file>', 'JSON file containing Brickfox to SPHERE.IO mappings'
-      .option '--config [file]', 'path to configuration file with data like SFTP credentials and its working folders'
+      .option '--sftpCredentials [file]', 'the path to a JSON file where to read the credentials from'
+      .option '--sftpHost', 'the SFTP host (will be used if sftpCredentials JSON is not given)'
+      .option '--sftpUsername', 'the SFTP username (will be used if sftpCredentials JSON is not given)'
+      .option '--sftpPassword', 'the SFTP password (will be used if sftpCredentials JSON is not given)'
+      .option '--config [file]', 'the path to a JSON file where to read the configuration from (not optional if any of --sftp* arguments is used)'
       .option '--sphereHost [host]', 'SPHERE.IO API host to connecto to'
       .option '--logLevel [level]', 'specifies log level (error|warn|info|debug|trace) [info]', 'info'
       .option '--logDir [directory]', 'specifies log file directory [.]', '.'
@@ -46,10 +50,10 @@ module.exports = class
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]'
       .action (opts) ->
 
+        validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
         logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_PRODUCTS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.safeCreate = opts.safeCreate
@@ -68,7 +72,7 @@ module.exports = class
             logger.error error.stack if error.stack
             @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
+          validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS)
 
           options = createBaseOptions(opts, logger)
@@ -102,10 +106,10 @@ module.exports = class
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file>'
       .action (opts) ->
 
+        validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
         logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           loadResources(opts, logger)
           .then (resources) ->
             importer = new ProductUpdates resources.options
@@ -117,7 +121,7 @@ module.exports = class
             logger.error error.stack if error.stack
             @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
+          validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
 
           options = createBaseOptions(opts, logger)
@@ -138,13 +142,13 @@ module.exports = class
       .description 'Exports new orders from your SPHERE.IO project into Brickfox XML file.'
       .option '--target <file>', 'Path to the file the exporter will write the resulting XML into'
       .option '--numberOfDays [days]', 'Retrieves orders created within the specified number of days starting with the present day. Default value is: 7'
-      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --numberOfDays [days] --mapping <file> --config [file] --target <file>'
+      .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --numberOfDays [days] --target <file>'
       .action (opts) ->
 
+        validateGlobalOpts(opts, CONS.CMD_EXPORT_ORDERS)
         logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_EXPORT_ORDERS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.numberOfDays = opts.numberOfDays
@@ -157,7 +161,7 @@ module.exports = class
             logger.error error.stack if error.stack
             @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, CONS.CMD_EXPORT_ORDERS)
+          validateCredentialsOpts(opts, CONS.CMD_EXPORT_ORDERS)
           validateOpt(opts.target, 'target', CONS.CMD_EXPORT_ORDERS)
 
           options = createBaseOptions(opts, logger)
@@ -191,10 +195,10 @@ module.exports = class
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --status <file> --createStates'
       .action (opts) ->
 
+        validateGlobalOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
         logger = createLogger(opts)
 
         if opts.parent.config # use SFTP to load import/export files
-          validateOpt(opts.parent.mapping, 'mapping', CONS.CMD_IMPORT_ORDERS_STATUS)
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.createstates = opts.createStates
@@ -207,7 +211,7 @@ module.exports = class
             logger.error error.stack if error.stack
             @exitCode = 1
         else # use command line arguments to load import/export files
-          validateGlobalOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
+          validateCredentialsOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
           validateOpt(opts.status, 'status', CONS.CMD_IMPORT_ORDERS_STATUS)
 
           options = createBaseOptions(opts, logger)
@@ -230,10 +234,12 @@ module.exports = class
         process.exit(2)
 
     validateGlobalOpts = (opts, commandName) ->
+      validateOpt(opts.parent.mapping, 'mapping', commandName)
+
+    validateCredentialsOpts = (opts, commandName) ->
       validateOpt(opts.parent.projectKey, 'projectKey', commandName)
       validateOpt(opts.parent.clientId, 'clientId', commandName)
       validateOpt(opts.parent.clientSecret, 'clientSecret', commandName)
-      validateOpt(opts.parent.mapping, 'mapping', commandName)
 
     initSftp = (host, username, password, logger) ->
       throw new Error 'You must provide host in order to connect to SFTP' unless host
@@ -308,7 +314,21 @@ module.exports = class
         utils.readJsonFromPath(opts.parent.mapping)
       .then (mappingResult) ->
         resources.mapping = mappingResult
-        resources.sftpClient = initSftp(resources.config.sftp_host, resources.config.sftp_user, resources.config.sftp_password, logger)
+        utils.readJsonFromPath(opts.parent.sftpCredentials) if opts.parent.sftpCredentials
+      .then (sftpCredentialsResult) ->
+        sftpCred = {}
+        sftpCred = sftpCredentialsResult[opts.parent.projectKey] or {} if sftpCredentialsResult
+        {host, username, password} = _.defaults sftpCred,
+          host: opts.parent.sftpHost
+          username: opts.parent.sftpUsername
+          password: opts.parent.sftpPassword
+        if not host
+          throw new Error "Missing sftp 'host'; --sftpHost: '#{opts.parent.sftpHost}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
+        if not username
+          throw new Error "Missing sftp 'username'; --sftpUsername: '#{opts.parent.sftpUsername}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
+        if not password
+          throw new Error "Missing sftp 'password'; --sftpPassword: '#{opts.parent.sftpPassword}'; --sftpCredentials: '#{opts.parent.sftpCredentials}'; sftpCred: \n #{_u.prettify sftpCred}"
+        resources.sftpClient = initSftp(host, username, password, logger)
         Q(resources)
 
     processSftpImport = (resources, importer, code) ->
