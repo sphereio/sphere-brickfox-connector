@@ -4,7 +4,7 @@ _s = require 'underscore.string'
 utils = require './utils'
 {_u} = require 'sphere-node-utils'
 
-#TODO refactor use with node connect GET / POST functions only (better use sphere-node-client / sync)
+#TODO use sphere-node-client/sync or GET/POST
 
 ###
 # Updates asynchronously category in Sphere.
@@ -23,26 +23,6 @@ exports.updateCategory = (rest, data) ->
         deferred.reject message
       else
         message = "Category with id: '#{data.id}' updated."
-        deferred.resolve message
-  deferred.promise
-
-###
-# Updates asynchronously product in Sphere.
-#
-# @param {Object} data Update product request data
-# @return {Object} If success returns promise with success message otherwise rejects with error message
-###
-exports.updateProduct = (rest, data) ->
-  deferred = Q.defer()
-  rest.POST "/products/#{data.id}", data.payload, (error, response, body) ->
-    if error
-      deferred.reject "HTTP error on product update; Error: #{error}; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-    else
-      if response.statusCode isnt 200
-        message = "Error on product update; Request body: \n #{utils.pretty data} \n\n Response body: '#{utils.pretty body}'"
-        deferred.reject message
-      else
-        message = "Product with id: '#{data.id}' updated."
         deferred.resolve message
   deferred.promise
 
