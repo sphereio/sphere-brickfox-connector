@@ -15,7 +15,7 @@ describe 'Products', ->
       name: "#{package_json.name}-#{package_json.version}"
       streams: [
         {level: 'info', stream: process.stderr}
-        {level: 'info', path: "./brickfox-logger.log"}
+        {level: 'info', path: "./sphere-brickfox-connector.log"}
       ]
 
   beforeEach ->
