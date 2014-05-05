@@ -7,7 +7,7 @@ coverage
 config.js
 .project
 *.log
-
 config.json
-
 sftp-credentials.json
+!/examples/config.json
+!/examples/sftp-credentials.json

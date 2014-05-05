@@ -75,7 +75,7 @@ Product attribute mapping examples
     }
 }
 ```
-More mapping examples can be found [here](https://github.com/sphereio/sphere-brickfox-connector/blob/master/examples/mapping/mapping.json)
+More mapping examples can be found [here](https://github.com/sphereio/sphere-brickfox-connector/blob/master/examples/mapping.json)
 
 
 This tool uses sub commands for the various task. Please refer to the usage of the concrete action:
