@@ -9,3 +9,5 @@ config.js
 *.log
 
 config.json
+
+sftp-credentials.json
