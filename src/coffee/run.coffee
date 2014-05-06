@@ -22,11 +22,19 @@ module.exports = class
   # workaround to make sure that all open logger streams(i.e.: bunyan) are flushed properly before node terminates
   @_exitCode = null
   @_setExitCode: (code) -> @_exitCode = code
+
   process.on 'exit', =>
-    console.log 'EXIT WITH CODE: ' + @_exitCode
     process.exit(@_exitCode)
 
+  # curiously with process.on 'exit' above node does not throw errors / stack traces anymore
+  process.on 'uncaughtException', (error) ->
+    if error.stack
+      console.error error.stack
+    else
+      console.error error
+
   @run: (argv) ->
+
     program
       .version package_json.version
       .usage '[command] [globals] [options]'
@@ -75,6 +83,7 @@ module.exports = class
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS)
@@ -96,19 +105,20 @@ module.exports = class
           .then (result) ->
             importer = new Products options
             importFn(importer, opts.products, mapping, logger)
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
 
     program
       .command CONS.CMD_IMPORT_PRODUCTS_UPDATES
       .description 'Imports Brickfox product stock and price changes into your SPHERE.IO project.'
       .option '--products <file>', 'XML file containing products to import'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file>'
-      .action (opts) ->
+      .action (opts) =>
 
         validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
         logger = createLogger(opts)
@@ -118,12 +128,13 @@ module.exports = class
           .then (resources) ->
             importer = new ProductUpdates resources.options
             processSftpImport(resources, importer, 'productUpdates')
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
@@ -134,12 +145,13 @@ module.exports = class
           .then (mapping) ->
             importer = new ProductUpdates options
             importFn(importer, opts.products, mapping, logger)
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
 
     program
       .command CONS.CMD_EXPORT_ORDERS
@@ -147,7 +159,7 @@ module.exports = class
       .option '--target <file>', 'Path to the file the exporter will write the resulting XML into'
       .option '--numberOfDays [days]', 'Retrieves orders created within the specified number of days starting with the present day. Default value is: 7'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --numberOfDays [days] --target <file>'
-      .action (opts) ->
+      .action (opts) =>
 
         validateGlobalOpts(opts, CONS.CMD_EXPORT_ORDERS)
         logger = createLogger(opts)
@@ -158,12 +170,13 @@ module.exports = class
             resources.options.numberOfDays = opts.numberOfDays
             exporter = new Orders resources.options
             processSftpExport(resources, exporter, 'orders')
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_EXPORT_ORDERS)
           validateOpt(opts.target, 'target', CONS.CMD_EXPORT_ORDERS)
@@ -177,19 +190,20 @@ module.exports = class
             exportFn(exporter, opts.target, mapping)
             .then (exportResult) ->
               exporter.doPostProcessing(exportResult)
-            .then ->
+            .then =>
               # output result after order export post processing
               exporter.outputSummary()
               @_setExitCode 0
-            .fail (error) ->
+            .fail (error) =>
               exporter.outputSummary()
               logger.error error, 'Oops, something went wrong!'
               logger.error error.stack if error.stack
               @_setExitCode 1
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
 
     program
       .command CONS.CMD_IMPORT_ORDERS_STATUS
@@ -197,7 +211,7 @@ module.exports = class
       .option '--status <file>', 'XML file containing order status to import'
       .option '--createStates', 'If set, will setup order line item states and its transitions according to mapping definition'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --status <file> --createStates'
-      .action (opts) ->
+      .action (opts) =>
 
         validateGlobalOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
         logger = createLogger(opts)
@@ -208,12 +222,13 @@ module.exports = class
             resources.options.createstates = opts.createStates
             importer = new OrderStatus resources.options
             processSftpImport(resources, importer, 'orderStatus')
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
           validateOpt(opts.status, 'status', CONS.CMD_IMPORT_ORDERS_STATUS)
@@ -225,12 +240,13 @@ module.exports = class
           .then (mapping) ->
             importer = new OrderStatus options
             importFn(importer, opts.status, mapping, logger)
-          .then ->
+          .then =>
             @_setExitCode 0
-          .fail (error) ->
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
             @_setExitCode 1
+          .done()
 
     validateOpt = (value, varName, commandName) ->
       if not value
