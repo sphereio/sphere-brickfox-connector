@@ -78,12 +78,13 @@ class Products
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[Products] Import result: #{result}.
-                    [Products] Products updated: #{@productsUpdated}
-                    [Products] Products created: #{@productsCreated}
-                    [Products] Products create skipped: #{@productsCreateSkipped}
-                    [Products] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      productsUpdated: @productsUpdated
+      productsCreated: @productsCreated
+      productsCreateSkipped: @productsCreateSkipped
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[Products]"
 
   _findAttributeAndFetch: (product, attributeName) ->
     attr = _.find product.masterVariant.attributes, (a) -> a.name is attributeName

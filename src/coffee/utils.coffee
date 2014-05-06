@@ -111,7 +111,7 @@ exports.batchSeq = (rest, createPromiseFn, dataList, logger, index = 0, allResul
     newIndex = index + 1
     donePercent = _s.numberFormat((newIndex * 100) / dataSize)
     if (donePercent - percent) >= 1
-      logger.info "Processed #{newIndex} out of #{dataSize}. Done: #{donePercent}%"
+      logger.debug "Processed #{newIndex} out of #{dataSize}. Done: #{donePercent}%"
     newResult = allResult.concat result
     if (newIndex) < dataSize
       @batchSeq(rest, createPromiseFn, dataList, logger, newIndex, newResult, donePercent)

@@ -18,7 +18,7 @@ class Orders
     @rest = new Rest @_options
     @client = new SphereClient @_options
     @logger = @_options.appLogger
-    @ordersExported = 0
+    @exportedOrders = 0
     @success = false
 
   ###
@@ -55,7 +55,7 @@ class Orders
             @fileName = @_getFileName(targetPath)
             @_writeFile(@fileName, content)
           else
-            @logger.info "[OrderExport] No unexported orders found."
+            @logger.debug "[OrderExport] No unexported orders found."
             Q()
     .then (writeFileResult) =>
       if writeFileResult is 'CREATED'
@@ -69,17 +69,18 @@ class Orders
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[OrderExport] Finished with result: #{result}.
-                    [OrderExport] Orders exported: #{@ordersExported}
-                    [OrderExport] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      exportedOrders: @exportedOrders
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[OrderExport]"
 
   doPostProcessing: (syncInfoUpdates) ->
     Q.all(_.map(syncInfoUpdates, (o) => @client.orders.byId(o.id).save(o.payload)))
     .then (result) =>
       resultSize = _.size(result)
-      @logger.info "[OrderExport] Updated order SyncInfo count: '#{resultSize}'" if resultSize > 0
-      @ordersExported = resultSize
+      @logger.debug "[OrderExport] Updated order SyncInfo count: '#{resultSize}'" if resultSize > 0
+      @exportedOrders = resultSize
       @success = true
       Q(result)
 

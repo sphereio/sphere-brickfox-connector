@@ -31,10 +31,11 @@ class Manufacturers
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[Manufacturers] Import result: #{result}.
-                    [Manufacturers] Manufacturers created: #{@manufacturersCreated}
-                    [Manufacturers] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      manufacturersCreated: @manufacturersCreated
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[Manufacturers]"
 
   ###
   # If manufacturers mapping is defined builds an array of update actions for mapped product type attribute
@@ -45,7 +46,7 @@ class Manufacturers
   # @return {Array} List of product type update actions
   ###
   _buildManufacturers: (data, productType, mappings) ->
-    @logger.info '[Manufacturers] Manufacturers XML import started...'
+    @logger.debug '[Manufacturers] Manufacturers XML import started...'
 
     if not mappings.ManufacturerId
       @logger.info '[Manufacturers] Mapping for ManufacturerId is not defined. No manufacturers will be created.'
@@ -55,7 +56,7 @@ class Manufacturers
     if count
       @logger.info "[Manufacturers] Import manufacturers found: '#{count}'"
     else
-      @logger.info '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
+      @logger.error '[Manufacturers] No manufacturers to import found or undefined. Please check manufacturers input XML.'
       return
 
     attributeName = mappings.ManufacturerId.to

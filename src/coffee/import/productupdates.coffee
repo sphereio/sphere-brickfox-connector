@@ -92,14 +92,15 @@ class ProductUpdates
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[ProductsUpdate] Import result: #{result}.
-                    [ProductsUpdate] Products(s) processed: #{@toBeImported}
-                    [ProductsUpdate] Price(s) updated: #{@priceUpdatedCount}
-                    [ProductsUpdate] Inventories created: #{@inventoriesCreated}
-                    [ProductsUpdate] Inventories updated: #{@inventoriesUpdated}
-                    [ProductsUpdate] Inventories update skipped: #{@inventoriesUpdateSkipped}
-                    [ProductsUpdate] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      productsProcessed: @toBeImported
+      pricesUpdated: @priceUpdatedCount
+      inventoriesCreated: @inventoriesCreated
+      inventoriesUpdated: @inventoriesUpdated
+      inventoriesUpdateSkipped: @inventoriesUpdateSkipped
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[ProductsUpdate]"
 
   _processProductUpdatesData: (data, mappings) =>
     extendedMappings = _.extend _.clone(mappings),

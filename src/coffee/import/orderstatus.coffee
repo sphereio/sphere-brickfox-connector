@@ -47,7 +47,7 @@ class OrderStatus
   execute: (statusXML, mappings) ->
     @startTime = new Date().getTime()
     @statusOrders = statusXML.Orders?.Order
-    @logger.info "[OrderStatus] Total order statuses to process: '#{_.size(@statusOrders)}'"
+    @logger.info "[OrderStatus] Total orders to process: '#{_.size(@statusOrders)}'"
     utils.batch(_.map(@statusOrders, (order) => api.queryOrders(@rest, "orderNumber=\"#{order.OrderId[0]}\"", 'lineItems[*].state[*].state')))
     .then (fetchedOrders) =>
       @logger.info "[OrderStatus] Fetched SPHERE.IO orders: '#{_.size(fetchedOrders)}'"
@@ -60,13 +60,14 @@ class OrderStatus
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[OrderStatus] Import result: #{result}.
-                    [OrderStatus] Total orders processed: #{@allOrdersCounter}
-                    [OrderStatus] Total canceled: #{@allCanceledCounter}
-                    [OrderStatus] Total shipped: #{@allShippedCounter}
-                    [OrderStatus] Total returned: #{@allReturnedCounter}
-                    [OrderStatus] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      ordersProcessed: @allOrdersCounter
+      itemsCanceled: @allCanceledCounter
+      itemsShipped: @allShippedCounter
+      itemsReturned: @allReturnedCounter
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[OrderStatus]"
 
   _fetchOrCreateStates: (createStates, mappings) ->
     if createStates and _.size(mappings.orderStatusImport?.states) > 0
@@ -122,7 +123,7 @@ class OrderStatus
           throw new Error "Can not process brickfox lineItem status with id: '#{orderLineStatusId}' as item could not be found in SPHERE.IO order with id: '#{fetchedOrder.id}'"
 
       if _.size(transitionActions) > 0
-        @logger.info "About to change order state; orderNumber: '#{fetchedOrder.orderNumber}', canceled: '#{@canceledCounter}', returned: '#{@returnedCounter}', shipped: '#{@shippedCounter}'"
+        @logger.debug "About to change order state; orderNumber: '#{fetchedOrder.orderNumber}', canceled: '#{@canceledCounter}', returned: '#{@returnedCounter}', shipped: '#{@shippedCounter}'"
         @allCanceledCounter = @allCanceledCounter + @canceledCounter
         @allShippedCounter = @allShippedCounter + @shippedCounter
         @allReturnedCounter = @allReturnedCounter + @returnedCounter
@@ -136,7 +137,7 @@ class OrderStatus
               api.addParcel(@rest, addDeliveryResult, delivery.id, {trackingId: shippingTrackingId})
               .then (addParcelResult) ->
       else
-        @logger.info "No order state change for orderNumber: '#{fetchedOrder.orderNumber}' required."
+        @logger.debug "No order state change for orderNumber: '#{fetchedOrder.orderNumber}' required."
 
   _createLineItemStateTransitionActions: (mappings, fetchedOrder, fetchedLine, orderLineStatus, quantity, fetchedStates, date) ->
     actions = []

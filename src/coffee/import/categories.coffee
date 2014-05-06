@@ -49,11 +49,12 @@ class Categories
 
   outputSummary: ->
     endTime = new Date().getTime()
-    result = if @success then 'SUCCESS' else 'ERROR'
-    @logger.info """[Categories] Import result: #{result}.
-                    [Categories] Created: #{@categoriesCreated}
-                    [Categories] Updated: #{@categoriesUpdated}
-                    [Categories] Processing time: #{(endTime - @startTime) / 1000} seconds."""
+    summary =
+      result: if @success then 'SUCCESS' else 'ERROR'
+      categoriesCreated: @categoriesCreated
+      categoriesUpdated: @categoriesUpdated
+      processingTimeInSec: (endTime - @startTime) / 1000
+    @logger.info summary, "[Categories]"
 
   ###
   # Builds categories list from import data with all attributes (name, slug, parent <-> child relation) required for category creation or update.
@@ -66,7 +67,7 @@ class Categories
     if count
       @logger.info "[Categories] Import categories found: '#{count}'"
     else
-      @logger.info '[Categories] No categories to import found or undefined. Please check categories input XML.'
+      @logger.error '[Categories] No categories to import found or undefined. Please check categories input XML.'
       return
     categories = []
     _.each data.Categories.Category, (c) =>
@@ -104,7 +105,7 @@ class Categories
       @logger.info "[Categories] Create count: '#{count}'"
       creates
     else
-      @logger.info "[Categories] No category create required."
+      @logger.debug "[Categories] No category create required."
       null
 
   ###
@@ -153,7 +154,7 @@ class Categories
       @logger.info "[Categories] Update count: '#{count}'"
       updates
     else
-      @logger.info "[Categories] No category update required."
+      @logger.debug "[Categories] No category update required."
       null
 
   ###
