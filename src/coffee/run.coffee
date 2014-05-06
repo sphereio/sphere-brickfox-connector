@@ -19,8 +19,12 @@ CONS = require './constants'
 
 module.exports = class
 
-  # workaround to make sure that all logger streams are flushed properly before node terminates
-  process.on 'exit', => process.exit(@exitCode)
+  # workaround to make sure that all open logger streams(i.e.: bunyan) are flushed properly before node terminates
+  @_exitCode = null
+  @_setExitCode: (code) -> @_exitCode = code
+  process.on 'exit', =>
+    console.log 'EXIT WITH CODE: ' + @_exitCode
+    process.exit(@_exitCode)
 
   @run: (argv) ->
     program
@@ -48,7 +52,7 @@ module.exports = class
       .option '--categories [file]', 'XML file containing categories to import'
       .option '--safeCreate', 'If defined, importer will check for product existence (by ProductId attribute mapping) in SPHERE.IO before sending create new product request'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]'
-      .action (opts) ->
+      .action (opts) =>
 
         validateGlobalOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
         logger = createLogger(opts)
@@ -65,12 +69,12 @@ module.exports = class
             .then (result) ->
               importer = new Products resources.options
               processSftpImport(resources, importer, 'products')
-          .then ->
-            @exitCode = 0
-          .fail (error) ->
+          .then =>
+            @_setExitCode 0
+          .fail (error) =>
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS)
@@ -93,11 +97,11 @@ module.exports = class
             importer = new Products options
             importFn(importer, opts.products, mapping, logger)
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
 
     program
       .command CONS.CMD_IMPORT_PRODUCTS_UPDATES
@@ -115,11 +119,11 @@ module.exports = class
             importer = new ProductUpdates resources.options
             processSftpImport(resources, importer, 'productUpdates')
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_PRODUCTS_UPDATES)
           validateOpt(opts.products, 'products', CONS.CMD_IMPORT_PRODUCTS_UPDATES)
@@ -131,11 +135,11 @@ module.exports = class
             importer = new ProductUpdates options
             importFn(importer, opts.products, mapping, logger)
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
 
     program
       .command CONS.CMD_EXPORT_ORDERS
@@ -155,11 +159,11 @@ module.exports = class
             exporter = new Orders resources.options
             processSftpExport(resources, exporter, 'orders')
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_EXPORT_ORDERS)
           validateOpt(opts.target, 'target', CONS.CMD_EXPORT_ORDERS)
@@ -176,16 +180,16 @@ module.exports = class
             .then ->
               # output result after order export post processing
               exporter.outputSummary()
-              @exitCode = 0
+              @_setExitCode 0
             .fail (error) ->
               exporter.outputSummary()
               logger.error error, 'Oops, something went wrong!'
               logger.error error.stack if error.stack
-              @exitCode = 1
+              @_setExitCode 1
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
 
     program
       .command CONS.CMD_IMPORT_ORDERS_STATUS
@@ -205,11 +209,11 @@ module.exports = class
             importer = new OrderStatus resources.options
             processSftpImport(resources, importer, 'orderStatus')
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
         else # use command line arguments to load import/export files
           validateCredentialsOpts(opts, CONS.CMD_IMPORT_ORDERS_STATUS)
           validateOpt(opts.status, 'status', CONS.CMD_IMPORT_ORDERS_STATUS)
@@ -222,11 +226,11 @@ module.exports = class
             importer = new OrderStatus options
             importFn(importer, opts.status, mapping, logger)
           .then ->
-            @exitCode = 0
+            @_setExitCode 0
           .fail (error) ->
             logger.error error, 'Oops, something went wrong!'
             logger.error error.stack if error.stack
-            @exitCode = 1
+            @_setExitCode 1
 
     validateOpt = (value, varName, commandName) ->
       if not value
