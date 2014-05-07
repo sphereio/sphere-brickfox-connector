@@ -44,11 +44,12 @@ class Products
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
         productIdMapping = mappings.productImport.mapping.ProductId.to
         Q.all _.map productUpdates, (p) =>
-          @_findAttributeAndFetch(p, productIdMapping)
+          attr = @_findAttributeByName(p, productIdMapping, true)
+          @_fetchProductByAttribute(attr)
           .then (fetchedProductResult) =>
-            oldProduct = fetchedProductResult?.body?.results[0]
+            oldProduct = fetchedProductResult?.body?.results?[0]
             if not oldProduct
-              throw new Error "Product update aborted. Could not find product by attribute '#{productIdMapping}' in SPHERE.IO for product update data: \n#{_u.prettify p}"
+              throw new Error "Could not find product to update by attribute name: '#{productIdMapping}' and value: '#{attr.value}' in SPHERE.IO"
             update = @productSync.buildActions(p, oldProduct).get()
             # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
             # TODO: make sure variants are not dropped and created from scratch but updated only.
@@ -61,7 +62,7 @@ class Products
         if @_options.safeCreate
           productIdMapping = mappings.productImport.mapping.ProductId.to
           Q.all _.map productCreates, (p) =>
-            @_findAttributeAndFetch(p, productIdMapping)
+            @_fetchProductByAttribute(@_findAttributeByName(p, productIdMapping, true))
             .then (fetchedProductResult) =>
               oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
@@ -86,11 +87,21 @@ class Products
       processingTimeInSec: (endTime - @startTime) / 1000
     @logger.info summary, "[Products]"
 
-  _findAttributeAndFetch: (product, attributeName) ->
-    attr = _.find product.masterVariant.attributes, (a) -> a.name is attributeName
+  _findAttributeByName: (product, name, failOnMiss = false) ->
+    attr = _.find product.masterVariant.attributes, (a) -> a.name is name
     if not attr
-      throw new Error "Attribute '#{attributeName}' not defined for Brickfox product: \n#{_u.prettify p}"
-    @client.productProjections.where("masterVariant(attributes(name=\"#{attributeName}\" and value=\"#{attr.value}\"))").staged().fetch()
+      if failOnMiss
+        throw new Error "Required attribute '#{name}' not defined for product: \n#{_u.prettify product}"
+      else
+        attr
+    else
+      attr
+
+  _fetchProductByAttribute: (attribute) ->
+    if attribute
+      @client.productProjections.where("masterVariant(attributes(name=\"#{attribute.name}\" and value=\"#{attribute.value}\"))").staged().fetch()
+    else
+      Q(null)
 
   ###
   # Processes product XML data and builds a list of Sphere product representations.
