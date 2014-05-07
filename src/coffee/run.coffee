@@ -360,7 +360,7 @@ module.exports = class
       .then (sftp) ->
         sourceFolder = config.sftp_directories.import[code].source
         fileRegex = config.sftp_directories.import[code].fileRegex
-        logger.info "Check for new '#{code}' in: '#{sourceFolder}'"
+        logger.debug "Check for new '#{code}' in: '#{sourceFolder}'"
         sftpClient.downloadAllFiles(sftp, tmpPath, sourceFolder, fileRegex)
         .then ->
           sftpClient.close(sftp)
