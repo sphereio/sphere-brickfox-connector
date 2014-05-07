@@ -93,7 +93,7 @@ exports.ensureStates = (rest, defs, logger) ->
       (state.transitions and state.definition.transitions and _.size(state.transitions) != _.size(state.definition.transitions))
         json =
           if state.definition.transitions
-            logger.info "Before add transitions to state with key: '#{state.key}'; transitions: \n '#{_u.prettify state.definition.transitions}'"
+            logger.info state.definition.transitions, "Before add transitions to state with key: '#{state.key}'; transitions:"
             version: state.version
             actions: [{action: 'setTransitions', transitions: _.map(state.definition.transitions, (tk) -> {typeId: 'state', id: _.find(createdStates, (s) -> s.key is tk).id})}]
           else
