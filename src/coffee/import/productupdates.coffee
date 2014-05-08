@@ -49,14 +49,13 @@ class ProductUpdates
     utils.assertSkuMappingIsDefined mappings.productImport.mapping
     @toBeImported = _.size(productsXML.Products?.ProductUpdate)
     @newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
-    @productExternalIdMapping = mappings.productImport.mapping.ProductId.to
-    productIds = @_getProductExternalIDs(@newProducts, @productExternalIdMapping) if @newProducts
+    @productIdMapping = mappings.productImport.mapping.ProductId.to
+    productIds = @_getProductIDs(@newProducts, @productIdMapping) if @newProducts
     @newVariants = @_transformToVariantsBySku(@newProducts)
     @logger.info "[ProductsUpdate] Product updates: #{_.size productIds}"
-    Q.all(_.map(productIds, (id) => @client.productProjections.where("masterVariant(attributes(name=\"#{@productExternalIdMapping}\" and value=#{id}))").staged().fetch()))
+    Q.all(_.map(productIds, (id) => @client.productProjections.where("masterVariant(attributes(name=\"#{@productIdMapping}\" and value=#{id}))").staged().fetch()))
     .then (fetchedProducts) =>
-      priceUpdates = @_buildPriceUpdates(fetchedProducts, @newProducts, @productExternalIdMapping)
-      @priceUpdatedCount = _.size(priceUpdates)
+      priceUpdates = @_buildPriceUpdates(fetchedProducts, @newProducts, @productIdMapping)
       @logger.info "[ProductsUpdate] Product price updates: #{@priceUpdatedCount}"
       Q.all(_.map(priceUpdates, (p) => @client.products.byId(p.id).update(p.payload))) if _.size(priceUpdates) > 0
     .then (priceUpdatesResult) =>
@@ -95,7 +94,7 @@ class ProductUpdates
     summary =
       result: if @success then 'SUCCESS' else 'ERROR'
       productsProcessed: @toBeImported
-      pricesUpdated: @priceUpdatedCount
+      priceUpdatedForProducts: @priceUpdatedCount
       inventoriesCreated: @inventoriesCreated
       inventoriesUpdated: @inventoriesUpdated
       inventoriesUpdateSkipped: @inventoriesUpdateSkipped
@@ -130,40 +129,50 @@ class ProductUpdates
     else
       map[id] = object
 
-  _getProductExternalIDs: (products, productExternalIdMapping) ->
+  _getProductIDs: (products, productIdMapping) ->
     productIDs = []
     _.each products, (p) ->
       productId = null
-      att = _.find p.masterVariant.attributes, (a) -> a.name is productExternalIdMapping
+      att = _.find p.masterVariant.attributes, (a) -> a.name is productIdMapping
       if att
         productIDs.push att.value
       else
-        throw new Error "Product price/stock update data does not contain required attribute: 'productExternalIdMapping'; Product update data: \n #{p}"
+        throw new Error "Product price/stock update data does not contain required attribute: 'productIdMapping'; Product update data: \n #{p}"
     productIDs
 
-  _validateProductExists: (oldProduct, newProduct, productExternalIdMapping) ->
-    if not oldProduct
-      att = _.find newProduct.masterVariant.attributes, (a) -> a.name is productExternalIdMapping
-      throw new Error "Products to update not found in SPHERE.IO by attribute name: '#{productExternalIdMapping}' and value: '#{att.value}'"
-
-  _buildPriceUpdates: (oldProducts, newProducts, productExternalIdMapping) =>
+  _buildPriceUpdates: (oldProducts, newProducts, productIdMapping) =>
     updates = []
     # we are interested in price changes only
     options = [{type: 'prices', group: 'white'}]
 
     _.each oldProducts, (val, index, list) =>
-      oldProduct = val?.body?.results[0]
+      oldProduct = val?.body?.results?[0]
       newProduct = newProducts[index]
-      @_validateProductExists(oldProduct, newProduct, productExternalIdMapping)
-      update = @productSync.config(options).buildActions(newProduct, oldProduct).get()
-      if update
+      @_validateProductExists(oldProduct, newProduct, productIdMapping)
+      @_setVariantIds(oldProduct, newProduct)
+      actions = @productSync.config(options).buildActions(newProduct, oldProduct).get()
+      if actions
         wrapper =
           id: oldProduct.id
-          payload: update
+          payload: actions
 
         updates.push wrapper
-
     updates
+
+  _validateProductExists: (oldProduct, newProduct, productIdMapping) ->
+    if not oldProduct
+      att = _.find newProduct.masterVariant.attributes, (a) -> a.name is productIdMapping
+      throw new Error "Product to update not found in SPHERE.IO by attribute name: '#{productIdMapping}' and value: '#{att.value}'"
+
+  _setVariantIds: (oldProduct, newProduct) ->
+    allOldVariants = [oldProduct.masterVariant].concat(oldProduct.variants)
+    _.each allOldVariants, (oldVariant) ->
+      oldSKU = oldVariant.sku
+      allNewVariants = [newProduct.masterVariant].concat(newProduct.variants)
+      for variant in allNewVariants
+        if variant.sku is oldSKU
+          variant.id = oldVariant.id
+          break
 
   _buildInventoryCreates: (skus, newVariants) ->
     creates = []
