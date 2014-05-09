@@ -1,8 +1,10 @@
+nutil = require 'util'
 Q = require 'q'
 _ = require 'lodash-node'
 _s = require 'underscore.string'
 {ProductSync} = require 'sphere-node-sync'
 SphereClient = require 'sphere-node-client'
+{Qutils} = require 'sphere-node-utils'
 {_u} = require 'sphere-node-utils'
 utils = require '../../lib/utils'
 
@@ -43,38 +45,42 @@ class Products
       if _.size(productUpdates) > 0
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
         productIdMapping = mappings.productImport.mapping.ProductId.to
-        Q.all _.map productUpdates, (p) =>
-          attr = @_findAttributeByName(p, productIdMapping, true)
+        Qutils.processList productUpdates, (p) =>
+          attr = @_findAttributeByName(p[0], productIdMapping, true)
           @_fetchProductByAttribute(attr)
           .then (fetchedProductResult) =>
             oldProduct = fetchedProductResult?.body?.results?[0]
-            if not oldProduct
-              throw new Error "Could not find product to update by attribute name: '#{productIdMapping}' and value: '#{attr.value}' in SPHERE.IO"
-            update = @productSync.buildActions(p, oldProduct).get()
+            throw new Error "Could not find product to update by attribute name: '#{productIdMapping}' and value: '#{attr.value}' in SPHERE.IO" if not oldProduct
+            @logger.info "[Products] About to update product with id: '#{attr.value}', counter: '#{@productsUpdated}'"
+            @productsUpdated++
+            update = @productSync.buildActions(p[0], oldProduct).get()
+            Q()
             # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
             # TODO: make sure variants are not dropped and created from scratch but updated only.
             #@client.products.byId(oldProduct.id).update(update)
     .then (updateProductsResult) =>
-      #@productsUpdated = _.size(updateProductsResult)
       productCreates = @products.creates
       if _.size(productCreates) > 0
         @logger.info "[Products] Create count: '#{_.size productCreates}'"
         if @_options.safeCreate
           productIdMapping = mappings.productImport.mapping.ProductId.to
-          Q.all _.map productCreates, (p) =>
-            @_fetchProductByAttribute(@_findAttributeByName(p, productIdMapping, true))
+          Qutils.processList productCreates, (p) =>
+            attr = @_findAttributeByName(p[0], productIdMapping, true)
+            @_fetchProductByAttribute(attr)
             .then (fetchedProductResult) =>
               oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
+                @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
+                @productsCreated++
                 # product does not exist yet, create it
-                @client.products.save(p)
+                @client.products.save(p[0])
               else
                 @productsCreateSkipped++
                 Q()
         else
           Q.all(_.map(productCreates, (p) => @client.products.save(p)))
     .then (createProductsResult) =>
-      @productsCreated = _.size(createProductsResult - @productsCreateSkipped)
+      @productsCreated = _.size(createProductsResult) if @productsCreated is 0
       @success = true
 
   outputSummary: ->
