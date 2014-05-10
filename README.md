@@ -44,6 +44,8 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
 
  - `to`: Defines SPHERE.IO product attribute name where the mapped value will be saved to. Possible product [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product). Possible variant [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product-variant)
 
+ - `logoutMissing`: Used for output of missing product type attribute values. Can be usefull for product type setup
+
  To ensure successful synchronization with Brickfox following Brickfox attribute mappings are mandatory:
    - VariationId (as variant product type attribute)
    - ProductId (as variant product type attribute)
