@@ -57,12 +57,13 @@ class Products
             oldProduct = fetchedProductResult?.body?.results?[0]
             throw new Error "Could not find product to update by attribute name: '#{productIdMapping}' and value: '#{attr.value}' in SPHERE.IO" if not oldProduct
             @logger.info "[Products] About to update product with id: '#{attr.value}', counter: '#{@productsUpdated}'"
-            @productsUpdated++
             update = @productSync.buildActions(p[0], oldProduct).get()
             Q()
             # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
             # TODO: make sure variants are not dropped and created from scratch but updated only.
             #@client.products.byId(oldProduct.id).update(update)
+            #.then ->
+            #  @productsUpdated++
     .then (updateProductsResult) =>
       productCreates = @products.creates
       if _.size(productCreates) > 0
@@ -76,9 +77,10 @@ class Products
               oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
                 @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
-                @productsCreated++
                 # product does not exist yet, create it
                 @client.products.save(p[0])
+                .then ->
+                  @productsCreated++
               else
                 @productsCreateSkipped++
                 Q()
