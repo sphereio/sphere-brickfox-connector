@@ -23,6 +23,7 @@ class Products
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
+    @allAttributes = []
     @productsUpdated = 0
     @productsCreated = 0
     @productsCreateSkipped = 0
@@ -41,6 +42,10 @@ class Products
       productType = utils.getProductTypeByConfig(fetchedProductTypesResult.body.results, mappings.productImport.productTypeId, @_options.config.project_key)
       @logger.info "[Products] Total products to import: '#{_.size productsXML.Products?.Product}'"
       @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, mappings.productImport.mapping)
+
+      if _.size(@allAttributes) > 0
+        @_logMissingAttributes(@allAttributes, productType)
+
       productUpdates = @products.updates
       if _.size(productUpdates) > 0
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
@@ -93,6 +98,31 @@ class Products
       processingTimeInSec: (endTime - @startTime) / 1000
     @logger.info summary, "[Products]"
 
+  _logMissingAttributes: (attributes, productType) ->
+    # group by objects name value
+    groups = _.groupBy(attributes, 'name')
+    _.each _.keys(groups), (attributeName) =>
+      matchedAttr = _.find productType.attributes, (value) -> value.name is attributeName
+      if not matchedAttr
+        throw new Error "Product type with id: '#{productType.id}' does not define an attribute with name: '#{attributeName}'"
+      # extract only keys from product type attribute values
+      keys = _.pluck(matchedAttr.type.values, 'key')
+      missing = []
+      # find attribute keys not existing in product type
+      _.each groups[attributeName], (val) ->
+        if not _.contains(keys, val.key)
+          exists = _.find missing, (m) -> m.key is val.key
+          missing.push val if not exists
+
+      if _.size(missing) > 0
+        @logger.debug missing, "Detailed missing product type attribute values:"
+        short = _.map missing, (m) -> _.pick(m, 'key', 'label')
+        info =
+          productTypeId: productType.id
+          attributeName: attributeName
+          missingValues: short
+        @logger.warn info, "Missing product type attribute values:"
+
   _findAttributeByName: (product, name, failOnMiss = false) ->
     attr = _.find product.masterVariant.attributes, (a) -> a.name is name
     if not attr
@@ -144,6 +174,7 @@ class Products
       # exclude product attributes which has to be handled differently
       simpleAttributes = _.omit(p, ['Attributes', 'Categories', 'Descriptions', 'Images', 'Variations', '$'])
       _.each simpleAttributes, (value, key) =>
+        # in case any attribute form product is mapped to variant
         @_processValue(product, variantBase, key, value, mappings)
 
       # extract Attributes from product
@@ -369,6 +400,13 @@ class Products
         val = value
       when 'enum', 'lenum'
         val = _s.slugify value[0]
+        if mapping.logoutMissing and isCustom
+          attr =
+            variantSKU: variant.sku
+            name: key
+            key: val
+            label: value[0]
+          @allAttributes.push attr
       when 'number'
         val = _s.toNumber(value[0])
       when 'money'

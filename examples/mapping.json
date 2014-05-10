@@ -2,7 +2,7 @@
     "description": "Mappings and configurations required for data synchronization between Brickfox and SPHERE.IO.",
     "productImport": {
         "description": "'mapping' - Brickfox to SPHERE product attributes mapping. 'productTypeId' - If not set first product type fetched from project will be used.",
-        "productTypeId": "bfe8c11c-9b4a-4c81-85f8-1ec80bd562ab",
+        "productTypeId": "75162a98-deb2-424e-8364-29b4d6614b49",
         "mapping": {
         	"meta_title": {
                 "target": "product",
@@ -26,37 +26,39 @@
             },
             "VariationId": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
                 "type": "text",
                 "to": "variationId"
             },
             "ProductId": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
                 "type": "number",
                 "to": "productId"
             },
             "15": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
+                "logoutMissing": true,
                 "type": "enum",
                 "to": "size"
             },
             "16": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
+                "logoutMissing": true,
                 "type": "enum",
                 "to": "color"
             },
             "magento_ean": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
                 "type": "ltext",
                 "to": "ean"
             },
             "Rrp": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
                 "type": "money",
         	    "currency": "EUR",
                 "to": "rrp"
@@ -100,7 +102,7 @@
             },
             "ManufacturerId": {
                 "target": "variant",
-                "isCustom": "true",
+                "isCustom": true,
                 "type": "lenum",
                 "to": "brand"
             }
