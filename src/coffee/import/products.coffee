@@ -455,6 +455,13 @@ class Products
     if _.has(productImportMappings, key)
       @_addValue(product, variant, value, productImportMappings[key], mappings)
 
+  ###
+  # Transforms given value by transformer defined in the mapping.
+  #
+  # @param {Object} value Value to process
+  # @param {Object} mapping Mapping for the given value
+  # @param {Object} mappings Product import attribute mappings
+  ###
   _transformValue: (value, mapping, mappings) ->
     valueTransformers = mappings.productImport.valueTransformers
     return value if not valueTransformers or not _.isString(value)
