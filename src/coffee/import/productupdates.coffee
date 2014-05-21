@@ -48,7 +48,7 @@ class ProductUpdates
     utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
     utils.assertSkuMappingIsDefined mappings.productImport.mapping
     @toBeImported = _.size(productsXML.Products?.ProductUpdate)
-    @newProducts = @_processProductUpdatesData(productsXML, mappings.productImport.mapping)
+    @newProducts = @_processProductUpdatesData(productsXML, mappings)
     @productIdMapping = mappings.productImport.mapping.ProductId.to
     productIds = @_getProductIDs(@newProducts, @productIdMapping) if @newProducts
     @newVariants = @_transformToVariantsBySku(@newProducts)
@@ -102,13 +102,12 @@ class ProductUpdates
     @logger.info summary, "[ProductsUpdate]"
 
   _processProductUpdatesData: (data, mappings) =>
-    extendedMappings = _.extend _.clone(mappings),
-      # extend mapping to ensure that stock information will be processed and included into variant information too
-      Stock:
-        target: "variant"
-        type: "text"
-        to: "tempstock"
-    result = @productsImport.buildProducts(data.Products?.ProductUpdate, null, null, extendedMappings)
+    # extend mapping to ensure that stock information will be processed and included into variant information too
+    mappings.productImport.mapping.Stock =
+      target: "variant"
+      type: "text"
+      to: "tempstock"
+    result = @productsImport.buildProducts(data.Products?.ProductUpdate, null, null, mappings)
 
     if(_.size result.updates) > 0
       result.updates

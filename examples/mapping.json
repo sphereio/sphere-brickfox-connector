@@ -2,7 +2,7 @@
     "description": "Mappings and configurations required for data synchronization between Brickfox and SPHERE.IO.",
     "productImport": {
         "description": "'mapping' - Brickfox to SPHERE product attributes mapping. 'productTypeId' - If not set first product type fetched from project will be used.",
-        "productTypeId": "75162a98-deb2-424e-8364-29b4d6614b49",
+        "productTypeId": "21be5078-750d-4a9d-8e71-3e319b816d7c",
         "mapping": {
         	"meta_title": {
                 "target": "product",
@@ -41,14 +41,16 @@
                 "isCustom": true,
                 "logoutMissing": true,
                 "type": "enum",
-                "to": "size"
+                "to": "size",
+                "transformers": ["replacePoint", "replaceComma", "replaceSpace", "replaceSlash", "replaceEszett"]
             },
             "16": {
                 "target": "variant",
                 "isCustom": true,
                 "logoutMissing": true,
                 "type": "enum",
-                "to": "color"
+                "to": "color",
+                "transformers": ["replacePoint", "replaceComma", "replaceSpace", "replaceSlash", "replaceEszett"]
             },
             "magento_ean": {
                 "target": "variant",
@@ -106,6 +108,15 @@
                 "type": "lenum",
                 "to": "brand"
             }
+        },
+        "valueTransformers": {
+            "replacePoint": {"type": "regexp", "find": "\\.", "replace": "Point"},
+            "replaceComma": {"type": "regexp", "find": "\\,", "replace": "Point"},
+            "replaceSpace": {"type": "regexp", "find": "\\s", "replace": "Space"},
+            "replaceSlash": {"type": "regexp", "find": "\/", "replace": "Slash"},
+            "replaceEszett": {"type": "regexp", "find": "\\ß", "replace": "ss"},
+            "toUpperCase": {"type": "upper"},
+            "toLowerCase": {"type": "lower"}
         }
     },
     "orderExport": {

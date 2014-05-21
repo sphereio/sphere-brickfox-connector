@@ -23,7 +23,7 @@ class Products
     @client = new SphereClient @_options
     @client.setMaxParallel(100)
     @logger = @_options.appLogger
-    @allAttributes = []
+    @allEnumAttributes = []
     @productsUpdated = 0
     @productsCreated = 0
     @productsCreateSkipped = 0
@@ -41,10 +41,10 @@ class Products
       fetchedCategories = utils.transformByCategoryExternalId(fetchedCategoriesResult.body.results)
       productType = utils.getProductTypeByConfig(fetchedProductTypesResult.body.results, mappings.productImport.productTypeId, @_options.config.project_key)
       @logger.info "[Products] Total products to import: '#{_.size productsXML.Products?.Product}'"
-      @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, mappings.productImport.mapping)
+      @products = @buildProducts(productsXML.Products?.Product, productType, fetchedCategories, mappings)
 
-      if _.size(@allAttributes) > 0
-        @_logMissingAttributes(@allAttributes, productType)
+      if _.size(@allEnumAttributes) > 0
+        @_logMissingAttributes(@allEnumAttributes, productType)
 
       productUpdates = @products.updates
       if _.size(productUpdates) > 0
@@ -270,9 +270,10 @@ class Products
   # @param {Object} mappings Product import attribute mappings
   ###
   _processImages: (item, variant, mappings) ->
+    productImportMappings = mappings.productImport.mapping
     _.each item, (value, key) ->
-      if _.has(mappings, key)
-        mapping = mappings[key]
+      if _.has(productImportMappings, key)
+        mapping = productImportMappings[key]
         url = value[0]
         if not _s.startsWith(url, 'http') and mapping.specialMapping?.baseURL
           url = "#{mapping.specialMapping.baseURL}#{url}"
@@ -297,9 +298,10 @@ class Products
   # @param {Object} mappings Product import attribute mappings
   ###
   _processCurrencies: (item, product, variant, mappings) ->
+    productImportMappings = mappings.productImport.mapping
     _.each item, (value, key) =>
-      if _.has(mappings, key)
-        mapping = mappings[key]
+      if _.has(productImportMappings, key)
+        mapping = productImportMappings[key]
         if mapping.type is 'special-price'
           price = {}
           currency = item['$'].currencyIso
@@ -325,7 +327,7 @@ class Products
           else
             variant[mapping.to] = [price]
         else
-          @_addValue(product, variant, value, mapping)
+          @_addValue(product, variant, value, mapping, mappings)
 
   ###
   # Extracts attribute values and depending on mapping
@@ -384,10 +386,11 @@ class Products
   # @param {Object} product Product object to save processed values to
   # @param {Object} variant Variant object to save processed values to
   # @param {Object} value Value to process
-  # @param {Object} mapping Product import mapping
+  # @param {Object} mapping mapping for the given value mapping
+  # @param {Object} mappings Product import mappings
   # @throws {Error} If attribute type unknown or not supported yet
   ###
-  _addValue: (product, variant, value, mapping) ->
+  _addValue: (product, variant, value, mapping, mappings) ->
     target = mapping.target
     type = mapping.type
     isCustom = mapping.isCustom
@@ -396,19 +399,19 @@ class Products
 
     switch type
       when 'text'
-        val = value[0]
+        val = @_transformValue(value[0], mapping, mappings)
       when 'ltext'
         # take value as it is as it should have proper form already
         val = value
       when 'enum', 'lenum'
-        val = _s.slugify value[0]
+        val = @_transformValue(value[0], mapping, mappings)
         if mapping.logoutMissing and isCustom
           attr =
             variantSKU: variant.sku
             name: key
             key: val
             label: value[0]
-          @allAttributes.push attr
+          @allEnumAttributes.push attr
       when 'number'
         val = _s.toNumber(value[0])
       when 'money'
@@ -448,7 +451,29 @@ class Products
   # @param {Object} mappings Product import attribute mappings
   ###
   _processValue: (product, variant, key, value, mappings) =>
-    if _.has(mappings, key)
-      @_addValue(product, variant, value, mappings[key])
+    productImportMappings = mappings.productImport.mapping
+    if _.has(productImportMappings, key)
+      @_addValue(product, variant, value, productImportMappings[key], mappings)
+
+  _transformValue: (value, mapping, mappings) ->
+    valueTransformers = mappings.productImport.valueTransformers
+    return value if not valueTransformers or not _.isString(value)
+
+    newValue = value
+    _.each mapping.transformers, (transformerName) ->
+      transformer = valueTransformers[transformerName]
+      switch transformer.type
+        when 'regexp'
+          find = new RegExp(transformer.find, 'g')
+          replace = transformer.replace
+          newValue = newValue.replace(find, replace)
+        when 'upper'
+          newValue = newValue.toUpperCase()
+        when 'lower'
+          newValue = newValue.toLowerCase()
+        else
+          throw new Error "Unsupported value transformer type: '#{transformer.type}' for value: '#{value}'; mapping: '#{_u.prettify mapping}'"
+
+    newValue
 
 module.exports = Products
