@@ -30,26 +30,25 @@ Before running this tool Brickfox to SPHERE.IO mapping has to be defined.
 
  - `isCustom`: Only relevant for targets of type ```variant``` and specifies if value should be mapped to one of the SPHERE.IO [product type](http://commercetools.de/dev/http-api-projects-productTypes.html#product-type) attributes. Possible values ```true | false```
 
- - `type`: Defines attribute type. Possible standard [values](http://commercetools.de/dev/http-api-projects-productTypes.html#attribute-type).
+ - `type`: Defines attribute type. Standard type [values](http://commercetools.de/dev/http-api-projects-productTypes.html#attribute-type).
 
-    Hint: Make sure that localized Brickfox attributes are mapped to localized ltext / lnum SPHERE.IO attributes.
+  Special type values:
+     - `special-tax`: Attribute's value will be mapped to configured tax category IDs
+     - `special-price`: Attribute's value will be mapped to configured customer group ID, channel group ID and country
+     - `special-image`: Attribute's value will used as URL for creation of variant images. Optional special mapping attribute `baseURL` can be used for prefixing of values with base url if non defined
 
-
-   Supported special types:
-   - `special-tax`: Attribute's value will be mapped to configured tax category IDs
-
-   - `special-price`: Attribute's value will be mapped to configured customer group ID, channel group ID and country
-
-   - `special-image`: Attribute's value will used as URL for creation of variant images. Optional special mapping attribute `baseURL` can be used for prefixing of values with base url if non defined
+  > Make sure that localized Brickfox attributes are mapped to localized ltext / lnum SPHERE.IO attributes.
 
  - `to`: Defines SPHERE.IO product attribute name where the mapped value will be saved to. Possible product [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product). Possible variant [attributes](http://commercetools.de/dev/http-api-projects-products.html#new-product-variant)
 
  - `logoutMissing`: Used for output of missing product type attribute values. Can be usefull for product type setup
+ - `transformers`: List of transformers to apply on the "enum" key or "text" value. Supported value transformers: regular expressions, lower case, upper case. [Examples](https://github.com/sphereio/sphere-brickfox-connector/blob/master/examples/mapping.json)
 
- To ensure successful synchronization with Brickfox following Brickfox attribute mappings are mandatory:
-   - VariationId (as variant product type attribute)
-   - ProductId (as variant product type attribute)
-   - ExternVariationId (as variant sku)
+
+ > To ensure successful synchronization with Brickfox following Brickfox attribute mappings are mandatory:
+  > - VariationId (as variant product type attribute)
+  >- ProductId (as variant product type attribute)
+  >- ExternVariationId (as variant sku)
 
 Product attribute mapping examples
 ```json
