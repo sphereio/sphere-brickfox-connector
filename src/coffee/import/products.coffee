@@ -63,7 +63,7 @@ class Products
             # TODO: make sure variants are not dropped and created from scratch but updated only.
             #@client.products.byId(oldProduct.id).update(update)
             #.then ->
-            #  @productsUpdated++
+            #  @productsUpdated = @productsUpdated + 1
     .then (updateProductsResult) =>
       productCreates = @products.creates
       if _.size(productCreates) > 0
@@ -79,10 +79,10 @@ class Products
                 @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
                 # product does not exist yet, create it
                 @client.products.save(p[0])
-                .then ->
-                  @productsCreated++
+                .then =>
+                  @productsCreated = @productsCreated + 1
               else
-                @productsCreateSkipped++
+                @productsCreateSkipped = @productsCreateSkipped + 1
                 Q()
         else
           Q.all(_.map(productCreates, (p) => @client.products.save(p)))

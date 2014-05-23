@@ -83,8 +83,8 @@ class OrderStatus
       shippingTrackingId = statusOrder.ShippingTrackingId?[0]
       # by convention we assume that fetched orders from SPHERE.IO are returned in the same sequence as requested
       fetchedOrder = fetchedOrders[index].results[0]
-      index++
-      @allOrdersCounter++
+      index = index + 1
+      @allOrdersCounter = @allOrdersCounter + 1
       # check if we got the right order from SPHERE.IO
       @_validateOrder fetchedOrder, statusOrder.OrderId[0]
       deliveryItems = []
