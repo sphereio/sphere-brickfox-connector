@@ -59,6 +59,7 @@ module.exports = class
       .option '--manufacturers [file]', 'XML file containing manufacturers to import'
       .option '--categories [file]', 'XML file containing categories to import'
       .option '--safeCreate', 'If defined, importer will check for product existence (by ProductId attribute mapping) in SPHERE.IO before sending create new product request'
+      .option '--continueOnProblems', 'When a product does not validate on the server side (400er response), ignore it and continue with the next products'
       .usage '--projectKey <project-key> --clientId <client-id> --clientSecret <client-secret> --mapping <file> --config [file] --products <file> --manufacturers [file] --categories [file]'
       .action (opts) =>
 
@@ -69,6 +70,7 @@ module.exports = class
           loadResources(opts, logger)
           .then (resources) ->
             resources.options.safeCreate = opts.safeCreate
+            resources.options.continueOnProblems = opts.continueOnProblems
             importer = new Categories resources.options
             processSftpImport(resources, importer, 'categories')
             .then (result) ->
@@ -90,6 +92,7 @@ module.exports = class
 
           options = createBaseOptions(opts, logger)
           options.safeCreate = opts.safeCreate
+          options.continueOnProblems = opts.continueOnProblems
           mapping = null
 
           utils.readJsonFromPath(opts.parent.mapping)

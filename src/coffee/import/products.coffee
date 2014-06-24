@@ -27,6 +27,7 @@ class Products
     @productsUpdated = 0
     @productsCreated = 0
     @productsCreateSkipped = 0
+    @productsCreateIgnored = 0
     @success = false
 
   execute: (productsXML, mappings) ->
@@ -78,16 +79,14 @@ class Products
               if not oldProduct
                 @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
                 # product does not exist yet, create it
-                @client.products.save(p[0])
-                .then =>
-                  @productsCreated = @productsCreated + 1
+                @_createProduct(p[0], attr.value)
               else
+                # product already exists - skip creation
                 @productsCreateSkipped = @productsCreateSkipped + 1
                 Q()
         else
-          Q.all(_.map(productCreates, (p) => @client.products.save(p)))
+          Q.all(_.map(productCreates, (p) => @_createProduct(p)))
     .then (createProductsResult) =>
-      @productsCreated = _.size(createProductsResult) if @productsCreated is 0
       @success = true
 
   outputSummary: ->
@@ -96,9 +95,27 @@ class Products
       result: if @success then 'SUCCESS' else 'ERROR'
       productsUpdated: @productsUpdated
       productsCreated: @productsCreated
-      productsCreateSkipped: @productsCreateSkipped
+      productsCreateDuplicatesSkipped: @productsCreateSkipped
+      productsCreateProblemsIgnored: @productsCreateIgnored
       processingTimeInSec: (endTime - @startTime) / 1000
     @logger.info summary, "[Products]"
+
+  _createProduct: (product, id) ->
+    @client.products.save(product)
+    .then =>
+      @productsCreated = @productsCreated + 1
+    .fail (error) =>
+      if error.statusCode is 400
+        if @_options.continueOnProblems
+          @productsCreateIgnored = @productsCreateIgnored + 1
+          msg = "[Products] Product with id: '#{id}' could not be created. Ignore and continue!; Reason:\n#{_u.prettify error}"
+          @logger.warn msg
+          Q.resolve msg
+        else
+          @_options.continueOnProblems
+          Q.reject error
+      else
+        Q.reject error
 
   _logMissingAttributes: (attributes, productType) ->
     # group by objects name value
