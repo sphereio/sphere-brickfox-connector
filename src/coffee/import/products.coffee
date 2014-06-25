@@ -51,13 +51,15 @@ class Products
       if _.size(productUpdates) > 0
         @logger.info "[Products] Update count: '#{_.size productUpdates}'"
         productIdMapping = mappings.productImport.mapping.ProductId.to
+        counter = 0
         Qutils.processList productUpdates, (p) =>
+          counter = counter + 1
           attr = @_findAttributeByName(p[0], productIdMapping, true)
           @_fetchProductByAttribute(attr)
           .then (fetchedProductResult) =>
             oldProduct = fetchedProductResult?.body?.results?[0]
             throw new Error "Could not find product to update by attribute name: '#{productIdMapping}' and value: '#{attr.value}' in SPHERE.IO" if not oldProduct
-            @logger.info "[Products] About to update product with id: '#{attr.value}', counter: '#{@productsUpdated}'"
+            @logger.info "[Products] About to update product with id: '#{attr.value}', counter: '#{counter}'"
             update = @productSync.buildActions(p[0], oldProduct).get()
             Q()
             # TODO: activate once SPHERE fixes delete and add variant with unique constraint attribute in one update action
@@ -71,13 +73,15 @@ class Products
         @logger.info "[Products] Create count: '#{_.size productCreates}'"
         if @_options.safeCreate
           productIdMapping = mappings.productImport.mapping.ProductId.to
+          counter = 0
           Qutils.processList productCreates, (p) =>
+            counter = counter + 1
             attr = @_findAttributeByName(p[0], productIdMapping, true)
             @_fetchProductByAttribute(attr)
             .then (fetchedProductResult) =>
               oldProduct = fetchedProductResult?.body?.results[0]
               if not oldProduct
-                @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
+                @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{counter}'"
                 # product does not exist yet, create it
                 @_createProduct(p[0])
               else
