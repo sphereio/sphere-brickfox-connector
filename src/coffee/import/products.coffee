@@ -79,7 +79,7 @@ class Products
               if not oldProduct
                 @logger.info "[Products] About to create product with id: '#{attr.value}', counter: '#{@productsCreated}'"
                 # product does not exist yet, create it
-                @_createProduct(p[0], attr.value)
+                @_createProduct(p[0])
               else
                 # product already exists - skip creation
                 @productsCreateSkipped = @productsCreateSkipped + 1
@@ -100,20 +100,16 @@ class Products
       processingTimeInSec: (endTime - @startTime) / 1000
     @logger.info summary, "[Products]"
 
-  _createProduct: (product, id) ->
+  _createProduct: (product) ->
     @client.products.save(product)
     .then =>
       @productsCreated = @productsCreated + 1
     .fail (error) =>
-      if error.statusCode is 400
-        if @_options.continueOnProblems
-          @productsCreateIgnored = @productsCreateIgnored + 1
-          msg = "[Products] Product with id: '#{id}' could not be created. Ignore and continue!; Reason:\n#{_u.prettify error}"
-          @logger.warn msg
-          Q.resolve msg
-        else
-          @_options.continueOnProblems
-          Q.reject error
+      if error.statusCode is 400 and @_options.continueOnProblems
+        @productsCreateIgnored = @productsCreateIgnored + 1
+        msg = "[Products] Product could not be created. Ignore and continue!; Reason:"
+        @logger.warn error, msg
+        Q.resolve msg
       else
         Q.reject error
 
