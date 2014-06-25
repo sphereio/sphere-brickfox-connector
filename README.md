@@ -132,6 +132,7 @@ node lib/run import-products --help
     --manufacturers [file]  XML file containing manufacturers to import
     --categories [file]     XML file containing categories to import
     --safeCreate            If defined, importer will check for product existence (by ProductId attribute mapping) in SPHERE.IO before sending create new product request
+    --continueOnProblems    When a product does not validate on the server side (400er response), ignore it and continue with the next products
 ```
 
 ## Import stock and price updates
@@ -181,6 +182,10 @@ node lib/run import-orders-status --help
     --createStates   If set, will setup order line item states and its transitions according to mapping definition
 ```
 
+## Logging
+
+By default application logs into the file ./sphere-brickfox-connector.log with log level 'info'. Log level can be overriden with parameter --logLevel
+> Once you installed bunyan CLI ```npm install -g bunyan``` following can be used for prettyfied log output: ```tail -f ./sphere-brickfox-connector.log | bunyan```
 
 ## Tests
 Tests are written using [jasmine](http://pivotal.github.io/jasmine/) (behavior-driven development framework for testing javascript code). Thanks to [jasmine-node](https://github.com/mhevery/jasmine-node), this test framework is also available for node.js.
