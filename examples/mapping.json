@@ -120,11 +120,12 @@
         }
     },
     "orderExport": {
-        "description": "'channel' - sync channel to create / use after successful order export as XML",
+        "description": "'channel' - sync channel to create / use after successful order export as XML. 'defaultEmail' - address fallback email to set if not provided by SPHERE order.",
         "channel": {
             "key": "BrickfoxOrderXmlExport",
             "role": ["OrderExport"]
-        }
+        },
+        "defaultEmail": "test@example.com"
     },
     "orderStatusImport": {
         "description": "'states' - list of possible order line item states and its transitions. 'mapping' - maps Brickfox to SPHERE.IO line item states.",
