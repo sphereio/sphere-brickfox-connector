@@ -31,6 +31,7 @@ class Orders
   # 3) Update SPHERE orders with sync information
   ###
   execute: (mappings, targetPath) ->
+    @mappings = mappings
     @startTime = new Date().getTime()
     orderQuery = @_buildOrderQuery @_options.numberOfDays
 
@@ -38,18 +39,18 @@ class Orders
       api.queryOrders(@rest, orderQuery)
       @_loadOrdersXsd './examples/xsd/orders.xsd'
     ], (fetchedOrders, ordersXsd) =>
-      utils.assertProductIdMappingIsDefined mappings.productImport.mapping
-      utils.assertVariationIdMappingIsDefined mappings.productImport.mapping
-      utils.assertSkuMappingIsDefined mappings.productImport.mapping
+      utils.assertProductIdMappingIsDefined @mappings.productImport.mapping
+      utils.assertVariationIdMappingIsDefined @mappings.productImport.mapping
+      utils.assertSkuMappingIsDefined @mappings.productImport.mapping
       if fetchedOrders
-        @client.channels.ensure(mappings.orderExport.channel.key, mappings.orderExport.channel.role)
+        @client.channels.ensure(@mappings.orderExport.channel.key, @mappings.orderExport.channel.role)
         .then (createOrGetChannelResult) =>
           @channel = createOrGetChannelResult.body
           # TODO refactor as soon as collection query in SPHERE.IO is fixed
           @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel)
           if _.size(@unsyncedOrders) > 0
             @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
-            xmlOrders = @_ordersToXML(@unsyncedOrders, mappings.productImport.mapping)
+            xmlOrders = @_ordersToXML(@unsyncedOrders)
             content = xmlOrders.end(pretty: true, indent: '  ', newline: "\n")
             @_validateXML(content, ordersXsd)
             @fileName = @_getFileName(targetPath)
@@ -140,15 +141,15 @@ class Orders
     _.filter orders, (order) ->
       _.size(order.syncInfo) is 0 or _.find order.syncInfo, (syncInfo) -> syncInfo.channel.id isnt channel.id
 
-  _ordersToXML: (orders, mappings) ->
+  _ordersToXML: (orders) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})
     root.att('count', orders.length)
     _.each orders, (order, index, list) =>
       orderXML = root.ele("Order", {num: index + 1})
-      @_orderToXML(order, orderXML, mappings)
+      @_orderToXML(order, orderXML)
     root
 
-  _orderToXML: (order, orderXML, mappings) =>
+  _orderToXML: (order, orderXML) =>
     @logger.info "[OrderExport] Processing order with orderNumber: '#{order.orderNumber}', id: '#{order.id}'"
     orderXML.e('OrderId').t(order.orderNumber)
     orderXML.e('OrderDate').t(order.createdAt)
@@ -156,14 +157,17 @@ class Orders
     #<xs:element ref="PaymentStatus" minOccurs="0"/>
     #<xs:element ref="CustomerId" minOccurs="0"/>
     #<xs:element ref="TotalAmountProducts" minOccurs="0"/>
-    orderXML.e('TotalAmountProductsNetto').t(@_toAmount(order.taxedPrice.totalNet.centAmount))
-    orderXML.e('TotalAmountVat').t(@_toAmount(order.taxedPrice.taxPortions[0].amount.centAmount))
+    if order.taxedPrice
+      orderXML.e('TotalAmountProductsNetto').t(@_toAmount(order.taxedPrice.totalNet.centAmount)) if order.taxedPrice?.totalNet
+      orderXML.e('TotalAmountVat').t(@_toAmount(order.taxedPrice.taxPortions[0].amount.centAmount)) if order.taxedPrice?.taxPortions?[0].amount
     shippingInfo = order.shippingInfo
     throw new Error "Can not export order as it does not contain shipping info; order id: '#{order.id}'" if not shippingInfo
     shippingCost = @_toAmount(shippingInfo.price.centAmount)
     orderXML.e('ShippingCost').t(shippingCost)
     #<xs:element ref="PaymentCost" minOccurs="0"/>
-    orderXML.e('TotalAmount').t(@_toAmount(order.taxedPrice.totalGross.centAmount))
+    totalAmount = order.totalPrice
+    totalAmount = order.taxedPrice.totalGross.centAmount if order.taxedPrice?.totalGross
+    orderXML.e('TotalAmount').t(@_toAmount(totalAmount))
     #<xs:element ref="Comment" minOccurs="0"/>
     #<xs:element ref="CostsChangings" minOccurs="0"/>
     # TODO use real data for PaymentMethod
@@ -180,12 +184,12 @@ class Orders
     lineItemsXML = orderXML.ele("OrderLines", {'count': order.lineItems.length})
     _.each order.lineItems, (lineItem, index, list) =>
       lineItemXML = lineItemsXML.ele("OrderLine", {num: index + 1})
-      @_lineItemToXML(lineItem, lineItemXML, mappings)
+      @_lineItemToXML(lineItem, lineItemXML)
 
-  _lineItemToXML: (lineItem, lineItemXML, mappings) =>
+  _lineItemToXML: (lineItem, lineItemXML) =>
     lineItemXML.e('OrderLineId').t(lineItem.id)
-    productId = utils.getVariantAttValue(mappings, 'ProductId', lineItem.variant)
-    variationId = utils.getVariantAttValue(mappings, 'VariationId', lineItem.variant)
+    productId = utils.getVariantAttValue(@mappings.productImport.mapping, 'ProductId', lineItem.variant)
+    variationId = utils.getVariantAttValue(@mappings.productImport.mapping, 'VariationId', lineItem.variant)
     lineItemXML.e('ProductId').t(productId)
     name = _.values(lineItem.name)[0]
     lineItemXML.e('ProductName').t(name)
@@ -218,12 +222,15 @@ class Orders
     el.e('City').t(address.city) if address.city
     el.e('Country').t(address.country) if address.country
     el.e('PhonePrivate').t(address.phone) if address.phone
-    el.e('EmailAddress').t(address.email) if address.email
+    if address.email
+      el.e('EmailAddress').t(address.email)
+    else if @mappings.orderExport.defaultEmail
+      el.e('EmailAddress').t(@mappings.orderExport.defaultEmail)
 
   _validateXML: (xml, xsd) ->
     xmlDoc = libxmljs.parseXmlString xml
     xsdDoc = libxmljs.parseXmlString xsd
     result = xmlDoc.validate(xsdDoc)
-    throw new Error "XML validation against XSD schema failed. XML content: \n #{xml}" if not result
+    throw new Error "XML validation against XSD schema failed. Validation errors: #{xmlDoc.validationErrors} XML content: #{xml}" if not result
 
 module.exports = Orders
