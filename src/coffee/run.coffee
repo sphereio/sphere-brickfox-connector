@@ -188,7 +188,7 @@ module.exports = class
           options.numberOfDays = opts.numberOfDays
 
           utils.readJsonFromPath(opts.parent.mapping)
-          .then (mapping) ->
+          .then (mapping) =>
             exporter = new Orders options
             exportFn(exporter, opts.target, mapping)
             .then (exportResult) ->
@@ -455,7 +455,6 @@ module.exports = class
       .then (result) ->
         d.resolve(result)
       .fail (error) ->
-        exporter.outputSummary()
         d.reject error
       d.promise
 
