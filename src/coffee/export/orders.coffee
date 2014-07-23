@@ -91,9 +91,9 @@ class Orders
     else
       timeStamp = new Date().getTime()
       if _s.endsWith(path, '/')
-        return "#{path}Orders-#{timeStamp}.xml"
+        return "#{path}Orders_#{timeStamp}.xml"
       else
-        return "#{path}/Orders-#{timeStamp}.xml"
+        return "#{path}/Orders_#{timeStamp}.xml"
 
   _loadOrdersXsd: (path) ->
     utils.readFile(path)
