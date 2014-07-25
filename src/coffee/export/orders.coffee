@@ -165,7 +165,7 @@ class Orders
     shippingCost = @_toAmount(shippingInfo.price.centAmount)
     orderXML.e('ShippingCost').t(shippingCost)
     #<xs:element ref="PaymentCost" minOccurs="0"/>
-    totalAmount = order.totalPrice
+    totalAmount = order.totalPrice.centAmount
     totalAmount = order.taxedPrice.totalGross.centAmount if order.taxedPrice?.totalGross
     orderXML.e('TotalAmount').t(@_toAmount(totalAmount))
     #<xs:element ref="Comment" minOccurs="0"/>
