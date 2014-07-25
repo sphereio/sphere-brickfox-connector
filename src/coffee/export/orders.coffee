@@ -171,7 +171,7 @@ class Orders
     #<xs:element ref="Comment" minOccurs="0"/>
     #<xs:element ref="CostsChangings" minOccurs="0"/>
     # TODO use real data for PaymentMethod
-    orderXML.e('PaymentMethod').t('test')
+    orderXML.e('PaymentMethod').t(@mappings.orderExport.defaultPayment)
     pmValues = orderXML.ele("PaymentMethodValues")
     # TODO use real data for PaymentMethodValue
     pmValue = pmValues.ele("PaymentMethodValue", {key: 'testKey', value: 'testValue'})

@@ -125,7 +125,8 @@
             "key": "BrickfoxOrderXmlExport",
             "role": ["OrderExport"]
         },
-        "defaultEmail": "test@example.com"
+        "defaultEmail": "test@example.com",
+        "defaultPayment": "dept47"
     },
     "orderStatusImport": {
         "description": "'states' - list of possible order line item states and its transitions. 'mapping' - maps Brickfox to SPHERE.IO line item states.",
