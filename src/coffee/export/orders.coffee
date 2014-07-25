@@ -154,7 +154,11 @@ class Orders
     orderXML.e('OrderId').t(order.orderNumber)
     orderXML.e('OrderDate').t(order.createdAt)
     #<xs:element ref="OrderStatus" minOccurs="0"/>
+    if order.orderState
+      orderXML.e('OrderStatus').t(order.orderState)
     #<xs:element ref="PaymentStatus" minOccurs="0"/>
+    if order.paymentState
+      orderXML.e('PaymentStatus').t(order.paymentState)
     #<xs:element ref="CustomerId" minOccurs="0"/>
     #<xs:element ref="TotalAmountProducts" minOccurs="0"/>
     if order.taxedPrice
@@ -217,7 +221,7 @@ class Orders
     el.e('LastName').t(address.lastName) if address.lastName
     el.e('Address').t(address.streetName) if address.streetName
     el.e('Number').t(address.streetNumber) if address.streetNumber
-    el.e('AddressAdd').t(address.additionalStreetInfo) if address.additionalStreetInfo
+    el.e('AddressAdd').t(address.additionalAddressInfo) if address.additionalAddressInfo
     el.e('PostalCode').t(address.postalCode) if address.postalCode
     el.e('City').t(address.city) if address.city
     el.e('Country').t(address.country) if address.country
