@@ -8,6 +8,7 @@ SphereClient = require 'sphere-node-client'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
+nutil = require 'util'
 
 ###
 Exports SPHERE orders as XML (in compliance with Brickfox order import XSD)
@@ -36,7 +37,7 @@ class Orders
     orderQuery = @_buildOrderQuery @_options.numberOfDays
 
     Q.spread [
-      api.queryOrders(@rest, orderQuery)
+      @_queryOrders(@rest, orderQuery)
       @_loadOrdersXsd './examples/xsd/orders.xsd'
     ], (fetchedOrders, ordersXsd) =>
       utils.assertProductIdMappingIsDefined @mappings.productImport.mapping
@@ -75,6 +76,9 @@ class Orders
       exportedOrders: @exportedOrders
       processingTimeInSec: (endTime - @startTime) / 1000
     @logger.info summary, "[OrderExport]"
+
+  _queryOrders: (rest, orderQuery) ->
+    api.queryOrders(rest, orderQuery)
 
   doPostProcessing: (syncInfoUpdates) ->
     Q.all(_.map(syncInfoUpdates, (o) => @client.orders.byId(o.id).save(o.payload)))
@@ -139,7 +143,7 @@ class Orders
   ###
   _filterByUnsyncedOrders: (orders, channel) ->
     _.filter orders, (order) ->
-      _.size(order.syncInfo) is 0 or _.find order.syncInfo, (syncInfo) -> syncInfo.channel.id isnt channel.id
+      _.size(order.syncInfo) is 0 or not (_.find order.syncInfo, (syncInfo) -> syncInfo.channel.id is channel?.id)
 
   _ordersToXML: (orders) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})
