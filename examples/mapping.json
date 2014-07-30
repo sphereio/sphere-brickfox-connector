@@ -126,7 +126,7 @@
             "role": ["OrderExport"]
         },
         "defaultEmail": "test@example.com",
-        "defaultPayment": "dept47"
+        "defaultPayment": "testPayment"
     },
     "orderStatusImport": {
         "description": "'states' - list of possible order line item states and its transitions. 'mapping' - maps Brickfox to SPHERE.IO line item states.",
