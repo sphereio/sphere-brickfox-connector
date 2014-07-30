@@ -41,14 +41,6 @@ module.exports = (grunt) ->
           rename: (dest, matchedSrcPath) ->
             dest + matchedSrcPath
           )
-      exampleOrders:
-        files: grunt.file.expandMapping(['**/exampleorders.coffee'], 'test/',
-          flatten: false
-          cwd: 'src/spec'
-          ext: '.js'
-          rename: (dest, matchedSrcPath) ->
-            dest + matchedSrcPath
-          )
 
     concat:
       options:

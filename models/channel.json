@@ -1,0 +1,13 @@
+{
+    "body": {
+        "createdAt": "2014-04-14T18:17:12.794Z",
+        "id": "foo",
+        "key": "BrickfoxOrderXmlExport",
+        "lastModifiedAt": "2014-04-14T18:17:12.794Z",
+        "roles": [
+            "OrderExport"
+        ],
+        "version": 1
+    },
+    "statusCode": 200
+}

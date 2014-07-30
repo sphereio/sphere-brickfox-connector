@@ -8,7 +8,7 @@ SphereClient = require 'sphere-node-client'
 {_u} = require 'sphere-node-utils'
 api = require '../../lib/sphere'
 utils = require '../../lib/utils'
-nutil = require 'util'
+
 
 ###
 Exports SPHERE orders as XML (in compliance with Brickfox order import XSD)
@@ -48,7 +48,7 @@ class Orders
         .then (createOrGetChannelResult) =>
           @channel = createOrGetChannelResult.body
           # TODO refactor as soon as collection query in SPHERE.IO is fixed
-          @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel)
+          @unsyncedOrders = @_filterByUnsyncedOrders(fetchedOrders.results, @channel.id)
           if _.size(@unsyncedOrders) > 0
             @logger.info "[OrderExport] Orders to export count: '#{_.size @unsyncedOrders}'"
             xmlOrders = @_ordersToXML(@unsyncedOrders)
@@ -138,12 +138,12 @@ class Orders
   ###
   Returns only orders which haven't been synchronized using the given channel.
   @param {Array} orders List of order resources.
-  @param {Object} channel SyncInfo channel.
+  @param {Object} channel SyncInfo channel id.
   @return {Array} List of orders without given channel.
   ###
-  _filterByUnsyncedOrders: (orders, channel) ->
+  _filterByUnsyncedOrders: (orders, channelId) ->
     _.filter orders, (order) ->
-      _.size(order.syncInfo) is 0 or not (_.find order.syncInfo, (syncInfo) -> syncInfo.channel.id is channel?.id)
+      _.size(order.syncInfo) is 0 or not (_.find order.syncInfo, (syncInfo) -> syncInfo.channel.id is channelId)
 
   _ordersToXML: (orders) ->
     root = builder.create('Orders', { 'version': '1.0', 'encoding': 'UTF-8'})

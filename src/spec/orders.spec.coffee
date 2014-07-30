@@ -5,8 +5,9 @@ Config = require '../config.json'
 Mappings = require '../examples/mapping.json'
 Orders = require('../lib/export/orders')
 package_json = require '../package.json'
-exampleorders = require './exampleorders'
-nutil = require 'util'
+exampleOrders = require '../models/orders.json'
+exampleChannel = require '../models/channel.json'
+
 
 describe 'Orders', ->
 
@@ -23,7 +24,7 @@ describe 'Orders', ->
 
   beforeEach ->
     @target = './Orders.xml'
-    @orderExportChannel = {id: "foo"}
+    @orderExportChannel = exampleChannel.body
     @exporter = new Orders _.extend _.clone(Config),
       logger: logger
       appLogger: logger
@@ -48,32 +49,28 @@ describe 'Orders', ->
       {id: 'd', syncInfo: [{channel: {typeId: 'channel', id: 'bar'}},{channel: {typeId: 'channel', id: @orderExportChannel.id}}]}
       {id: 'e', syncInfo: [{channel: {typeId: 'channel', id: 'bar'}},{channel: {typeId: 'channel', id: 'bar2'}}]}
     ]
-    unsyncedOrders = @exporter._filterByUnsyncedOrders(orders, @orderExportChannel)
+    unsyncedOrders = @exporter._filterByUnsyncedOrders(orders, @orderExportChannel.id)
 
-    # a, b, e orders should be sync-ed
     expect(_.size(unsyncedOrders)).toEqual 3
+    expect(unsyncedOrders[0].id).toBe 'a'
+    expect(unsyncedOrders[1].id).toBe 'b'
+    expect(unsyncedOrders[2].id).toBe 'e'
 
-  xit 'should export new order as XML', (done) ->
-    createOrdersResultMock = ->
-      d = Q.defer()
-      d.resolve {"results": exampleorders.orders}
-      d.promise
+  it 'should export new order as XML', (done) ->
+    spyOn(@exporter.client.channels, 'ensure').andCallFake (key, role) -> Q(exampleChannel)
+    spyOn(@exporter, '_queryOrders').andReturn Q({"results": exampleOrders})
+    spyOn(@exporter, '_writeFile').andReturn Q('CREATED')
+    spyOn(@exporter, '_validateXML')
+    spyOn(@exporter, '_buildOrderSyncInfoUpdates')
 
-    createChannelMock = ->
-      d = Q.defer()
-      d.resolve @orderExportChannel
-      d.promise
-
-    createWriteFileMock = ->
-      d = Q.defer()
-      d.resolve 'CREATED'
-      d.promise
-
-    spyOn(@exporter.client.channels, 'ensure').andReturn createChannelMock()
-    spyOn(@exporter, '_queryOrders').andReturn createOrdersResultMock()
-    spyOn(@exporter, '_writeFile').andReturn createWriteFileMock()
-
-    @exporter.execute (Mappings, @target) =>
+    @exporter.execute(Mappings, @target)
+    .then (result) =>
       expect(@exporter._validateXML).toHaveBeenCalled()
+      expect(@exporter._validateXML.mostRecentCall.args[0]).toContain('Orders count="2"')
       expect(@exporter._writeFile).toHaveBeenCalled()
       expect(@exporter._buildOrderSyncInfoUpdates).toHaveBeenCalled()
+      done()
+    .fail (error) ->
+      console.log error
+      done()
+      this.fail(error)
