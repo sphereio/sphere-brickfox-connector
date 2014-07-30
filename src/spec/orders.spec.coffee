@@ -71,6 +71,4 @@ describe 'Orders', ->
       expect(@exporter._buildOrderSyncInfoUpdates).toHaveBeenCalled()
       done()
     .fail (error) ->
-      console.log error
-      done()
-      this.fail(error)
+      done(error)
