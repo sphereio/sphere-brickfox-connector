@@ -32,7 +32,7 @@ class Categories
       @logger.info "[Categories] Fetched SPHERE.IO categories count: '#{_.size @fetchedCategories}'"
       @categories = @_buildCategories(categoriesXML)
       @categoryCreates = @_buildCategoryCreates(@categories, @fetchedCategories) if @categories
-      Q.all(_.map(@categoryCreates, (c) => @client.categories.save(c))) if @categoryCreates
+      Q.all(_.map(@categoryCreates, (c) => @client.categories.create(c))) if @categoryCreates
     .then (createCategoriesResult) =>
       @categoriesCreated = _.size(@categoryCreates)
       # fetch created categories to get id's used for parent reference creation. Required only if new categories created.

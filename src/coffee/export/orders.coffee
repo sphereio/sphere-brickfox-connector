@@ -81,7 +81,7 @@ class Orders
     api.queryOrders(rest, orderQuery)
 
   doPostProcessing: (syncInfoUpdates) ->
-    Q.all(_.map(syncInfoUpdates, (o) => @client.orders.byId(o.id).save(o.payload)))
+    Q.all(_.map(syncInfoUpdates, (o) => @client.orders.byId(o.id).update(o.payload)))
     .then (result) =>
       resultSize = _.size(result)
       @logger.debug "[OrderExport] Updated order SyncInfo count: '#{resultSize}'" if resultSize > 0

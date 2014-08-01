@@ -84,7 +84,7 @@ class ProductUpdates
       inventoryCreates = @_buildInventoryCreates(@createInventoryForSkus, @newVariants) if _.size(@createInventoryForSkus) > 0
       if inventoryCreates
         @logger.info "[ProductsUpdate] Inventories to create: #{_.size inventoryCreates}"
-        Q.all(_.map(inventoryCreates, (i) => @client.inventoryEntries.save(i))) if inventoryCreates
+        Q.all(_.map(inventoryCreates, (i) => @client.inventoryEntries.create(i))) if inventoryCreates
     .then (createInventoryResult) =>
       @inventoriesCreated = _.size(createInventoryResult)
       @success = true

@@ -105,7 +105,7 @@ class Products
     @logger.info summary, "[Products]"
 
   _createProduct: (product) ->
-    @client.products.save(product)
+    @client.products.create(product)
     .then =>
       @productsCreated = @productsCreated + 1
     .fail (error) =>
