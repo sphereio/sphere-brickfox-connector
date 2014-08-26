@@ -1,7 +1,7 @@
 Q = require 'q'
 _ = require 'lodash-node'
 {ExtendedLogger} = require 'sphere-node-utils'
-Config = require '../config.json'
+Config = require '../examples/config.json'
 Mappings = require '../examples/mapping.json'
 Orders = require('../lib/export/orders')
 package_json = require '../package.json'
@@ -40,6 +40,30 @@ describe 'Orders', ->
   it 'should initialize', ->
     expect(@exporter).toBeDefined()
     expect(@exporter._options.target).toBe @target
+
+  describe '#_toAmount', ->
+    it 'should convert cents only', ->
+      expect(@exporter._toAmount(99)).toBe '0.99'
+      expect(@exporter._toAmount(90)).toBe '0.90'
+      expect(@exporter._toAmount(9)).toBe '0.09'
+      expect(@exporter._toAmount(0)).toBe '0.00'
+
+    it 'should format big amounts', ->
+      expect(@exporter._toAmount(1000)).toBe '10.00'
+      expect(@exporter._toAmount(9999999)).toBe '99,999.99'
+
+    describe '#_toTax', ->
+    it 'should convert tax rates', ->
+      expect(@exporter._toTax(0.01)).toBe '1.00'
+      expect(@exporter._toTax(0.19)).toBe '19.00'
+      expect(@exporter._toTax(0.10)).toBe '10.00'
+
+    describe '#_toProductPriceFromTotal', ->
+    it 'should calculate correct line item price', ->
+      expect(@exporter._toProductPriceFromTotal(50000, 5)).toBe '100.00'
+      expect(@exporter._toProductPriceFromTotal(10, 10)).toBe '0.01'
+      expect(@exporter._toProductPriceFromTotal(334, 3)).toBe '1.11'
+      expect(@exporter._toProductPriceFromTotal(335, 3)).toBe '1.12'
 
   it 'should return unsynced orders', ->
     orders = [
