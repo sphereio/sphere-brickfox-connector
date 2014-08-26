@@ -209,13 +209,13 @@ class Orders
     lineItemXML.e('TaxRate').t(@_toTax(lineItem.taxRate.amount))
 
   _toAmount: (centAmount) ->
-    amount = _s.numberFormat(_s.toNumber(centAmount / 100, 2), 2)
+    amount = _s.numberFormat(centAmount / 100, 2)
 
   _toTax: (rate) ->
-    rate = _s.numberFormat(_s.toNumber(rate * 100), 2)
+    rate = _s.numberFormat(rate * 100, 2)
 
   _toProductPriceFromTotal: (centAmount, quantity) ->
-    amount = _s.numberFormat(_s.toNumber(centAmount / quantity / 100), 2)
+    amount = _s.numberFormat(centAmount / quantity / 100, 2)
 
   _addressToXML: (address, xml, name) ->
     el = xml.ele(name)
