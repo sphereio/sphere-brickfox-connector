@@ -219,7 +219,7 @@ class Orders
 
   _addressToXML: (address, xml, name) ->
     el = xml.ele(name)
-    el.e('Title').t(address.title) if address.title
+    el.e('Title').t(address.salutation) if address.salutation
     el.e('Company').t(address.company) if address.company
     el.e('FirstName').t(address.firstName) if address.firstName
     el.e('LastName').t(address.lastName) if address.lastName
