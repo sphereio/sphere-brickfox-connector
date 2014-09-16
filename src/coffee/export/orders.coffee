@@ -219,7 +219,6 @@ class Orders
 
   _addressToXML: (address, xml, name) ->
     el = xml.ele(name)
-    el.e('Title').t(address.salutation) if address.salutation
     el.e('Company').t(address.company) if address.company
     el.e('FirstName').t(address.firstName) if address.firstName
     el.e('LastName').t(address.lastName) if address.lastName
@@ -230,6 +229,7 @@ class Orders
     el.e('City').t(address.city) if address.city
     el.e('Country').t(address.country) if address.country
     el.e('PhonePrivate').t(address.phone) if address.phone
+    el.e('Title').t(address.salutation) if address.salutation
     if address.email
       el.e('EmailAddress').t(address.email)
     else if @mappings.orderExport.defaultEmail
