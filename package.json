@@ -1,7 +1,7 @@
 {
   "name": "sphere-brickfox-connector",
   "description": "A set of data connectors to sync data between brickfox and SPHERE.IO",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "homepage": "https://github.com/sphereio/sphere-brickfox-connector",
   "keywords": [
     "sphere",
