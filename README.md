@@ -188,7 +188,7 @@ By default application logs into the file ./sphere-brickfox-connector.log with l
 > Once you installed bunyan CLI ```npm install -g bunyan``` following can be used for prettyfied log output: ```tail -f ./sphere-brickfox-connector.log | bunyan```
 
 ## Tests
-Tests are written using [jasmine](http://pivotal.github.io/jasmine/) (behavior-driven development framework for testing javascript code). Thanks to [jasmine-node](https://github.com/mhevery/jasmine-node), this test framework is also available for node.js.
+Tests are written using [jasmine](https://jasmine.github.io/) (behavior-driven development framework for testing javascript code). Thanks to [jasmine-node](https://github.com/mhevery/jasmine-node), this test framework is also available for node.js.
 
 To run tests, simple execute the *test* task using `grunt`.
 ```bash
